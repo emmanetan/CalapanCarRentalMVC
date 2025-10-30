@@ -40,6 +40,15 @@ namespace CalapanCarRentalMVC.Controllers
               .Take(5)
              .ToListAsync();
 
+         // Maintenance statistics
+            ViewBag.UrgentMaintenance = await _context.Maintenances.CountAsync(m => m.Status == "Urgent");
+    ViewBag.ScheduledMaintenance = await _context.Maintenances.CountAsync(m => m.Status == "Scheduled");
+        ViewBag.CompletedMaintenance = await _context.Maintenances
+                .CountAsync(m => m.Status == "Completed" && 
+      m.DateCompleted.HasValue && 
+       m.DateCompleted.Value.Month == DateTime.Now.Month &&
+        m.DateCompleted.Value.Year == DateTime.Now.Year);
+
             return View();
         }
     }

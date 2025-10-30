@@ -19,7 +19,7 @@ namespace CalapanCarRentalMVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Get available cars for the home page
+            // Get available cars for the home page (exclude cars in maintenance)
             var availableCars = await _context.Cars
                 .Where(c => c.Status == "Available")
                 .OrderByDescending(c => c.CreatedAt)

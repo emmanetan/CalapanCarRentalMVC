@@ -27,18 +27,18 @@
      <div class="d-flex justify-content-between align-items-center">
        <div>
  <p class="text-muted mb-1">Total Rentals</p>
-          <h3>@ViewBag.TotalRentals</h3>
+     <h3>@ViewBag.TotalRentals</h3>
    </div>
     <i class="fas fa-file-contract"></i>
-            </div>
+</div>
  </div>
     </div>
     <div class="col-md-3 mb-3">
-        <div class="stat-card">
-         <div class="d-flex justify-content-between align-items-center">
+     <div class="stat-card">
+   <div class="d-flex justify-content-between align-items-center">
         <div>
         <p class="text-muted mb-1">Active Rentals</p>
-         <h3 class="text-success">@ViewBag.ActiveRentals</h3>
+   <h3 class="text-success">@ViewBag.ActiveRentals</h3>
      </div>
          <i class="fas fa-check-circle text-success"></i>
             </div>
@@ -47,20 +47,20 @@
     <div class="col-md-3 mb-3">
 <div class="stat-card">
     <div class="d-flex justify-content-between align-items-center">
-           <div>
+       <div>
          <p class="text-muted mb-1">Completed</p>
-          <h3 class="text-primary">@ViewBag.CompletedRentals</h3>
+    <h3 class="text-primary">@ViewBag.CompletedRentals</h3>
      </div>
-          <i class="fas fa-check-double text-primary"></i>
-            </div>
-        </div>
+     <i class="fas fa-check-double text-primary"></i>
+    </div>
+</div>
     </div>
  <div class="col-md-3 mb-3">
   <div class="stat-card">
    <div class="d-flex justify-content-between align-items-center">
        <div>
    <p class="text-muted mb-1">Total Spent</p>
-  <h3 class="text-success">?@ViewBag.TotalSpent.ToString("N2")</h3>
+  <h3 class="text-success">@Html.Raw("&#8369;")@ViewBag.TotalSpent.ToString("N2")</h3>
        </div>
        <i class="fas fa-dollar-sign text-success"></i>
       </div>
@@ -131,14 +131,14 @@
         else if (rental.Status == "Completed")
    {
       <span class="badge bg-primary">@rental.Status</span>
-            }
+       }
  else
-                 {
-         <span class="badge bg-warning">@rental.Status</span>
+     {
+      <span class="badge bg-warning">@rental.Status</span>
     }
-     </td>
-         <td><strong>?@rental.TotalAmount.ToString("N2")</strong></td>
-     </tr>
+ </td>
+      <td><strong>@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong></td>
+  </tr>
        }
             </tbody>
              </table>

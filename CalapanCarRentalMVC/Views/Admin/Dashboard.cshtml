@@ -84,6 +84,10 @@
             <i class="fas fa-file-alt"></i>
             <span>New Rental</span>
         </a>
+        <a asp-controller="Maintenance" asp-action="Index" class="quick-action-btn text-decoration-none">
+  <i class="fas fa-tools"></i>
+      <span>Maintenance</span>
+     </a>
    <a href="#" class="quick-action-btn text-decoration-none">
      <i class="fas fa-chart-line"></i>
       <span>View Reports</span>
@@ -148,6 +152,36 @@
    <p class="text-muted">No recent rentals</p>
  </div>
           }
+        </div>
+
+        <!-- Maintenance Overview -->
+        <div class="dashboard-widget mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5><i class="fas fa-tools me-2"></i>Maintenance Overview</h5>
+        <a asp-controller="Maintenance" asp-action="Index" class="btn btn-sm btn-admin-primary">
+      <i class="fas fa-eye me-1"></i>View All
+       </a>
+  </div>
+            <div class="row">
+  <div class="col-md-4 text-center mb-2">
+       <div class="p-3 bg-danger bg-opacity-10 rounded">
+     <h3 class="text-danger mb-1">@(ViewBag.UrgentMaintenance ?? 0)</h3>
+      <small class="text-muted">Urgent</small>
+         </div>
+    </div>
+      <div class="col-md-4 text-center mb-2">
+               <div class="p-3 bg-warning bg-opacity-10 rounded">
+  <h3 class="text-warning mb-1">@(ViewBag.ScheduledMaintenance ?? 0)</h3>
+             <small class="text-muted">Scheduled</small>
+    </div>
+          </div>
+     <div class="col-md-4 text-center mb-2">
+         <div class="p-3 bg-success bg-opacity-10 rounded">
+         <h3 class="text-success mb-1">@(ViewBag.CompletedMaintenance ?? 0)</h3>
+       <small class="text-muted">Completed (This Month)</small>
+       </div>
+      </div>
+       </div>
         </div>
     </div>
 

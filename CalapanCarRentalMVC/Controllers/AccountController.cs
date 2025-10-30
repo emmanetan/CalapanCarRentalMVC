@@ -17,6 +17,13 @@ namespace CalapanCarRentalMVC.Controllers
         // GET: Account/Login
         public IActionResult Login()
         {
+            // If user is coming from a direct navigation (not from trying to rent a car),
+            // and there's no redirect message, clear any stale RedirectCarId
+            if (TempData["RedirectMessage"] == null && TempData.ContainsKey("RedirectCarId"))
+            {
+                TempData.Remove("RedirectCarId");
+            }
+
             return View();
         }
 
@@ -51,9 +58,13 @@ namespace CalapanCarRentalMVC.Controllers
 if (TempData["RedirectCarId"] != null)
               {
           int carId = (int)TempData["RedirectCarId"];
+                // Clear the TempData after reading it
+            TempData.Remove("RedirectCarId");
+     TempData.Remove("RedirectMessage");
          return RedirectToAction("Create", "Rentals", new { carId = carId });
  }
        
+            // Default redirect to Customer Dashboard
             return RedirectToAction("Dashboard", "Customer");
         }
   else

@@ -43,10 +43,13 @@
                                     <th><i class="fas fa-palette me-2 text-primary"></i>Color:</th>
                                     <td>@Model.Color</td>
                                 </tr>
-                                <tr>
-                                    <th><i class="fas fa-hashtag me-2 text-primary"></i>Plate Number:</th>
-                                    <td>@Model.PlateNumber</td>
-                                </tr>
+                                @if (!string.IsNullOrEmpty(Context.Session.GetString("UserRole")))
+                                {
+                                    <tr>
+                                        <th><i class="fas fa-hashtag me-2 text-primary"></i>Plate Number:</th>
+                                        <td>@Model.PlateNumber</td>
+                                    </tr>
+                                }
                                 <tr>
                                     <th><i class="fas fa-cog me-2 text-primary"></i>Transmission:</th>
                                     <td>@Model.TransmissionType</td>

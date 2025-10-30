@@ -100,19 +100,20 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="#reportsSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-                                <i class="fas fa-chart-bar"></i>
-                                <span>Reports</span>
-                                <i class="fas fa-chevron-down ms-auto"></i>
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")"
+                               asp-controller="Reports" asp-action="Index">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Reports & Analytics</span>
                             </a>
-                            <ul class="collapse sidebar-submenu" id="reportsSubmenu">
-                                <li><a href="#"><i class="fas fa-chart-line me-2"></i>Revenue Report</a></li>
-                                <li><a href="#"><i class="fas fa-calendar-check me-2"></i>Rental History</a></li>
-                                <li><a href="#"><i class="fas fa-car-side me-2"></i>Vehicle Utilization</a></li>
-                                <li><a href="#"><i class="fas fa-user-check me-2"></i>Customer Statistics</a></li>
-                            </ul>
                         </li>
                         <li class="sidebar-divider"></li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")"
+                               asp-controller="Admin" asp-action="Profile">
+                                <i class="fas fa-user-circle"></i>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="#">
                                 <i class="fas fa-cog"></i>
@@ -254,7 +255,39 @@
             @RenderBody()
         </main>
 
-        <!-- Footer only for visitors -->
+     <!-- Banner Section before Footer -->
+        <section class="banner-section">
+          <div class="container-fluid p-0">
+   @{
+     // Check if banner.jpg exists and convert to Base64
+        var bannerPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "banner.jpg");
+        string base64Image = "";
+            
+             if (System.IO.File.Exists(bannerPath))
+          {
+          try
+          {
+     byte[] imageBytes = System.IO.File.ReadAllBytes(bannerPath);
+     base64Image = Convert.ToBase64String(imageBytes);
+      }
+               catch
+            {
+          base64Image = "";
+               }
+   }
+              }
+      
+       @if (!string.IsNullOrEmpty(base64Image))
+   {
+            <img src="data:image/jpeg;base64,@base64Image" 
+         alt="Calapan Car Rental Banner" 
+        class="img-fluid w-100" 
+          style="max-height: 400px; object-fit: cover;" />
+             }
+            </div>
+        </section>
+
+<!-- Footer only for visitors -->
         <footer class="bg-dark text-white py-4">
             <div class="container">
                 <div class="row">

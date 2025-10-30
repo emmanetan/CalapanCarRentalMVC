@@ -1,0 +1,405 @@
+@{
+    ViewData["Title"] = "Reports & Analytics";
+    Layout = "_Layout";
+}
+
+<div class="page-header">
+<div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1><i class="fas fa-chart-line me-2"></i>Reports & Analytics</h1>
+            <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+     <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+           <li class="breadcrumb-item active">Reports</li>
+     </ol>
+        </nav>
+        </div>
+        <div>
+            <button class="btn btn-primary" onclick="window.print()">
+      <i class="fas fa-print me-1"></i>Print Report
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+<div class="d-flex justify-content-between align-items-center">
+       <div>
+          <p class="text-muted mb-1">Total Revenue</p>
+           <h3 class="text-success">?@ViewBag.TotalRevenue.ToString("N2")</h3>
+                </div>
+          <i class="fas fa-dollar-sign text-success"></i>
+</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-center">
+     <div>
+               <p class="text-muted mb-1">Total Rentals</p>
+         <h3>@ViewBag.TotalRentals</h3>
+          </div>
+                <i class="fas fa-file-contract"></i>
+    </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+           <div>
+  <p class="text-muted mb-1">Active Rentals</p>
+          <h3 class="text-warning">@ViewBag.ActiveRentals</h3>
+      </div>
+       <i class="fas fa-spinner text-warning"></i>
+  </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+ <div class="d-flex justify-content-between align-items-center">
+          <div>
+      <p class="text-muted mb-1">Completed Rentals</p>
+      <h3 class="text-primary">@ViewBag.CompletedRentals</h3>
+                </div>
+         <i class="fas fa-check-circle text-primary"></i>
+          </div>
+  </div>
+ </div>
+</div>
+
+<!-- Revenue Chart -->
+<div class="row">
+ <div class="col-lg-8 mb-4">
+        <div class="dashboard-widget">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5><i class="fas fa-chart-line me-2"></i>Revenue Trends</h5>
+                <div class="btn-group" role="group">
+    <button type="button" class="btn btn-sm btn-outline-primary active" onclick="loadRevenueChart('daily')">Daily</button>
+     <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadRevenueChart('weekly')">Weekly</button>
+ <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadRevenueChart('monthly')">Monthly</button>
+              </div>
+            </div>
+            <canvas id="revenueChart" height="80"></canvas>
+        </div>
+
+        <!-- Popular Cars Chart -->
+        <div class="dashboard-widget mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5><i class="fas fa-car me-2"></i>Most Rented Vehicles</h5>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadPopularCarsChart('daily')">Daily</button>
+    <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadPopularCarsChart('weekly')">Weekly</button>
+       <button type="button" class="btn btn-sm btn-outline-primary active" onclick="loadPopularCarsChart('monthly')">Monthly</button>
+          </div>
+       </div>
+            <canvas id="popularCarsChart" height="80"></canvas>
+   </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <!-- Rental Status Chart -->
+        <div class="dashboard-widget mb-4">
+       <h5><i class="fas fa-pie-chart me-2"></i>Rental Status Distribution</h5>
+            <canvas id="statusChart" height="200"></canvas>
+        </div>
+
+        <!-- Payment Methods Chart -->
+        <div class="dashboard-widget">
+     <div class="d-flex justify-content-between align-items-center mb-3">
+   <h5><i class="fas fa-credit-card me-2"></i>Payment Methods</h5>
+  <div class="btn-group" role="group">
+   <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadPaymentMethodChart('daily')">Daily</button>
+        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadPaymentMethodChart('weekly')">Weekly</button>
+  <button type="button" class="btn btn-sm btn-outline-primary active" onclick="loadPaymentMethodChart('monthly')">Monthly</button>
+          </div>
+            </div>
+            <canvas id="paymentMethodChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let revenueChart, statusChart, popularCarsChart, paymentMethodChart;
+
+        // Revenue Chart
+        async function loadRevenueChart(period) {
+ // Update active button
+        document.querySelectorAll('.btn-group button').forEach(btn => {
+    if (btn.textContent.toLowerCase() === period) {
+          btn.classList.add('active');
+       } else {
+    btn.classList.remove('active');
+       }
+            });
+
+            try {
+  const response = await fetch(`/Reports/GetRevenueData?period=${period}`);
+           const data = await response.json();
+
+      const ctx = document.getElementById('revenueChart').getContext('2d');
+
+          if (revenueChart) {
+   revenueChart.destroy();
+        }
+
+              revenueChart = new Chart(ctx, {
+  type: 'line',
+           data: {
+    labels: data.map(d => d.date),
+      datasets: [{
+     label: 'Revenue (?)',
+             data: data.map(d => d.revenue),
+          borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+       tension: 0.4,
+                fill: true
+      }, {
+           label: 'Number of Rentals',
+       data: data.map(d => d.count),
+    borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+       tension: 0.4,
+      fill: true,
+      yAxisID: 'y1'
+          }]
+      },
+    options: {
+          responsive: true,
+maintainAspectRatio: true,
+              interaction: {
+           mode: 'index',
+           intersect: false
+               },
+             plugins: {
+       legend: {
+     display: true,
+      position: 'top'
+ },
+       tooltip: {
+        callbacks: {
+  label: function(context) {
+       let label = context.dataset.label || '';
+         if (label) {
+label += ': ';
+     }
+       if (context.datasetIndex === 0) {
+        label += '?' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            } else {
+                label += context.parsed.y;
+}
+       return label;
+            }
+        }
+     }
+         },
+      scales: {
+        y: {
+       type: 'linear',
+    display: true,
+           position: 'left',
+       ticks: {
+         callback: function(value) {
+       return '?' + value.toLocaleString();
+       }
+   }
+       },
+    y1: {
+   type: 'linear',
+              display: true,
+         position: 'right',
+      grid: {
+   drawOnChartArea: false
+       }
+            }
+    }
+             }
+        });
+} catch (error) {
+                console.error('Error loading revenue chart:', error);
+    }
+   }
+
+        // Rental Status Chart
+    async function loadStatusChart() {
+    try {
+  const response = await fetch('/Reports/GetRentalStatusData');
+        const data = await response.json();
+
+    const ctx = document.getElementById('statusChart').getContext('2d');
+
+          if (statusChart) {
+     statusChart.destroy();
+  }
+
+      const colors = {
+              'Active': 'rgba(255, 193, 7, 0.8)',
+  'Completed': 'rgba(13, 110, 253, 0.8)',
+     'Pending': 'rgba(255, 159, 64, 0.8)',
+        'Cancelled': 'rgba(220, 53, 69, 0.8)',
+'Rejected': 'rgba(108, 117, 125, 0.8)'
+     };
+
+                statusChart = new Chart(ctx, {
+       type: 'doughnut',
+            data: {
+ labels: data.map(d => d.status),
+     datasets: [{
+        data: data.map(d => d.count),
+        backgroundColor: data.map(d => colors[d.status] || 'rgba(150, 150, 150, 0.8)')
+  }]
+    },
+     options: {
+             responsive: true,
+  maintainAspectRatio: true,
+   plugins: {
+        legend: {
+    position: 'bottom'
+      },
+      tooltip: {
+            callbacks: {
+   label: function(context) {
+ let label = context.label || '';
+            if (label) {
+  label += ': ';
+         }
+      label += context.parsed + ' rentals';
+       return label;
+       }
+       }
+       }
+    }
+         }
+      });
+        } catch (error) {
+       console.error('Error loading status chart:', error);
+        }
+        }
+
+        // Popular Cars Chart
+        async function loadPopularCarsChart(period) {
+ try {
+          const response = await fetch(`/Reports/GetPopularCarsData?period=${period}`);
+ const data = await response.json();
+
+          const ctx = document.getElementById('popularCarsChart').getContext('2d');
+
+   if (popularCarsChart) {
+    popularCarsChart.destroy();
+   }
+
+        popularCarsChart = new Chart(ctx, {
+     type: 'bar',
+ data: {
+         labels: data.map(d => d.car),
+            datasets: [{
+              label: 'Number of Rentals',
+          data: data.map(d => d.count),
+     backgroundColor: 'rgba(54, 162, 235, 0.8)',
+  borderColor: 'rgba(54, 162, 235, 1)',
+       borderWidth: 1
+        }]
+        },
+         options: {
+   responsive: true,
+        maintainAspectRatio: true,
+       indexAxis: 'y',
+   plugins: {
+       legend: {
+             display: false
+     },
+            tooltip: {
+ callbacks: {
+             afterLabel: function(context) {
+         const revenue = data[context.dataIndex].revenue;
+return 'Revenue: ?' + revenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+   }
+    }
+            }
+   },
+      scales: {
+         x: {
+       beginAtZero: true,
+         ticks: {
+stepSize: 1
+        }
+               }
+        }
+  }
+    });
+            } catch (error) {
+        console.error('Error loading popular cars chart:', error);
+            }
+        }
+
+        // Payment Method Chart
+      async function loadPaymentMethodChart(period) {
+            try {
+     const response = await fetch(`/Reports/GetPaymentMethodData?period=${period}`);
+         const data = await response.json();
+
+                const ctx = document.getElementById('paymentMethodChart').getContext('2d');
+
+       if (paymentMethodChart) {
+    paymentMethodChart.destroy();
+        }
+
+ const colors = {
+  'Cash': 'rgba(40, 167, 69, 0.8)',
+           'Gcash': 'rgba(0, 123, 255, 0.8)',
+         'Bank Transfer': 'rgba(108, 117, 125, 0.8)'
+      };
+
+   paymentMethodChart = new Chart(ctx, {
+  type: 'pie',
+    data: {
+                 labels: data.map(d => d.method),
+   datasets: [{
+            data: data.map(d => d.count),
+       backgroundColor: data.map(d => colors[d.method] || 'rgba(150, 150, 150, 0.8)')
+         }]
+      },
+   options: {
+       responsive: true,
+           maintainAspectRatio: true,
+         plugins: {
+      legend: {
+    position: 'bottom'
+     },
+  tooltip: {
+          callbacks: {
+   label: function(context) {
+          let label = context.label || '';
+           if (label) {
+label += ': ';
+    }
+    label += context.parsed + ' rentals';
+      return label;
+            },
+          afterLabel: function(context) {
+        const revenue = data[context.dataIndex].revenue;
+          return 'Revenue: ?' + revenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+ }
+           }
+       }
+  }
+     }
+      });
+            } catch (error) {
+         console.error('Error loading payment method chart:', error);
+         }
+    }
+
+    // Initialize charts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+     loadRevenueChart('daily');
+ loadStatusChart();
+            loadPopularCarsChart('monthly');
+       loadPaymentMethodChart('monthly');
+     });
+    </script>
+}

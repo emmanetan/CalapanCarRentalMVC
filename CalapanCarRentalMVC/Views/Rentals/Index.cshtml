@@ -4,152 +4,293 @@
 }
 
 <div class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
         @if (ViewBag.CustomerId != null)
-        {
-            <h1><i class="fas fa-history text-primary me-2"></i>Transaction History - @ViewBag.CustomerName</h1>
-        }
-        else
-        {
-            <h1><i class="fas fa-file-contract text-primary me-2"></i>Manage Rentals</h1>
-        }
-        @if (Context.Session.GetString("UserRole") == "Admin" && ViewBag.CustomerId == null)
-        {
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>New Rental
-            </a>
+  {
+ <h1><i class="fas fa-history text-primary me-2"></i>Transaction History - @ViewBag.CustomerName</h1>
+   }
+   else
+ {
+     <h1><i class="fas fa-file-contract text-primary me-2"></i>Manage Rentals</h1>
+}
+      @if (Context.Session.GetString("UserRole") == "Admin" && ViewBag.CustomerId == null)
+     {
+    <a asp-action="Create" class="btn btn-primary">
+     <i class="fas fa-plus me-2"></i>New Rental
+    </a>
         }
         else if (ViewBag.CustomerId != null)
-        {
-            <a asp-controller="Customers" asp-action="Details" asp-route-id="@ViewBag.CustomerId" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Back to Customer
-            </a>
-        }
+ {
+      <a asp-controller="Customers" asp-action="Details" asp-route-id="@ViewBag.CustomerId" class="btn btn-secondary">
+<i class="fas fa-arrow-left me-2"></i>Back to Customer
+    </a>
+       }
     </div>
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     @if (TempData["Warning"] != null)
     {
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Warning"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+     <div class="alert alert-warning alert-dismissible fade show" role="alert">
+       <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Warning"]
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+   </div>
     }
 
     @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+ {
+ <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+ </div>
     }
 
     <!-- Filter Section -->
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
-            <form method="get" class="row g-3">
-                <div class="col-md-4">
-                    <select name="filterStatus" class="form-select">
-                        <option value="">All Status</option>
-                        <option value="Active" selected="@(Context.Request.Query["filterStatus"] == "Active")">Active</option>
-                        <option value="Completed" selected="@(Context.Request.Query["filterStatus"] == "Completed")">Completed</option>
-                        <option value="Cancelled" selected="@(Context.Request.Query["filterStatus"] == "Cancelled")">Cancelled</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search me-2"></i>Filter
-                    </button>
-                </div>
-            </form>
+  <form method="get" class="row g-3">
+     <div class="col-md-4">
+       <select name="filterStatus" class="form-select">
+            <option value="">All Status</option>
+         <option value="Pending" selected="@(Context.Request.Query["filterStatus"] == "Pending")">Pending Approval</option>
+ <option value="Active" selected="@(Context.Request.Query["filterStatus"] == "Active")">Active</option>
+            <option value="Completed" selected="@(Context.Request.Query["filterStatus"] == "Completed")">Completed</option>
+            <option value="Rejected" selected="@(Context.Request.Query["filterStatus"] == "Rejected")">Rejected</option>
+        <option value="Cancelled" selected="@(Context.Request.Query["filterStatus"] == "Cancelled")">Cancelled</option>
+       </select>
+    </div>
+     <div class="col-md-3">
+  <button type="submit" class="btn btn-primary w-100">
+         <i class="fas fa-search me-2"></i>Filter
+       </button>
+     </div>
+    </form>
         </div>
     </div>
 
-    <!-- Rentals Table -->
-    @if (Model.Any())
+ <!-- Rentals Cards -->
+  @if (Model.Any())
     {
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Rental ID</th>
-                                <th>Customer</th>
-                                <th>Car</th>
-                                <th>Rental Date</th>
-                                <th>Return Date</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var rental in Model)
-                            {
-                                <tr>
-                                    <td><strong>#@rental.RentalId</strong></td>
-                                    <td>@rental.Customer.FirstName @rental.Customer.LastName</td>
-                                    <td>@rental.Car.Brand @rental.Car.Model</td>
-                                    <td>@rental.RentalDate.ToString("MMM dd, yyyy")</td>
-                                    <td>@rental.ReturnDate.ToString("MMM dd, yyyy")</td>
-                                    <td><strong>?@rental.TotalAmount.ToString("N2")</strong></td>
-                                    <td>
-                                        @if (rental.Status == "Active")
-                                        {
-                                            <span class="badge bg-success">@rental.Status</span>
-                                        }
-                                        else if (rental.Status == "Completed")
-                                        {
-                                            <span class="badge bg-primary">@rental.Status</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary">@rental.Status</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@rental.RentalId" class="btn btn-sm btn-outline-primary" title="Details">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            @if (Context.Session.GetString("UserRole") == "Admin")
-                                            {
-                                                @if (rental.Status == "Active")
-                                                {
-                                                    <a asp-action="Return" asp-route-id="@rental.RentalId" class="btn btn-sm btn-success" title="Mark as Returned">
-                                                        <i class="fas fa-check"></i>
-                                                    </a>
-                                                }
-                                                <a asp-action="Edit" asp-route-id="@rental.RentalId" class="btn btn-sm btn-edit" title="Edit">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a asp-action="Delete" asp-route-id="@rental.RentalId" class="btn btn-sm btn-outline-danger" title="Delete">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                            }
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+<div class="row">
+    @foreach (var rental in Model)
+            {
+                <div class="col-12 mb-3">
+         <div class="card shadow-sm">
+ <div class="card-header 
+         @(rental.Status == "Pending" ? "bg-warning" : 
+         rental.Status == "Active" ? "bg-success" : 
+           rental.Status == "Completed" ? "bg-primary" : 
+        rental.Status == "Rejected" ? "bg-danger" : "bg-secondary") text-white">
+          <div class="row align-items-center">
+    <div class="col-md-6">
+           <h6 class="mb-0">
+              <i class="fas fa-hashtag me-1"></i>Rental #@rental.RentalId
+      <span class="badge 
+       @(rental.Status == "Pending" ? "bg-dark" : 
+        rental.Status == "Active" ? "bg-light text-dark" : 
+              rental.Status == "Completed" ? "bg-light text-dark" : 
+             rental.Status == "Rejected" ? "bg-light text-dark" : "bg-light text-dark") ms-2">
+      @rental.Status
+     </span>
+       </h6>
+          </div>
+         <div class="col-md-6 text-md-end mt-2 mt-md-0">
+       <small>
+      <i class="fas fa-calendar me-1"></i>Created: @rental.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")
+          </small>
+           </div>
+         </div>
+      </div>
+                 
+          <div class="card-body">
+         <div class="row">
+   <!-- Customer Info -->
+        <div class="col-md-3 mb-3 mb-md-0">
+     <h6 class="text-muted mb-2 border-bottom pb-2">
+        <i class="fas fa-user me-2"></i>Customer
+          </h6>
+   <p class="mb-1"><strong>@rental.Customer.FirstName @rental.Customer.LastName</strong></p>
+      <small class="text-muted d-block">
+     <i class="fas fa-envelope me-1"></i>@rental.Customer.Email
+           </small>
+  <small class="text-muted d-block">
+ <i class="fas fa-phone me-1"></i>@rental.Customer.PhoneNumber
+               </small>
+         </div>
+
+    <!-- Car Info -->
+           <div class="col-md-3 mb-3 mb-md-0">
+   <h6 class="text-muted mb-2 border-bottom pb-2">
+           <i class="fas fa-car me-2"></i>Vehicle
+             </h6>
+       <p class="mb-1"><strong>@rental.Car.Brand @rental.Car.Model</strong></p>
+            <small class="text-muted d-block">
+ <i class="fas fa-calendar me-1"></i>@rental.Car.Year
+    </small>
+         <small class="text-muted d-block">
+  <i class="fas fa-hashtag me-1"></i>@rental.Car.PlateNumber
+            </small>
+       </div>
+
+         <!-- Rental Dates -->
+          <div class="col-md-3 mb-3 mb-md-0">
+           <h6 class="text-muted mb-2 border-bottom pb-2">
+       <i class="fas fa-calendar-alt me-2"></i>Schedule
+ </h6>
+             <div class="mb-2">
+    <small class="text-muted d-block">Pick-up</small>
+   <strong>@rental.RentalDate.ToString("MMM dd, yyyy")</strong>
+       <small class="text-muted">@rental.RentalDate.ToString("hh:mm tt")</small>
+</div>
+         <div>
+       <small class="text-muted d-block">Return</small>
+             <strong>@rental.ReturnDate.ToString("MMM dd, yyyy")</strong>
+   <small class="text-muted">@rental.ReturnDate.ToString("hh:mm tt")</small>
+      </div>
+             </div>
+
+          <!-- Payment & Destination -->
+           <div class="col-md-3">
+       <h6 class="text-muted mb-2 border-bottom pb-2">
+      <i class="fas fa-info-circle me-2"></i>Details
+             </h6>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+ <span class="text-muted">Total:</span>
+        <h5 class="text-primary mb-0">₱@rental.TotalAmount.ToString("N2")</h5>
+          </div>
+       <small class="text-muted d-block mb-1">
+                <i class="fas fa-credit-card me-1"></i>@rental.PaymentMethod
+     </small>
+    @if (!string.IsNullOrEmpty(rental.Destination))
+        {
+     <small class="text-muted d-block">
+      <i class="fas fa-map-marker-alt me-1"></i>@rental.Destination
+      </small>
+    }
+      </div>
+               </div>
+             </div>
+
+      <div class="card-footer bg-light">
+             @if (Context.Session.GetString("UserRole") == "Admin")
+   {
+      <div class="d-flex gap-2 flex-wrap">
+        @if (rental.Status == "Pending")
+        {
+    <!-- Pending: Show Details/Approve/Reject -->
+              <a asp-action="Details" asp-route-id="@rental.RentalId" class="btn btn-sm btn-info" title="View Details">
+      <i class="fas fa-eye me-1"></i>View Details
+            </a>
+           <form asp-action="Approve" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to approve this rental?');">
+   <input type="hidden" name="id" value="@rental.RentalId" />
+@Html.AntiForgeryToken()
+           <button type="submit" class="btn btn-sm btn-success" title="Approve Rental">
+         <i class="fas fa-check me-1"></i>Approve
+   </button>
+      </form>
+      <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal@(rental.RentalId)" title="Reject Rental">
+  <i class="fas fa-times me-1"></i>Reject
+     </button>
+         }
+               else if (rental.Status == "Active")
+     {
+     <!-- Active: Show Details/Return/Edit -->
+        <a asp-action="Details" asp-route-id="@rental.RentalId" class="btn btn-sm btn-info" title="View Details">
+   <i class="fas fa-eye me-1"></i>Details
+            </a>
+         <a asp-action="Return" asp-route-id="@rental.RentalId" class="btn btn-sm btn-success" title="Mark as Returned">
+       <i class="fas fa-check-circle me-1"></i>Mark as Returned
+         </a>
+  <a asp-action="Edit" asp-route-id="@rental.RentalId" class="btn btn-sm btn-warning" title="Edit">
+            <i class="fas fa-edit me-1"></i>Edit
+      </a>
+      }
+         else
+  {
+    <!-- Completed/Rejected: Show Details/Delete -->
+       <a asp-action="Details" asp-route-id="@rental.RentalId" class="btn btn-sm btn-info" title="View Details">
+   <i class="fas fa-eye me-1"></i>View Details
+       </a>
+    @if (rental.Status == "Completed" || rental.Status == "Rejected")
+    {
+      <a asp-action="Delete" asp-route-id="@rental.RentalId" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this rental record?');">
+         <i class="fas fa-trash me-1"></i>Delete
+            </a>
+      }
+     }
+     </div>
+     }
+               else
+     {
+         <!-- Customer View -->
+    <a asp-action="Details" asp-route-id="@rental.RentalId" class="btn btn-sm btn-info">
+   <i class="fas fa-eye me-1"></i>View Details
+            </a>
+             }
+   </div>
+     </div>
+  </div>
+
+         <!-- Reject Modal -->
+                @if (rental.Status == "Pending")
+      {
+         <div class="modal fade" id="rejectModal@(rental.RentalId)" tabindex="-1" aria-labelledby="rejectModalLabel@(rental.RentalId)" aria-hidden="true">
+         <div class="modal-dialog">
+   <div class="modal-content">
+       <div class="modal-header bg-danger text-white">
+     <h5 class="modal-title" id="rejectModalLabel@(rental.RentalId)">
+      <i class="fas fa-times-circle me-2"></i>Reject Rental #@rental.RentalId
+     </h5>
+         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+            <form asp-action="Reject" method="post">
+  <div class="modal-body">
+          <input type="hidden" name="id" value="@rental.RentalId" />
+         @Html.AntiForgeryToken()
+  
+<div class="alert alert-warning">
+           <i class="fas fa-exclamation-triangle me-2"></i>
+         <strong>Are you sure?</strong> This will reject the rental request and notify the customer.
                 </div>
-            </div>
+
+               <div class="mb-3">
+       <label for="rejectionReason@(rental.RentalId)" class="form-label">Rejection Reason (Optional)</label>
+               <textarea class="form-control" id="rejectionReason@(rental.RentalId)" name="rejectionReason" rows="3" placeholder="Enter reason for rejection..."></textarea>
+         </div>
+
+           <div class="border rounded p-3 bg-light">
+  <p class="mb-1"><strong>Customer:</strong> @rental.Customer.FirstName @rental.Customer.LastName</p>
+     <p class="mb-1"><strong>Vehicle:</strong> @rental.Car.Brand @rental.Car.Model</p>
+     <p class="mb-0"><strong>Pick-up:</strong> @rental.RentalDate.ToString("MMM dd, yyyy")</p>
         </div>
+   </div>
+    <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+  <i class="fas fa-times me-1"></i>Cancel
+       </button>
+                <button type="submit" class="btn btn-danger">
+    <i class="fas fa-ban me-1"></i>Reject Rental
+               </button>
+             </div>
+              </form>
+          </div>
+  </div>
+     </div>
+    }
+    }
+   </div>
     }
     else
     {
-        <div class="alert alert-info text-center">
-            <i class="fas fa-info-circle me-2"></i>No rentals found.
+      <div class="alert alert-info text-center">
+          <i class="fas fa-info-circle me-2"></i>No rentals found.
         </div>
-    }
+ }
 </div>
 

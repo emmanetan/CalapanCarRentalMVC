@@ -19,7 +19,14 @@
         <div class="card-body">
             <form method="get" class="row g-3">
                 <div class="col-md-5">
-                    <input type="text" name="searchString" class="form-control" placeholder="Search by brand, model, or plate number..." value="@Context.Request.Query["searchString"]" />
+                    @if (!string.IsNullOrEmpty(Context.Session.GetString("UserRole")))
+                    {
+                        <input type="text" name="searchString" class="form-control" placeholder="Search by brand, model, or plate number..." value="@Context.Request.Query["searchString"]" />
+                    }
+                    else
+                    {
+                        <input type="text" name="searchString" class="form-control" placeholder="Search by brand or model..." value="@Context.Request.Query["searchString"]" />
+                    }
                 </div>
                 <div class="col-md-4">
                     <select name="filterStatus" class="form-select">
@@ -61,7 +68,10 @@
                             <h5 class="card-title">@car.Brand @car.Model (@car.Year)</h5>
                             <p class="card-text text-muted small">
                                 <i class="fas fa-palette me-1"></i>@car.Color
-                                <i class="fas fa-hashtag ms-2 me-1"></i>@car.PlateNumber
+                                @if (!string.IsNullOrEmpty(Context.Session.GetString("UserRole")))
+                                {
+                                    <span><i class="fas fa-hashtag ms-2 me-1"></i>@car.PlateNumber</span>
+                                }
                             </p>
                             <p class="card-text">
                                 <i class="fas fa-cog me-1"></i>@car.TransmissionType<br />

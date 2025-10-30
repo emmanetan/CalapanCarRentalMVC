@@ -1,0 +1,119 @@
+﻿@model IEnumerable<CalapanCarRentalMVC.Models.Car>
+@{
+    ViewData["Title"] = "Our Fleet";
+}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-car text-primary me-2"></i>Our Fleet</h1>
+        @if (Context.Session.GetString("UserRole") == "Admin")
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add New Car
+            </a>
+        }
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-5">
+                    <input type="text" name="searchString" class="form-control" placeholder="Search by brand, model, or plate number..." value="@Context.Request.Query["searchString"]" />
+                </div>
+                <div class="col-md-4">
+                    <select name="filterStatus" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="Available" selected="@(Context.Request.Query["filterStatus"] == "Available")">Available</option>
+                        <option value="Rented" selected="@(Context.Request.Query["filterStatus"] == "Rented")">Rented</option>
+                        <option value="Maintenance" selected="@(Context.Request.Query["filterStatus"] == "Maintenance")">Maintenance</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Cars Grid -->
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var car in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(car.ImageUrl))
+                        {
+                            <img src="@car.ImageUrl" class="card-img-top" alt="@car.Brand @car.Model" style="height: 250px; object-fit: cover;" onerror="this.src='/images/default-car.jpg'" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 250px;">
+                                <i class="fas fa-car fa-5x"></i>
+                            </div>
+                        }
+
+                        <div class="card-body">
+                            <h5 class="card-title">@car.Brand @car.Model (@car.Year)</h5>
+                            <p class="card-text text-muted small">
+                                <i class="fas fa-palette me-1"></i>@car.Color
+                                <i class="fas fa-hashtag ms-2 me-1"></i>@car.PlateNumber
+                            </p>
+                            <p class="card-text">
+                                <i class="fas fa-cog me-1"></i>@car.TransmissionType<br />
+                                <i class="fas fa-users me-1"></i>@car.SeatingCapacity Seats<br />
+                                <i class="fas fa-gas-pump me-1"></i>@car.GasType
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="text-primary mb-0">@Html.Raw("&#8369;")@car.DailyRate.ToString("N2")</h4>
+                                <span class="text-muted">/day</span>
+                            </div>
+                            <div class="mb-2">
+                                @if (car.Status == "Available")
+                                {
+                                    <span class="badge bg-success w-100">Available</span>
+                                }
+                                else if (car.Status == "Rented")
+                                {
+                                    <span class="badge bg-warning w-100">Rented</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary w-100">@car.Status</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@car.CarId" class="btn btn-sm btn-outline-primary flex-fill">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </a>
+                                @if (Context.Session.GetString("UserRole") == "Admin")
+                                {
+                                    <a asp-action="Edit" asp-route-id="@car.CarId" class="btn btn-sm btn-edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@car.CarId" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle me-2"></i>No cars found matching your criteria.
+        </div>
+    }
+</div>
+

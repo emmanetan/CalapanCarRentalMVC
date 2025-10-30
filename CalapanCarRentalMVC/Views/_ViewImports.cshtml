@@ -1,0 +1,11 @@
+﻿@using CalapanCarRentalMVC
+@using CalapanCarRentalMVC.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@functions {
+    public static string FormatCurrency(decimal amount)
+    {
+        return $"&#8369;{amount:N2}";
+    }
+}
+

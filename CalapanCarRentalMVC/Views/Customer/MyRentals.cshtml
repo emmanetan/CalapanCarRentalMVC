@@ -1,0 +1,371 @@
+@model IEnumerable<CalapanCarRentalMVC.Models.Rental>
+@{
+    ViewData["Title"] = "My Rentals";
+    Layout = "_Layout";
+}
+
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+    <div>
+ <h1><i class="fas fa-list me-2"></i>My Rentals</h1>
+            <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">My Rentals</li>
+      </ol>
+</nav>
+        </div>
+        <div>
+        <a asp-controller="Cars" asp-action="Index" class="btn btn-primary">
+                <i class="fas fa-car me-2"></i>Browse Cars
+   </a>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="dashboard-widget">
+    @if (Model.Any())
+    {
+  <!-- Summary Cards -->
+    <div class="row mb-4">
+ <div class="col-md-4 mb-3">
+      <div class="stat-card">
+<div class="d-flex justify-content-between align-items-center">
+ <div>
+      <p class="text-muted mb-1">Total Rentals</p>
+      <h3>@Model.Count()</h3>
+     </div>
+    <i class="fas fa-file-contract"></i>
+               </div>
+      </div>
+          </div>
+      <div class="col-md-4 mb-3">
+                <div class="stat-card">
+     <div class="d-flex justify-content-between align-items-center">
+ <div>
+   <p class="text-muted mb-1">Active Rentals</p>
+     <h3 class="text-success">@Model.Count(r => r.Status == "Active")</h3>
+ </div>
+            <i class="fas fa-check-circle text-success"></i>
+       </div>
+        </div>
+   </div>
+<div class="col-md-4 mb-3">
+     <div class="stat-card">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+      <p class="text-muted mb-1">Total Spent</p>
+    <h3 class="text-primary">?@Model.Where(r => r.Status == "Completed").Sum(r => r.TotalAmount).ToString("N2")</h3>
+    </div>
+        <i class="fas fa-dollar-sign text-primary"></i>
+     </div>
+     </div>
+      </div>
+     </div>
+
+        <!-- Filter Tabs -->
+        <ul class="nav nav-tabs mb-3" id="rentalTabs" role="tablist">
+   <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+ <i class="fas fa-list me-1"></i>All (@Model.Count())
+    </button>
+            </li>
+        <li class="nav-item" role="presentation">
+     <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab">
+         <i class="fas fa-check-circle me-1"></i>Active (@Model.Count(r => r.Status == "Active"))
+     </button>
+ </li>
+ <li class="nav-item" role="presentation">
+              <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
+<i class="fas fa-check-double me-1"></i>Completed (@Model.Count(r => r.Status == "Completed"))
+</button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="rentalTabsContent">
+       <!-- All Rentals -->
+            <div class="tab-pane fade show active" id="all" role="tabpanel">
+         <div class="table-responsive">
+   <table class="table admin-table">
+   <thead>
+         <tr>
+           <th>Rental ID</th>
+           <th>Car</th>
+    <th>Pickup Date</th>
+     <th>Return Date</th>
+                  <th>Destination</th>
+            <th>Payment</th>
+      <th>Total Amount</th>
+     <th>Status</th>
+          <th>Actions</th>
+       </tr>
+            </thead>
+                  <tbody>
+      @foreach (var rental in Model.OrderByDescending(r => r.CreatedAt))
+            {
+ <tr>
+        <td><strong>#@rental.RentalId</strong></td>
+          <td>
+  <div>
+    <strong>@rental.Car.Brand @rental.Car.Model</strong>
+      <br />
+      <small class="text-muted">@rental.Car.Year - @rental.Car.Color</small>
+     </div>
+     </td>
+      <td>
+<i class="fas fa-calendar me-1"></i>@rental.RentalDate.ToString("MMM dd, yyyy")
+               <br />
+  <small class="text-muted">@rental.RentalDate.ToString("hh:mm tt")</small>
+          </td>
+        <td>
+             <i class="fas fa-calendar-check me-1"></i>@rental.ReturnDate.ToString("MMM dd, yyyy")
+     <br />
+ <small class="text-muted">@rental.ReturnDate.ToString("hh:mm tt")</small>
+       </td>
+          <td>
+           <i class="fas fa-map-marker-alt me-1"></i>@rental.Destination
+         </td>
+    <td>
+         @if (rental.PaymentMethod == "Cash")
+            {
+                    <span class="badge bg-success"><i class="fas fa-money-bill me-1"></i>@rental.PaymentMethod</span>
+        }
+          else if (rental.PaymentMethod == "Gcash")
+  {
+       <span class="badge bg-info"><i class="fas fa-mobile-alt me-1"></i>@rental.PaymentMethod</span>
+      }
+   else
+  {
+              <span class="badge bg-primary"><i class="fas fa-university me-1"></i>@rental.PaymentMethod</span>
+                    }
+       </td>
+           <td>
+           <strong class="text-success">?@rental.TotalAmount.ToString("N2")</strong>
+             @if (rental.LateFee.HasValue && rental.LateFee.Value > 0)
+        {
+    <br />
+         <small class="text-danger">Late Fee: ?@rental.LateFee.Value.ToString("N2")</small>
+        }
+</td>
+              <td>
+      @if (rental.Status == "Active")
+             {
+       <span class="badge bg-success">@rental.Status</span>
+        }
+       else if (rental.Status == "Completed")
+      {
+           <span class="badge bg-primary">@rental.Status</span>
+      }
+         else if (rental.Status == "Cancelled")
+             {
+         <span class="badge bg-danger">@rental.Status</span>
+           }
+      else
+        {
+            <span class="badge bg-warning">@rental.Status</span>
+         }
+   </td>
+                 <td>
+        <a asp-controller="Rentals" asp-action="Details" asp-route-id="@rental.RentalId" class="btn btn-sm btn-outline-primary" title="View Details">
+          <i class="fas fa-eye"></i> Details
+             </a>
+   </td>
+         </tr>
+                 }
+        </tbody>
+ </table>
+          </div>
+            </div>
+
+     <!-- Active Rentals -->
+            <div class="tab-pane fade" id="active" role="tabpanel">
+           @if (Model.Any(r => r.Status == "Active"))
+              {
+           <div class="table-responsive">
+             <table class="table admin-table">
+                 <thead>
+   <tr>
+           <th>Rental ID</th>
+           <th>Car</th>
+              <th>Pickup Date</th>
+  <th>Return Date</th>
+                  <th>Destination</th>
+              <th>Payment</th>
+    <th>Total Amount</th>
+       <th>Actions</th>
+           </tr>
+        </thead>
+    <tbody>
+     @foreach (var rental in Model.Where(r => r.Status == "Active").OrderByDescending(r => r.CreatedAt))
+    {
+      <tr>
+             <td><strong>#@rental.RentalId</strong></td>
+              <td>
+      <div>
+         <strong>@rental.Car.Brand @rental.Car.Model</strong>
+       <br />
+             <small class="text-muted">@rental.Car.Year - @rental.Car.Color</small>
+       </div>
+         </td>
+  <td>
+           <i class="fas fa-calendar me-1"></i>@rental.RentalDate.ToString("MMM dd, yyyy")
+    <br />
+  <small class="text-muted">@rental.RentalDate.ToString("hh:mm tt")</small>
+   </td>
+     <td>
+  <i class="fas fa-calendar-check me-1"></i>@rental.ReturnDate.ToString("MMM dd, yyyy")
+      <br />
+                <small class="text-muted">@rental.ReturnDate.ToString("hh:mm tt")</small>
+       </td>
+             <td>
+<i class="fas fa-map-marker-alt me-1"></i>@rental.Destination
+       </td>
+           <td>
+             @if (rental.PaymentMethod == "Cash")
+  {
+       <span class="badge bg-success"><i class="fas fa-money-bill me-1"></i>@rental.PaymentMethod</span>
+       }
+    else if (rental.PaymentMethod == "Gcash")
+            {
+     <span class="badge bg-info"><i class="fas fa-mobile-alt me-1"></i>@rental.PaymentMethod</span>
+   }
+          else
+ {
+ <span class="badge bg-primary"><i class="fas fa-university me-1"></i>@rental.PaymentMethod</span>
+          }
+              </td>
+        <td><strong class="text-success">?@rental.TotalAmount.ToString("N2")</strong></td>
+        <td>
+          <a asp-controller="Rentals" asp-action="Details" asp-route-id="@rental.RentalId" class="btn btn-sm btn-outline-primary" title="View Details">
+  <i class="fas fa-eye"></i> Details
+    </a>
+          </td>
+ </tr>
+     }
+        </tbody>
+         </table>
+       </div>
+     }
+   else
+    {
+              <div class="text-center py-5">
+     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+      <p class="text-muted">You don't have any active rentals</p>
+   <a asp-controller="Cars" asp-action="Index" class="btn btn-primary">
+       <i class="fas fa-car me-1"></i>Browse Available Cars
+        </a>
+            </div>
+ }
+            </div>
+
+ <!-- Completed Rentals -->
+       <div class="tab-pane fade" id="completed" role="tabpanel">
+                @if (Model.Any(r => r.Status == "Completed"))
+    {
+     <div class="table-responsive">
+          <table class="table admin-table">
+          <thead>
+      <tr>
+           <th>Rental ID</th>
+            <th>Car</th>
+  <th>Rental Period</th>
+  <th>Destination</th>
+          <th>Payment</th>
+  <th>Total Amount</th>
+   <th>Actions</th>
+     </tr>
+  </thead>
+        <tbody>
+             @foreach (var rental in Model.Where(r => r.Status == "Completed").OrderByDescending(r => r.CreatedAt))
+      {
+       <tr>
+     <td><strong>#@rental.RentalId</strong></td>
+         <td>
+  <div>
+     <strong>@rental.Car.Brand @rental.Car.Model</strong>
+             <br />
+         <small class="text-muted">@rental.Car.Year - @rental.Car.Color</small>
+        </div>
+                </td>
+     <td>
+           <i class="fas fa-calendar me-1"></i>@rental.RentalDate.ToString("MMM dd, yyyy") - @rental.ReturnDate.ToString("MMM dd, yyyy")
+            @if (rental.ActualReturnDate.HasValue)
+       {
+      <br />
+  <small class="text-muted">Returned: @rental.ActualReturnDate.Value.ToString("MMM dd, yyyy")</small>
+     }
+           </td>
+     <td>
+     <i class="fas fa-map-marker-alt me-1"></i>@rental.Destination
+        </td>
+<td>
+      @if (rental.PaymentMethod == "Cash")
+               {
+    <span class="badge bg-success"><i class="fas fa-money-bill me-1"></i>@rental.PaymentMethod</span>
+ }
+            else if (rental.PaymentMethod == "Gcash")
+     {
+         <span class="badge bg-info"><i class="fas fa-mobile-alt me-1"></i>@rental.PaymentMethod</span>
+       }
+           else
+             {
+         <span class="badge bg-primary"><i class="fas fa-university me-1"></i>@rental.PaymentMethod</span>
+          }
+     </td>
+      <td>
+         <strong class="text-success">?@rental.TotalAmount.ToString("N2")</strong>
+  @if (rental.LateFee.HasValue && rental.LateFee.Value > 0)
+   {
+         <br />
+           <small class="text-danger">Late Fee: ?@rental.LateFee.Value.ToString("N2")</small>
+   }
+        </td>
+        <td>
+     <a asp-controller="Rentals" asp-action="Details" asp-route-id="@rental.RentalId" class="btn btn-sm btn-outline-primary" title="View Details">
+        <i class="fas fa-eye"></i> Details
+            </a>
+ </td>
+    </tr>
+    }
+ </tbody>
+       </table>
+      </div>
+  }
+    else
+       {
+               <div class="text-center py-5">
+           <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+  <p class="text-muted">You don't have any completed rentals yet</p>
+          </div>
+           }
+   </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+   <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted mb-3">No Rentals Yet</h4>
+            <p class="text-muted mb-4">You haven't rented any cars yet. Browse our available vehicles to get started!</p>
+            <a asp-controller="Cars" asp-action="Index" class="btn btn-primary btn-lg">
+    <i class="fas fa-car me-2"></i>Browse Available Cars
+      </a>
+  </div>
+    }
+</div>

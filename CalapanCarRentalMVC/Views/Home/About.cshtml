@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4"><i class="fas fa-info-circle text-primary me-2"></i>About Calapan Car Rental</h1>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title text-primary">Our Story</h4>
+                    <p class="card-text">
+                        Established in Calapan City, Oriental Mindoro, we have been serving the community
+                        with reliable car rental services for years. Our mission is to provide quality vehicles
+                        at affordable prices to make your travels comfortable and convenient.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title text-primary">Our Mission</h4>
+                    <p class="card-text">
+                        To deliver exceptional car rental experiences by offering well-maintained vehicles,
+                        competitive pricing, and outstanding customer service. We strive to be your trusted
+                        partner for all your transportation needs in Calapan City and beyond.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title text-primary">Our Values</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Reliability:</strong> We maintain our fleet to the highest standards</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Transparency:</strong> No hidden fees, clear pricing</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Customer Focus:</strong> Your satisfaction is our priority</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Safety:</strong> All vehicles are fully insured and regularly inspected</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a asp-controller="Cars" asp-action="Index" class="btn btn-primary btn-lg">
+                    <i class="fas fa-car me-2"></i>Browse Our Fleet
+                </a>
+                <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-envelope me-2"></i>Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+

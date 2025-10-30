@@ -1,0 +1,241 @@
+﻿@model CalapanCarRentalMVC.Models.Rental
+@{
+    ViewData["Title"] = "Rent a Car";
+}
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-car me-2"></i>Rent a Car</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        @if (ViewBag.SelectedCarId != null)
+                        {
+                            var selectedCar = ViewBag.SelectedCar as CalapanCarRentalMVC.Models.Car;
+                            if (selectedCar != null)
+                            {
+                                <div class="alert alert-info mb-4">
+                                    <h5 class="mb-3"><i class="fas fa-info-circle me-2"></i>Selected Vehicle</h5>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h4>@selectedCar.Brand @selectedCar.Model (@selectedCar.Year)</h4>
+                                            <p class="mb-1"><i class="fas fa-palette me-2"></i><strong>Color:</strong> @selectedCar.Color</p>
+                                            <p class="mb-1"><i class="fas fa-cog me-2"></i><strong>Transmission:</strong> @selectedCar.TransmissionType</p>
+                                            <p class="mb-1"><i class="fas fa-users me-2"></i><strong>Seating:</strong> @selectedCar.SeatingCapacity Seats</p>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <h3 class="text-primary">@Html.Raw("&#8369;")@selectedCar.DailyRate.ToString("N2")</h3>
+                                            <small class="text-muted">per day</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" asp-for="CarId" value="@selectedCar.CarId" />
+                            }
+                        }
+                        else
+                        {
+                            <div class="mb-3">
+                                <label asp-for="CarId" class="form-label">Select Vehicle</label>
+                                <select asp-for="CarId" class="form-select" asp-items="ViewBag.CarId">
+                                    <option value="">-- Select a Car --</option>
+                                </select>
+                                <span asp-validation-for="CarId" class="text-danger"></span>
+                            </div>
+                        }
+
+                        @if (ViewBag.CustomerId != null)
+                        {
+                            <input type="hidden" asp-for="CustomerId" value="@ViewBag.CustomerId" />
+                        }
+                        else
+                        {
+                            <div class="mb-3">
+                                <label asp-for="CustomerId" class="form-label">Customer</label>
+                                <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.CustomerId">
+                                    <option value="">-- Select Customer --</option>
+                                </select>
+                                <span asp-validation-for="CustomerId" class="text-danger"></span>
+                            </div>
+                        }
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="RentalDate" class="form-label">Pick-up Date & Time</label>
+                                <input asp-for="RentalDate" type="datetime-local" class="form-control" id="rentalDate"
+                                       min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="RentalDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ReturnDate" class="form-label">Return Date & Time</label>
+                                <input asp-for="ReturnDate" type="datetime-local" class="form-control" id="returnDate"
+                                       min="@DateTime.Now.AddHours(1).ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="ReturnDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Destination" class="form-label">Destination (within Oriental Mindoro)</label>
+                            <input asp-for="Destination" class="form-control" placeholder="Enter your destination in Oriental Mindoro" />
+                            <span asp-validation-for="Destination" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Government ID (to be surrendered)</label>
+                                <input type="file" name="governmentIdFile" class="form-control" accept="image/*,.pdf" required />
+                                <small class="text-muted">Accepted formats: JPG, PNG, PDF (Max 5MB)</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PaymentMethod" class="form-label">Payment Method</label>
+                                <select asp-for="PaymentMethod" class="form-select" id="paymentMethod">
+                                    <option value="Cash">Cash</option>
+                                    <option value="Gcash">Gcash</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                </select>
+                                <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row" id="receiptUploadSection" style="display: none;">
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Payment Receipt Required:</strong> Please upload your payment receipt/proof of payment.
+                                </div>
+                                <label class="form-label">Payment Receipt <span class="text-danger">*</span></label>
+                                <input type="file" name="paymentReceiptFile" id="paymentReceiptFile" class="form-control" accept="image/*,.pdf" />
+                                <small class="text-muted">Accepted formats: JPG, PNG, PDF (Max 5MB)</small>
+                                <span class="text-danger" id="receiptError"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Estimated Total</label>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h4 class="text-primary mb-0" id="estimatedTotal">@Html.Raw("&#8369;")0.00</h4>
+                                    <small class="text-muted" id="rentalDays">Please select rental dates</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label">Additional Notes (Optional)</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any special requests or notes..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Important:</strong> Please ensure you have a valid driver's license and the government ID you upload will be surrendered upon vehicle pick-up.
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check me-2"></i>Confirm Rental
+                            </button>
+                            <a asp-controller="Cars" asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+            $(document).ready(function() {
+           var dailyRate = @(ViewBag.SelectedCar != null ? ((CalapanCarRentalMVC.Models.Car)ViewBag.SelectedCar).DailyRate : 0);
+
+               function calculateTotal() {
+           var rentalDate = $('#rentalDate').val();
+             var returnDate = $('#returnDate').val();
+
+        if (rentalDate && returnDate && dailyRate > 0) {
+             var start = new Date(rentalDate);
+         var end = new Date(returnDate);
+              var hours = (end - start) / (1000 * 60 * 60);
+           var days = Math.ceil(hours / 24);
+
+          if (days > 0) {
+              var total = days * dailyRate;
+                $('#estimatedTotal').text('₱' + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+           $('#rentalDays').text(days + ' day' + (days > 1 ? 's' : '') + ' rental');
+            } else {
+            $('#estimatedTotal').text('₱0.00');
+         $('#rentalDays').text('Return date must be after rental date');
+          }
+              } else {
+         $('#estimatedTotal').text('₱0.00');
+           $('#rentalDays').text('Please select rental dates');
+            }
+            }
+
+             $('#rentalDate, #returnDate').on('change', calculateTotal);
+
+           // Set minimum return date based on rental date
+           $('#rentalDate').on('change', function() {
+          var rentalDateTime = new Date($(this).val());
+             var minReturnDateTime = new Date(rentalDateTime);
+            minReturnDateTime.setHours(minReturnDateTime.getHours() + 1);
+            $('#returnDate').attr('min', minReturnDateTime.toISOString().slice(0, 16));
+            });
+
+         // Initialize if dates are pre-filled
+            calculateTotal();
+
+        // Function to toggle receipt upload section
+        function toggleReceiptUpload() {
+            var selectedMethod = $('#paymentMethod').val();
+            console.log('Payment method selected:', selectedMethod); // Debug log
+
+            if (selectedMethod === 'Gcash' || selectedMethod === 'Bank Transfer') {
+                $('#receiptUploadSection').slideDown(300);
+                $('#paymentReceiptFile').prop('required', true);
+            } else {
+                $('#receiptUploadSection').slideUp(300);
+                $('#paymentReceiptFile').prop('required', false);
+                $('#receiptError').text('');
+            }
+        }
+
+        // Show/hide receipt upload section based on payment method
+        $('#paymentMethod').on('change', function() {
+            toggleReceiptUpload();
+        });
+
+        // Check on page load in case there's a pre-selected value
+        toggleReceiptUpload();
+
+        // Form validation for receipt
+        $('form').on('submit', function(e) {
+        var paymentMethod = $('#paymentMethod').val();
+         if (paymentMethod === 'Gcash' || paymentMethod === 'Bank Transfer') {
+          var receiptFile = $('#paymentReceiptFile')[0].files;
+             if (!receiptFile || receiptFile.length === 0) {
+             e.preventDefault();
+              $('#receiptError').text('Payment receipt is required for ' + paymentMethod);
+             $('#receiptUploadSection').slideDown(300);
+           $('html, body').animate({
+         scrollTop: $('#receiptUploadSection').offset().top - 100
+           }, 500);
+                    return false;
+                }
+            }
+        });
+
+            });
+    </script>
+}
+

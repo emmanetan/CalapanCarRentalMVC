@@ -1,0 +1,129 @@
+@model dynamic
+@{
+    var unreadCount = Model.UnreadCount;
+    var notifications = Model.Notifications as List<CalapanCarRentalMVC.Models.Notification> ?? new List<CalapanCarRentalMVC.Models.Notification>();
+}
+
+<div class="dropdown">
+    <button class="btn btn-link text-white position-relative p-2 me-2" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-bell fa-lg"></i>
+   @if (unreadCount > 0)
+        {
+       <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+    @unreadCount
+                <span class="visually-hidden">unread notifications</span>
+         </span>
+   }
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
+<li class="dropdown-header d-flex justify-content-between align-items-center">
+   <span class="fw-bold">Notifications</span>
+     @if (unreadCount > 0)
+    {
+              <span class="badge bg-dark-subtle text-dark rounded-pill">@unreadCount</span>
+   }
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        
+      @if (notifications.Any())
+   {
+            @foreach (var notification in notifications)
+            {
+    <li>
+           <a class="dropdown-item notification-item @(notification.IsRead ? "read" : "unread")" 
+            href="@(notification.ActionUrl ?? "#")" 
+      data-notification-id="@notification.NotificationId">
+               <div class="d-flex">
+      <div class="notification-icon bg-@(notification.Type.ToLower())">
+        <i class="fas @notification.Icon"></i>
+           </div>
+       <div class="notification-content">
+     <p class="mb-1"><strong>@notification.Title</strong></p>
+        <small class="text-muted">@notification.Message</small>
+       <br><small class="text-muted">@GetTimeAgo(notification.CreatedAt)</small>
+       </div>
+  </div>
+     </a>
+ </li>
+        <li><hr class="dropdown-divider"></li>
+     }
+        }
+        else
+        {
+    <li>
+        <div class="dropdown-item text-center text-muted py-3">
+      <i class="fas fa-bell-slash fa-2x mb-2"></i>
+      <p class="mb-0">No notifications</p>
+        </div>
+            </li>
+        }
+ 
+  <li>
+        <a class="dropdown-item text-center text-primary fw-bold" asp-controller="Notifications" asp-action="Index">
+       View All Notifications
+      </a>
+        </li>
+    </ul>
+</div>
+
+@functions {
+    string GetTimeAgo(DateTime dateTime)
+    {
+    var timeSpan = DateTime.Now - dateTime;
+        
+        if (timeSpan.TotalMinutes < 1)
+            return "Just now";
+        if (timeSpan.TotalMinutes < 60)
+   return $"{(int)timeSpan.TotalMinutes} minute{((int)timeSpan.TotalMinutes != 1 ? "s" : "")} ago";
+        if (timeSpan.TotalHours < 24)
+        return $"{(int)timeSpan.TotalHours} hour{((int)timeSpan.TotalHours != 1 ? "s" : "")} ago";
+ if (timeSpan.TotalDays < 7)
+        return $"{(int)timeSpan.TotalDays} day{((int)timeSpan.TotalDays != 1 ? "s" : "")} ago";
+        if (timeSpan.TotalDays < 30)
+   return $"{(int)(timeSpan.TotalDays / 7)} week{((int)(timeSpan.TotalDays / 7) != 1 ? "s" : "")} ago";
+        
+        return dateTime.ToString("MMM dd, yyyy");
+    }
+}
+
+<script>
+    // Mark notification as read when clicked
+    document.querySelectorAll('.notification-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+     const notificationId = this.dataset.notificationId;
+            if (notificationId) {
+    fetch(`/Notifications/MarkAsRead/${notificationId}`, {
+         method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+             }
+    }).then(response => response.json())
+   .then(data => {
+    if (data.success) {
+       this.classList.remove('unread');
+        this.classList.add('read');
+  // Update badge count
+             updateNotificationBadge();
+            }
+     });
+        }
+  });
+  });
+    
+    function updateNotificationBadge() {
+        fetch('/Notifications/GetUnreadCount')
+            .then(response => response.json())
+      .then(data => {
+                const badge = document.querySelector('.notification-badge');
+      if (data.count > 0) {
+            if (badge) {
+              badge.textContent = data.count;
+           }
+        } else {
+               if (badge) {
+          badge.style.display = 'none';
+          }
+   }
+            });
+    }
+</script>

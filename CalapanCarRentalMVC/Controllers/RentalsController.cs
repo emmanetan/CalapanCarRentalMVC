@@ -16,7 +16,7 @@ namespace CalapanCarRentalMVC.Controllers
         }
 
         // GET: Rentals
-        public async Task<IActionResult> Index(string filterStatus)
+        public async Task<IActionResult> Index(string filterStatus, int? customerId)
         {
             var rentals = _context.Rentals
                .Include(r => r.Car)
@@ -26,6 +26,19 @@ namespace CalapanCarRentalMVC.Controllers
             if (!string.IsNullOrEmpty(filterStatus))
             {
                 rentals = rentals.Where(r => r.Status == filterStatus);
+            }
+
+            if (customerId.HasValue)
+            {
+                rentals = rentals.Where(r => r.CustomerId == customerId.Value);
+                ViewBag.CustomerId = customerId.Value;
+
+                // Get customer info for display
+                var customer = await _context.Customers.FindAsync(customerId.Value);
+                if (customer != null)
+                {
+                    ViewBag.CustomerName = $"{customer.FirstName} {customer.LastName}";
+                }
             }
 
             return View(await rentals.OrderByDescending(r => r.CreatedAt).ToListAsync());
@@ -370,31 +383,69 @@ namespace CalapanCarRentalMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Return(int id)
         {
-            var rental = await _context.Rentals.Include(r => r.Car).FirstOrDefaultAsync(r => r.RentalId == id);
-            if (rental == null)
+            var rental = await _context.Rentals
+          .Include(r => r.Car)
+                .Include(r => r.Customer)
+                .FirstOrDefaultAsync(r => r.RentalId == id);
+            
+if (rental == null)
             {
-                return NotFound();
-            }
+ return NotFound();
+       }
 
-            rental.ActualReturnDate = DateTime.Now;
+      rental.ActualReturnDate = DateTime.Now;
             rental.Status = "Completed";
 
-            // Calculate late fee if returned late
-            if (rental.ActualReturnDate > rental.ReturnDate)
-            {
-                var lateDays = (rental.ActualReturnDate.Value - rental.ReturnDate).Days;
-                rental.LateFee = lateDays * (rental.Car.DailyRate * 0.2m); // 20% of daily rate as late fee
-                rental.TotalAmount += rental.LateFee.Value;
+    // Calculate late fee if returned late
+        string notificationMessage;
+      string notificationType;
+     
+  if (rental.ActualReturnDate > rental.ReturnDate)
+  {
+    var lateDays = (rental.ActualReturnDate.Value - rental.ReturnDate).Days;
+    rental.LateFee = lateDays * (rental.Car.DailyRate * 0.2m); // 20% of daily rate as late fee
+     rental.TotalAmount += rental.LateFee.Value;
+        TempData["Warning"] = $"Late return fee of ?{rental.LateFee.Value:N2} has been added for {lateDays} day(s) late.";
+      
+    notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been returned {lateDays} day(s) late. A late fee of ?{rental.LateFee.Value:N2} has been applied. Total amount: ?{rental.TotalAmount:N2}";
+       notificationType = "Warning";
+   }
+   else
+  {
+    TempData["Success"] = "Car returned successfully with no late fees!";
+                
+              notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been successfully returned on time. Total amount: ?{rental.TotalAmount:N2}. Thank you for your business!";
+     notificationType = "Success";
+     }
+
+      // Update car status to available
+  rental.Car.Status = "Available";
+
+  _context.Update(rental);
+    _context.Update(rental.Car);
+            
+      // Create notification for customer
+   var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
+            if (customerUser != null)
+    {
+var notification = new Notification
+     {
+    UserId = customerUser.UserId,
+Title = "Rental Returned",
+        Message = notificationMessage,
+   Type = notificationType,
+         Icon = notificationType == "Success" ? "fa-check-circle" : "fa-exclamation-triangle",
+        ActionUrl = $"/Customer/MyRentals",
+            IsRead = false,
+  CreatedAt = DateTime.Now
+      };
+         
+                _context.Notifications.Add(notification);
             }
+     
+     await _context.SaveChangesAsync();
 
-            // Update car status to available
-            rental.Car.Status = "Available";
-
-            _context.Update(rental);
-            _context.Update(rental.Car);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Details), new { id = rental.RentalId });
+return RedirectToAction(nameof(Index));
         }
 
         // GET: Rentals/Delete/5

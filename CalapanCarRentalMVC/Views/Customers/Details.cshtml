@@ -1,0 +1,204 @@
+@model CalapanCarRentalMVC.Models.Customer
+@{
+    ViewData["Title"] = "Customer Details";
+    Layout = "_Layout";
+}
+
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+     <h1><i class="fas fa-user me-2"></i>Customer Details</h1>
+       <nav aria-label="breadcrumb">
+     <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Customers</a></li>
+ <li class="breadcrumb-item active">Details</li>
+         </ol>
+            </nav>
+      </div>
+        <div>
+    <a asp-action="Edit" asp-route-id="@Model.CustomerId" class="btn btn-warning">
+   <i class="fas fa-edit me-1"></i>Edit
+     </a>
+   <a asp-action="Index" class="btn btn-secondary">
+      <i class="fas fa-arrow-left me-1"></i>Back to List
+   </a>
+        </div>
+ </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+  <div class="dashboard-widget">
+     <h5><i class="fas fa-id-card me-2"></i>Customer Information</h5>
+ 
+     <div class="row mb-3">
+     <div class="col-md-6">
+        <label class="text-muted">Customer ID</label>
+    <p><strong>#@Model.CustomerId</strong></p>
+       </div>
+        <div class="col-md-6">
+         <label class="text-muted">Registration Date</label>
+      <p>@Model.CreatedAt.ToString("MMMM dd, yyyy")</p>
+ </div>
+  </div>
+
+  <hr />
+
+      <div class="row mb-3">
+    <div class="col-md-6">
+         <label class="text-muted">First Name</label>
+  <p><strong>@Model.FirstName</strong></p>
+     </div>
+  <div class="col-md-6">
+      <label class="text-muted">Last Name</label>
+        <p><strong>@Model.LastName</strong></p>
+  </div>
+     </div>
+
+      <div class="row mb-3">
+   <div class="col-md-6">
+         <label class="text-muted">Email Address</label>
+    <p><i class="fas fa-envelope me-1"></i>@Model.Email</p>
+      </div>
+       <div class="col-md-6">
+      <label class="text-muted">Phone Number</label>
+       <p><i class="fas fa-phone me-1"></i>@Model.PhoneNumber</p>
+         </div>
+ </div>
+
+     <div class="mb-3">
+    <label class="text-muted">Address</label>
+ <p><i class="fas fa-map-marker-alt me-1"></i>@Model.Address</p>
+     </div>
+
+  <hr />
+
+       <h5 class="mb-3"><i class="fas fa-id-card me-2"></i>License Information</h5>
+
+   <div class="row mb-3">
+        <div class="col-md-6">
+      <label class="text-muted">License Number</label>
+  <p><strong>@Model.LicenseNumber</strong></p>
+     </div>
+    <div class="col-md-6">
+     <label class="text-muted">License Expiry Date</label>
+          <p>
+     @Model.LicenseExpiryDate.ToString("MMMM dd, yyyy")
+      @if (Model.LicenseExpiryDate < DateTime.Now)
+         {
+             <span class="badge bg-danger ms-2">Expired</span>
+   }
+       else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
+     {
+        <span class="badge bg-warning ms-2">Expiring Soon</span>
+    }
+    else
+ {
+    <span class="badge bg-success ms-2">Valid</span>
+   }
+      </p>
+       </div>
+   </div>
+ </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="dashboard-widget">
+  <h5><i class="fas fa-chart-bar me-2"></i>Rental Statistics</h5>
+       
+   <div class="mb-3">
+     <label class="text-muted">Total Rentals</label>
+<h3 class="text-primary">@Model.Rentals.Count</h3>
+     </div>
+
+      <div class="mb-3">
+  <label class="text-muted">Active Rentals</label>
+       <h3 class="text-success">@Model.Rentals.Count(r => r.Status == "Active")</h3>
+   </div>
+
+     <div class="mb-3">
+      <label class="text-muted">Completed Rentals</label>
+       <h3 class="text-info">@Model.Rentals.Count(r => r.Status == "Completed")</h3>
+   </div>
+
+       <div class="mb-3">
+       <label class="text-muted">Total Spent</label>
+      <h3 class="text-success">?@Model.Rentals.Where(r => r.Status == "Completed").Sum(r => r.TotalAmount).ToString("N2")</h3>
+ </div>
+
+ <hr />
+
+       <a asp-controller="Rentals" asp-action="Index" asp-route-customerId="@Model.CustomerId" 
+     class="btn btn-admin-primary w-100">
+<i class="fas fa-history me-1"></i>View Transaction History
+   </a>
+  </div>
+
+        <div class="dashboard-widget mt-3">
+       <h5><i class="fas fa-cog me-2"></i>Actions</h5>
+   
+        <div class="d-grid gap-2">
+      <a asp-action="Edit" asp-route-id="@Model.CustomerId" class="btn btn-warning">
+  <i class="fas fa-edit me-1"></i>Edit Customer
+    </a>
+  <a asp-controller="Rentals" asp-action="Create" asp-route-customerId="@Model.CustomerId" 
+         class="btn btn-success">
+           <i class="fas fa-plus me-1"></i>Create Rental
+     </a>
+  <a asp-action="Delete" asp-route-id="@Model.CustomerId" class="btn btn-danger">
+   <i class="fas fa-trash me-1"></i>Delete Customer
+    </a>
+      </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Rentals -->
+@if (Model.Rentals.Any())
+{
+    <div class="dashboard-widget mt-4">
+<h5><i class="fas fa-history me-2"></i>Recent Rentals</h5>
+        
+        <div class="table-responsive">
+   <table class="table admin-table mb-0">
+         <thead>
+            <tr>
+  <th>Rental ID</th>
+    <th>Car</th>
+       <th>Rental Date</th>
+ <th>Return Date</th>
+   <th>Amount</th>
+      <th>Status</th>
+   </tr>
+     </thead>
+         <tbody>
+  @foreach (var rental in Model.Rentals.OrderByDescending(r => r.CreatedAt).Take(5))
+    {
+  <tr>
+   <td><strong>#@rental.RentalId</strong></td>
+ <td>@rental.Car.Brand @rental.Car.Model</td>
+         <td>@rental.RentalDate.ToString("MMM dd, yyyy")</td>
+  <td>@rental.ReturnDate.ToString("MMM dd, yyyy")</td>
+       <td><strong>?@rental.TotalAmount.ToString("N2")</strong></td>
+         <td>
+      @if (rental.Status == "Active")
+     {
+   <span class="badge bg-success">@rental.Status</span>
+    }
+        else if (rental.Status == "Completed")
+      {
+    <span class="badge bg-primary">@rental.Status</span>
+     }
+  else
+  {
+          <span class="badge bg-secondary">@rental.Status</span>
+      }
+        </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+    </div>
+}

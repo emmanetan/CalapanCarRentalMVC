@@ -30,126 +30,11 @@
 
                     <!-- Right Side: Notifications -->
                     <div class="ms-auto">
-                        <div class="navbar-actions d-flex align-items-center">
-                            <!-- Notification Icon -->
-                            <div class="dropdown">
-                                <button class="btn btn-link text-white position-relative p-2 me-2" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-bell fa-lg"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
-                                        3
-                                        <span class="visually-hidden">unread notifications</span>
-                                    </span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
-                                    <li class="dropdown-header d-flex justify-content-between align-items-center">
-                                        <span class="fw-bold">Notifications</span>
-                                        <span class="badge bg-dark-subtle text-dark rounded-pill">3</span>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    @if (Context.Session.GetString("UserRole") == "Admin")
-                                    {
-                                        <li>
-                                            <a class="dropdown-item notification-item" href="#">
-                                                <div class="d-flex">
-                                                    <div class="notification-icon bg-info">
-                                                        <i class="fas fa-file-contract"></i>
-                                                    </div>
-                                                    <div class="notification-content">
-                                                        <p class="mb-1"><strong>New Rental Request</strong></p>
-                                                        <small class="text-muted">John Doe requested a car rental</small>
-                                                        <br><small class="text-muted">5 minutes ago</small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <a class="dropdown-item notification-item" href="#">
-                                                <div class="d-flex">
-                                                    <div class="notification-icon bg-warning">
-                                                        <i class="fas fa-car"></i>
-                                                    </div>
-                                                    <div class="notification-content">
-                                                        <p class="mb-1"><strong>Car Due for Maintenance</strong></p>
-                                                        <small class="text-muted">Toyota Vios needs service</small>
-                                                        <br><small class="text-muted">2 hours ago</small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <a class="dropdown-item notification-item" href="#">
-                                                <div class="d-flex">
-                                                    <div class="notification-icon bg-success">
-                                                        <i class="fas fa-check-circle"></i>
-                                                    </div>
-                                                    <div class="notification-content">
-                                                        <p class="mb-1"><strong>Payment Received</strong></p>
-                                                        <small class="text-muted">₱5,000 from Jane Smith</small>
-                                                        <br><small class="text-muted">1 day ago</small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li>
-                                            <a class="dropdown-item notification-item" href="#">
-                                                <div class="d-flex">
-                                                    <div class="notification-icon bg-success">
-                                                        <i class="fas fa-check-circle"></i>
-                                                    </div>
-                                                    <div class="notification-content">
-                                                        <p class="mb-1"><strong>Booking Confirmed</strong></p>
-                                                        <small class="text-muted">Your rental is confirmed</small>
-                                                        <br><small class="text-muted">1 hour ago</small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <a class="dropdown-item notification-item" href="#">
-                                                <div class="d-flex">
-                                                    <div class="notification-icon bg-info">
-                                                        <i class="fas fa-calendar"></i>
-                                                    </div>
-                                                    <div class="notification-content">
-                                                        <p class="mb-1"><strong>Rental Reminder</strong></p>
-                                                        <small class="text-muted">Pick up your car tomorrow</small>
-                                                        <br><small class="text-muted">5 hours ago</small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <a class="dropdown-item notification-item" href="#">
-                                                <div class="d-flex">
-                                                    <div class="notification-icon bg-warning">
-                                                        <i class="fas fa-clock"></i>
-                                                    </div>
-                                                    <div class="notification-content">
-                                                        <p class="mb-1"><strong>Return Due Soon</strong></p>
-                                                        <small class="text-muted">Return car in 2 days</small>
-                                                        <br><small class="text-muted">1 day ago</small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                    }
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item text-center text-primary fw-bold" href="#">
-                                            View All Notifications
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+  <div class="navbar-actions d-flex align-items-center">
+      <!-- Notification Icon -->
+        @await Component.InvokeAsync("NotificationBell")
+ </div>
+   </div>
                 </div>
             </nav>
         </header>
@@ -176,38 +61,6 @@
 
                 <!-- Sidebar Navigation Menu -->
                 <ul class="sidebar-menu">
-                    <!-- Common Navigation Items -->
-                    <li class="sidebar-item">
-                        <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
-                           asp-controller="Home" asp-action="Index">
-                            <i class="fas fa-home"></i>
-                            <span>Home</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Cars" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
-                           asp-controller="Cars" asp-action="Index">
-                            <i class="fas fa-car"></i>
-                            <span>Browse Cars</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Contact" ? "active" : "")"
-                           asp-controller="Home" asp-action="Contact">
-                            <i class="fas fa-envelope"></i>
-                            <span>Contact</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "About" ? "active" : "")"
-                           asp-controller="Home" asp-action="About">
-                            <i class="fas fa-info-circle"></i>
-                            <span>About</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-divider"></li>
-
                     @if (Context.Session.GetString("UserRole") == "Admin")
                     {
                         <!-- Admin Specific Menu -->
@@ -269,6 +122,38 @@
                     }
                     else if (Context.Session.GetString("UserRole") == "Customer")
                     {
+                        <!-- Common Navigation Items for Customer -->
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home"></i>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Cars" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-controller="Cars" asp-action="Index">
+                                <i class="fas fa-car"></i>
+                                <span>Browse Cars</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Contact" ? "active" : "")"
+                               asp-controller="Home" asp-action="Contact">
+                                <i class="fas fa-envelope"></i>
+                                <span>Contact</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "About" ? "active" : "")"
+                               asp-controller="Home" asp-action="About">
+                                <i class="fas fa-info-circle"></i>
+                                <span>About</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-divider"></li>
+
                         <!-- Customer Specific Menu -->
                         <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"

@@ -292,16 +292,16 @@ _context.Maintenances.Remove(maintenance);
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CompleteMaintenance(int id, decimal? actualCost, string? completionNotes)
-        {
+    {
    var userRole = HttpContext.Session.GetString("UserRole");
-            if (userRole != "Admin")
+       if (userRole != "Admin")
        {
-                return RedirectToAction("Login", "Account");
-            }
+  return RedirectToAction("Login", "Account");
+   }
 
-       var maintenance = await _context.Maintenances
+ var maintenance = await _context.Maintenances
       .Include(m => m.Car)
-                .FirstOrDefaultAsync(m => m.MaintenanceId == id);
+  .FirstOrDefaultAsync(m => m.MaintenanceId == id);
 
   if (maintenance == null)
   {
@@ -309,22 +309,22 @@ _context.Maintenances.Remove(maintenance);
          }
 
       // Update maintenance to completed
-        maintenance.Status = "Completed";
+     maintenance.Status = "Completed";
       maintenance.DateCompleted = DateTime.Now;
-            maintenance.UpdatedAt = DateTime.Now;
+     maintenance.UpdatedAt = DateTime.Now;
 
   // Update cost if provided
         if (actualCost.HasValue && actualCost.Value > 0)
       {
-                maintenance.Cost = actualCost.Value;
+     maintenance.Cost = actualCost.Value;
          }
 
-       // Add completion notes if provided
-            if (!string.IsNullOrEmpty(completionNotes))
+    // Add completion notes if provided
+     if (!string.IsNullOrEmpty(completionNotes))
           {
-       maintenance.Notes = string.IsNullOrEmpty(maintenance.Notes) 
-            ? $"Completed: {completionNotes}" 
-          : $"{maintenance.Notes}\nCompleted: {completionNotes}";
+ maintenance.Notes = string.IsNullOrEmpty(maintenance.Notes) 
+   ? $"Completed: {completionNotes}" 
+: $"{maintenance.Notes}\nCompleted: {completionNotes}";
    }
 
     _context.Update(maintenance);
@@ -332,16 +332,19 @@ _context.Maintenances.Remove(maintenance);
       // Update car status back to available
   if (maintenance.Car != null)
          {
-         // Check if there are other active maintenances for this car
+       // Check if there are other active maintenances for this car
         var hasActiveMaintenance = await _context.Maintenances
-        .AnyAsync(m => m.CarId == maintenance.CarId && 
-                (m.Status == "Urgent" || m.Status == "Scheduled") && 
+   .AnyAsync(m => m.CarId == maintenance.CarId && 
+       (m.Status == "Urgent" || m.Status == "Scheduled") && 
          m.MaintenanceId != maintenance.MaintenanceId);
 
 if (!hasActiveMaintenance && maintenance.Car.Status == "Maintenance")
      {
-         maintenance.Car.Status = "Available";
+   maintenance.Car.Status = "Available";
       _context.Update(maintenance.Car);
+          
+        // Notify customers who have active rentals for this car type (future bookings)
+         // For now, notify all customers via admin notification or create system notification
      }
    }
 
@@ -349,7 +352,7 @@ if (!hasActiveMaintenance && maintenance.Car.Status == "Maintenance")
 
    TempData["Success"] = $"Maintenance for {maintenance.Car?.Brand} {maintenance.Car?.Model} has been marked as completed!";
      return RedirectToAction(nameof(Index));
-        }
+   }
 
 private bool MaintenanceExists(int id)
    {

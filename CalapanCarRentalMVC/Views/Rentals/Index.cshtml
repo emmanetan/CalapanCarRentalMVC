@@ -5,14 +5,51 @@
 
 <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="fas fa-file-contract text-primary me-2"></i>Manage Rentals</h1>
-        @if (Context.Session.GetString("UserRole") == "Admin")
+        @if (ViewBag.CustomerId != null)
+        {
+            <h1><i class="fas fa-history text-primary me-2"></i>Transaction History - @ViewBag.CustomerName</h1>
+        }
+        else
+        {
+            <h1><i class="fas fa-file-contract text-primary me-2"></i>Manage Rentals</h1>
+        }
+        @if (Context.Session.GetString("UserRole") == "Admin" && ViewBag.CustomerId == null)
         {
             <a asp-action="Create" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>New Rental
             </a>
         }
+        else if (ViewBag.CustomerId != null)
+        {
+            <a asp-controller="Customers" asp-action="Details" asp-route-id="@ViewBag.CustomerId" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Customer
+            </a>
+        }
     </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Warning"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Warning"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
     <!-- Filter Section -->
     <div class="card mb-4 shadow-sm">

@@ -14,6 +14,7 @@ namespace CalapanCarRentalMVC.Data
         public DbSet<Rental> Rentals { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Maintenance> Maintenances { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,7 +39,13 @@ namespace CalapanCarRentalMVC.Data
     .HasForeignKey(m => m.CarId)
     .OnDelete(DeleteBehavior.Restrict);
 
-            // Seed initial data
+            modelBuilder.Entity<Notification>()
+  .HasOne(n => n.User)
+     .WithMany()
+   .HasForeignKey(n => n.UserId)
+.OnDelete(DeleteBehavior.Cascade);
+
+        // Seed initial data
             modelBuilder.Entity<User>().HasData(
                   new User
                   {

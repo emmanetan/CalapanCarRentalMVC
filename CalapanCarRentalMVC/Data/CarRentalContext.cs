@@ -15,6 +15,8 @@ namespace CalapanCarRentalMVC.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Maintenance> Maintenances { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<EmailVerification> EmailVerifications { get; set; }
+        public DbSet<PasswordReset> PasswordResets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

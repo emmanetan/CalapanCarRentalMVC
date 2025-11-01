@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using CalapanCarRentalMVC.Data;
+using CalapanCarRentalMVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CarRentalContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+// Register Email Service
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add Session support
 builder.Services.AddSession(options =>

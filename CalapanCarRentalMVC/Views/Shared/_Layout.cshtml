@@ -15,7 +15,7 @@
     {
         <!-- Top Bar for Logged-in Users -->
         <header>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
                 <div class="container-fluid d-flex align-items-center">
                     <!-- Left Side: Sidebar Toggle + Logo -->
                     <div class="d-flex align-items-center">
@@ -66,42 +66,42 @@
                         <!-- Admin Specific Menu -->
                         <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
-                               asp-controller="Admin" asp-action="Dashboard">
+                               asp-controller="Admin" asp-action="Dashboard" data-title="Dashboard">
                                 <i class="fas fa-tachometer-alt"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Cars" && ViewContext.RouteData.Values["Action"]?.ToString() != "Index" ? "active" : "")"
-                               asp-controller="Cars" asp-action="Index">
+                               asp-controller="Cars" asp-action="Index" data-title="Manage Cars">
                                 <i class="fas fa-car-side"></i>
                                 <span>Manage Cars</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customers" ? "active" : "")"
-                               asp-controller="Customers" asp-action="Index">
+                               asp-controller="Customers" asp-action="Index" data-title="Manage Customers">
                                 <i class="fas fa-users"></i>
                                 <span>Manage Customers</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Rentals" ? "active" : "")"
-                               asp-controller="Rentals" asp-action="Index">
+                               asp-controller="Rentals" asp-action="Index" data-title="Manage Rentals">
                                 <i class="fas fa-file-contract"></i>
                                 <span>Manage Rentals</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Maintenance" ? "active" : "")"
-                               asp-controller="Maintenance" asp-action="Index">
+                               asp-controller="Maintenance" asp-action="Index" data-title="Maintenance">
                                 <i class="fas fa-tools"></i>
                                 <span>Maintenance</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")"
-                               asp-controller="Reports" asp-action="Index">
+                               asp-controller="Reports" asp-action="Index" data-title="Reports & Analytics">
                                 <i class="fas fa-chart-line"></i>
                                 <span>Reports & Analytics</span>
                             </a>
@@ -109,13 +109,13 @@
                         <li class="sidebar-divider"></li>
                         <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")"
-                               asp-controller="Admin" asp-action="Profile">
+                               asp-controller="Admin" asp-action="Profile" data-title="My Profile">
                                 <i class="fas fa-user-circle"></i>
                                 <span>My Profile</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="#">
+                            <a class="sidebar-link" href="#" data-title="Settings">
                                 <i class="fas fa-cog"></i>
                                 <span>Settings</span>
                             </a>
@@ -125,68 +125,75 @@
                     {
                         <!-- Common Navigation Items for Customer -->
                         <li class="sidebar-item">
-                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
-                               asp-controller="Home" asp-action="Index">
-                                <i class="fas fa-home"></i>
-                                <span>Home</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Cars" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
-                               asp-controller="Cars" asp-action="Index">
-                                <i class="fas fa-car"></i>
-                                <span>Browse Cars</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Contact" ? "active" : "")"
-                               asp-controller="Home" asp-action="Contact">
-                                <i class="fas fa-envelope"></i>
-                                <span>Contact</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "About" ? "active" : "")"
-                               asp-controller="Home" asp-action="About">
-                                <i class="fas fa-info-circle"></i>
-                                <span>About</span>
-                            </a>
-                        </li>
+       <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+         asp-controller="Home" asp-action="Index"
+             data-title="Home">
+    <i class="fas fa-home"></i>
+            <span>Home</span>
+     </a>
+        </li>
+     <li class="sidebar-item">
+        <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Cars" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+       asp-controller="Cars" asp-action="Index"
+  data-title="Browse Cars">
+    <i class="fas fa-car"></i>
+ <span>Browse Cars</span>
+       </a>
+  </li>
+            <li class="sidebar-item">
+  <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Contact" ? "active" : "")"
+     asp-controller="Home" asp-action="Contact"
+    data-title="Contact">
+       <i class="fas fa-envelope"></i>
+        <span>Contact</span>
+        </a>
+        </li>
+ <li class="sidebar-item">
+   <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "About" ? "active" : "")"
+     asp-controller="Home" asp-action="About"
+   data-title="About">
+           <i class="fas fa-info-circle"></i>
+    <span>About</span>
+        </a>
+        </li>
 
-                        <li class="sidebar-divider"></li>
+     <li class="sidebar-divider"></li>
 
-                        <!-- Customer Specific Menu -->
-                        <li class="sidebar-item">
-                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
-                               asp-controller="Customer" asp-action="Dashboard">
-                                <i class="fas fa-tachometer-alt"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "MyRentals" ? "active" : "")"
-                               asp-controller="Customer" asp-action="MyRentals">
-                                <i class="fas fa-file-contract"></i>
-                                <span>My Rentals</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")"
-                               asp-controller="Customer" asp-action="Profile">
-                                <i class="fas fa-user-circle"></i>
-                                <span>My Profile</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-divider"></li>
-                    }
+    <!-- Customer Specific Menu -->
+      <li class="sidebar-item">
+   <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
+     asp-controller="Customer" asp-action="Dashboard"
+          data-title="Dashboard">
+         <i class="fas fa-tachometer-alt"></i>
+    <span>Dashboard</span>
+ </a>
+        </li>
+         <li class="sidebar-item">
+      <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "MyRentals" ? "active" : "")"
+ asp-controller="Customer" asp-action="MyRentals"
+         data-title="My Rentals">
+  <i class="fas fa-file-contract"></i>
+  <span>My Rentals</span>
+         </a>
+    </li>
+ <li class="sidebar-item">
+     <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")"
+     asp-controller="Customer" asp-action="Profile"
+  data-title="My Profile">
+  <i class="fas fa-user-circle"></i>
+    <span>My Profile</span>
+       </a>
+        </li>
+<li class="sidebar-divider"></li>
+    }
 
                     <!-- Logout -->
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" asp-controller="Account" asp-action="Logout">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </a>
-                    </li>
+  <li class="sidebar-item">
+            <a class="sidebar-link" asp-controller="Account" asp-action="Logout" data-title="Logout">
+                 <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </a>
+          </li>
                 </ul>
             </aside>
 

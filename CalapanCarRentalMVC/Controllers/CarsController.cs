@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CalapanCarRentalMVC.Data;
 using CalapanCarRentalMVC.Models;
+using CalapanCarRentalMVC.Filters;
 
 namespace CalapanCarRentalMVC.Controllers
 {
@@ -65,6 +66,7 @@ namespace CalapanCarRentalMVC.Controllers
         }
 
         // GET: Cars/Create
+        [SessionAuthorization(Roles = new[] { "Admin" })]
         public IActionResult Create()
         {
             SetLayout();
@@ -74,6 +76,7 @@ namespace CalapanCarRentalMVC.Controllers
         // POST: Cars/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [SessionAuthorization(Roles = new[] { "Admin" })]
         public async Task<IActionResult> Create([Bind("CarId,Brand,Model,Year,Color,PlateNumber,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,Description")] Car car, IFormFile? imageFile)
         {
             SetLayout();
@@ -104,6 +107,7 @@ namespace CalapanCarRentalMVC.Controllers
         }
 
         // GET: Cars/Edit/5
+        [SessionAuthorization(Roles = new[] { "Admin" })]
         public async Task<IActionResult> Edit(int? id)
         {
             SetLayout();
@@ -123,6 +127,7 @@ namespace CalapanCarRentalMVC.Controllers
         // POST: Cars/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [SessionAuthorization(Roles = new[] { "Admin" })]
         public async Task<IActionResult> Edit(int id, [Bind("CarId,Brand,Model,Year,Color,PlateNumber,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,ImageUrl,Description,CreatedAt")] Car car, IFormFile? imageFile)
         {
             SetLayout();
@@ -171,6 +176,7 @@ namespace CalapanCarRentalMVC.Controllers
         }
 
         // GET: Cars/Delete/5
+        [SessionAuthorization(Roles = new[] { "Admin" })]
         public async Task<IActionResult> Delete(int? id)
         {
             SetLayout();
@@ -192,6 +198,7 @@ namespace CalapanCarRentalMVC.Controllers
         // POST: Cars/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [SessionAuthorization(Roles = new[] { "Admin" })]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var car = await _context.Cars.FindAsync(id);

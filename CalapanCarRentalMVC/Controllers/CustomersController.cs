@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CalapanCarRentalMVC.Data;
 using CalapanCarRentalMVC.Models;
+using CalapanCarRentalMVC.Filters;
 
 namespace CalapanCarRentalMVC.Controllers
 {
+    [SessionAuthorization(Roles = new[] { "Admin" })]
     public class CustomersController : Controller
     {
         private readonly CarRentalContext _context;

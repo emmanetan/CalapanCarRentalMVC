@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CalapanCarRentalMVC.Data;
 using CalapanCarRentalMVC.Models;
+using CalapanCarRentalMVC.Filters;
 
 namespace CalapanCarRentalMVC.Controllers
 {
+    [SessionAuthorization(RequireAuthentication = true)]
     public class RentalsController : Controller
     {
         private readonly CarRentalContext _context;
@@ -104,6 +106,13 @@ namespace CalapanCarRentalMVC.Controllers
                 return RedirectToAction("Profile", "Customer");
             }
 
+            // Check if license is expired
+            if (customer.LicenseExpiryDate < DateTime.Now)
+            {
+                TempData["Error"] = "Your driver's license has expired. Please update your license information before booking a car.";
+                return RedirectToAction("Profile", "Customer");
+            }
+
             // Set customer ID
             ViewBag.CustomerId = customer.CustomerId;
 
@@ -135,6 +144,20 @@ namespace CalapanCarRentalMVC.Controllers
             if (string.IsNullOrEmpty(userRole) || string.IsNullOrEmpty(userId))
             {
                 return RedirectToAction("Login", "Account");
+            }
+
+            // Verify customer's license is not expired
+            var customer = await _context.Customers.FindAsync(rental.CustomerId);
+            if (customer == null)
+            {
+                TempData["Error"] = "Customer not found.";
+                return RedirectToAction("Index", "Cars");
+            }
+
+            if (customer.LicenseExpiryDate < DateTime.Now)
+            {
+                TempData["Error"] = "Your driver's license has expired. Please update your license information before booking a car.";
+                return RedirectToAction("Profile", "Customer");
             }
 
             // Validate government ID file
@@ -268,6 +291,25 @@ namespace CalapanCarRentalMVC.Controllers
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
 
+                // Create notification for ALL admin users
+                var adminUsers = await _context.Users.Where(u => u.Role == "Admin").ToListAsync();
+                foreach (var adminUser in adminUsers)
+                {
+                    var adminNotification = new Notification
+                    {
+                        UserId = adminUser.UserId,
+                        Title = "New Rental Request",
+                        Message = $"{customer.FirstName} {customer.LastName} requested to rent {car.Brand} {car.Model}. Pick-up: {rental.RentalDate:MMM dd, yyyy}. Total: ₱{rental.TotalAmount:N2}. Please review and approve.",
+                        Type = "Info",
+                        Icon = "fa-car",
+                        ActionUrl = "/Rentals/Index?filterStatus=Pending",
+                        IsRead = false,
+                        CreatedAt = DateTime.Now
+                    };
+                    _context.Notifications.Add(adminNotification);
+                }
+                await _context.SaveChangesAsync();
+
                 TempData["Success"] = "Car rental request submitted successfully! Please wait for admin approval.";
 
                 if (userRole == "Customer")
@@ -290,6 +332,7 @@ namespace CalapanCarRentalMVC.Controllers
         }
 
         // GET: Rentals/Edit/5
+        [SessionAuthorization(Roles = new[] { "Admin" })]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -311,7 +354,8 @@ namespace CalapanCarRentalMVC.Controllers
         // POST: Rentals/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RentalId,CarId,CustomerId,RentalDate,ReturnDate,ActualReturnDate,TotalAmount,LateFee,Status,Notes,CreatedAt")] Rental rental)
+        [SessionAuthorization(Roles = new[] { "Admin" })]
+        public async Task<IActionResult> Edit(int id, [Bind("RentalId,CarId,CustomerId,RentalDate,ReturnDate,Destination,PaymentMethod,TotalAmount,Status,CreatedAt")] Rental rental)
         {
             if (id != rental.RentalId)
             {
@@ -356,229 +400,8 @@ namespace CalapanCarRentalMVC.Controllers
             return View(rental);
         }
 
-        // GET: Rentals/Return/5
-        public async Task<IActionResult> Return(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var rental = await _context.Rentals
-              .Include(r => r.Car)
-          .Include(r => r.Customer)
-             .FirstOrDefaultAsync(m => m.RentalId == id);
-
-            if (rental == null)
-            {
-                return NotFound();
-            }
-
-            return View(rental);
-        }
-
-        // POST: Rentals/Return/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Return(int id)
-        {
-            var rental = await _context.Rentals
-      .Include(r => r.Car)
-        .Include(r => r.Customer)
-        .FirstOrDefaultAsync(r => r.RentalId == id);
-   
-     if (rental == null)
-            {
-              return NotFound();
-            }
-
-            rental.ActualReturnDate = DateTime.Now;
-    rental.Status = "Completed";
-
-            // Calculate late fee if returned late
-            string notificationMessage;
-    string notificationType;
-       
-if (rental.ActualReturnDate > rental.ReturnDate)
-         {
-       var lateDays = (rental.ActualReturnDate.Value - rental.ReturnDate).Days;
-          rental.LateFee = lateDays * (rental.Car.DailyRate * 0.2m); // 20% of daily rate as late fee
-                rental.TotalAmount += rental.LateFee.Value;
-         TempData["Warning"] = $"Late return fee of ₱{rental.LateFee.Value:N2} has been added for {lateDays} day(s) late.";
-       
-       notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been returned {lateDays} day(s) late. A late fee of ₱{rental.LateFee.Value:N2} has been applied. Total amount: ₱{rental.TotalAmount:N2}";
-        notificationType = "Warning";
-       }
-  else
-            {
-      TempData["Success"] = "Car returned successfully with no late fees!";
-     
-        notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been successfully returned on time. Total amount: ₱{rental.TotalAmount:N2}. Thank you for your business!";
-      notificationType = "Success";
-       }
-
-   // Update car status to available
-            rental.Car.Status = "Available";
-
-            _context.Update(rental);
-     _context.Update(rental.Car);
-    
-     // Create notification for customer
-    var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
-            if (customerUser != null)
-            {
-             var notification = new Notification
-              {
-    UserId = customerUser.UserId,
-      Title = "Rental Returned",
-      Message = notificationMessage,
-    Type = notificationType,
-                Icon = notificationType == "Success" ? "fa-check-circle" : "fa-exclamation-triangle",
-               ActionUrl = $"/Customer/MyRentals",
-               IsRead = false,
-             CreatedAt = DateTime.Now
-   };
-      
- _context.Notifications.Add(notification);
-          }
-            
-          await _context.SaveChangesAsync();
-
-          return RedirectToAction(nameof(Index));
-        }
-
-        // POST: Rentals/Approve/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(int id)
-        {
-          var userRole = HttpContext.Session.GetString("UserRole");
-      if (userRole != "Admin")
-            {
-        return RedirectToAction("Login", "Account");
-      }
-
-         var rental = await _context.Rentals
-             .Include(r => r.Car)
-   .Include(r => r.Customer)
-            .FirstOrDefaultAsync(r => r.RentalId == id);
-
-            if (rental == null)
-            {
-           return NotFound();
-         }
-
-     if (rental.Status != "Pending")
-     {
-          TempData["Error"] = "Only pending rentals can be approved.";
-         return RedirectToAction(nameof(Index));
-   }
-
- // Update rental status
-            rental.Status = "Active";
-        
-            // Update car status
-     rental.Car.Status = "Rented";
-
-    _context.Update(rental);
-      _context.Update(rental.Car);
-
-            // Create notification for customer
-       var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
-            if (customerUser != null)
-  {
-  var notification = new Notification
-             {
-          UserId = customerUser.UserId,
-     Title = "Rental Approved",
-  Message = $"Your rental request for {rental.Car.Brand} {rental.Car.Model} has been approved! Pick-up date: {rental.RentalDate:MMM dd, yyyy}. Please bring your government ID and payment.",
-         Type = "Success",
-Icon = "fa-check-circle",
-      ActionUrl = "/Customer/MyRentals",
-       IsRead = false,
-           CreatedAt = DateTime.Now
- };
-
-_context.Notifications.Add(notification);
-      }
-
-            await _context.SaveChangesAsync();
-
-        TempData["Success"] = $"Rental #{rental.RentalId} has been approved successfully!";
-return RedirectToAction(nameof(Index));
-        }
-
-        // POST: Rentals/Reject/5
-      [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(int id, string? rejectionReason)
-    {
-            var userRole = HttpContext.Session.GetString("UserRole");
-            if (userRole != "Admin")
-            {
-        return RedirectToAction("Login", "Account");
-        }
-
-  var rental = await _context.Rentals
-                .Include(r => r.Car)
-     .Include(r => r.Customer)
-          .FirstOrDefaultAsync(r => r.RentalId == id);
-
- if (rental == null)
-            {
-   return NotFound();
-      }
-
-          if (rental.Status != "Pending")
-            {
-  TempData["Error"] = "Only pending rentals can be rejected.";
- return RedirectToAction(nameof(Index));
-            }
-
- // Update rental status
-   rental.Status = "Rejected";
-      
-            // Add rejection reason to notes
-  if (!string.IsNullOrEmpty(rejectionReason))
-            {
-      rental.Notes = string.IsNullOrEmpty(rental.Notes) 
-  ? $"Rejected: {rejectionReason}" 
-      : $"{rental.Notes}\nRejected: {rejectionReason}";
-         }
-
-     // Car remains available (wasn't rented)
-   rental.Car.Status = "Available";
-
-     _context.Update(rental);
-            _context.Update(rental.Car);
-
-    // Create notification for customer
-        var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
-            if (customerUser != null)
-   {
-           var notification = new Notification
-                {
-   UserId = customerUser.UserId,
-              Title = "Rental Request Rejected",
-      Message = $"Unfortunately, your rental request for {rental.Car.Brand} {rental.Car.Model} has been rejected. " + 
-               (string.IsNullOrEmpty(rejectionReason) ? "Please contact us for more information." : $"Reason: {rejectionReason}"),
-             Type = "Danger",
-        Icon = "fa-times-circle",
-          ActionUrl = "/Customer/MyRentals",
-         IsRead = false,
-        CreatedAt = DateTime.Now
-                };
-
-             _context.Notifications.Add(notification);
-  }
-
-   await _context.SaveChangesAsync();
-
-      TempData["Success"] = $"Rental #{rental.RentalId} has been rejected.";
-         return RedirectToAction(nameof(Index));
-    }
-
         // GET: Rentals/Delete/5
+        [SessionAuthorization(Roles = new[] { "Admin" })]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -602,6 +425,7 @@ return RedirectToAction(nameof(Index));
         // POST: Rentals/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [SessionAuthorization(Roles = new[] { "Admin" })]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var rental = await _context.Rentals.Include(r => r.Car).FirstOrDefaultAsync(r => r.RentalId == id);
@@ -618,6 +442,232 @@ return RedirectToAction(nameof(Index));
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Rentals/Return/5
+        [SessionAuthorization(Roles = new[] { "Admin" })]
+        public async Task<IActionResult> Return(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var rental = await _context.Rentals
+              .Include(r => r.Car)
+          .Include(r => r.Customer)
+             .FirstOrDefaultAsync(m => m.RentalId == id);
+
+            if (rental == null)
+            {
+                return NotFound();
+            }
+
+            return View(rental);
+        }
+
+        // POST: Rentals/Return/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [SessionAuthorization(Roles = new[] { "Admin" })]
+        public async Task<IActionResult> Return(int id, DateTime actualReturnDate, decimal? additionalCharges, string? returnNotes)
+        {
+            var rental = await _context.Rentals
+      .Include(r => r.Car)
+        .Include(r => r.Customer)
+        .FirstOrDefaultAsync(r => r.RentalId == id);
+
+            if (rental == null)
+            {
+                return NotFound();
+            }
+
+            rental.ActualReturnDate = DateTime.Now;
+            rental.Status = "Completed";
+
+            // Calculate late fee if returned late
+            string notificationMessage;
+            string notificationType;
+
+            if (rental.ActualReturnDate > rental.ReturnDate)
+            {
+                var lateDays = (rental.ActualReturnDate.Value - rental.ReturnDate).Days;
+                rental.LateFee = lateDays * (rental.Car.DailyRate * 0.2m); // 20% of daily rate as late fee
+                rental.TotalAmount += rental.LateFee.Value;
+                TempData["Warning"] = $"Late return fee of ₱{rental.LateFee.Value:N2} has been added for {lateDays} day(s) late.";
+
+                notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been returned {lateDays} day(s) late. A late fee of ₱{rental.LateFee.Value:N2} has been applied. Total amount: ₱{rental.TotalAmount:N2}";
+                notificationType = "Warning";
+            }
+            else
+            {
+                TempData["Success"] = "Car returned successfully with no late fees!";
+
+                notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been successfully returned on time. Total amount: ₱{rental.TotalAmount:N2}. Thank you for your business!";
+                notificationType = "Success";
+            }
+
+            // Update car status to available
+            rental.Car.Status = "Available";
+
+            _context.Update(rental);
+            _context.Update(rental.Car);
+
+            // Create notification for customer
+            var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
+            if (customerUser != null)
+            {
+                var notification = new Notification
+                {
+                    UserId = customerUser.UserId,
+                    Title = "Rental Returned",
+                    Message = notificationMessage,
+                    Type = notificationType,
+                    Icon = notificationType == "Success" ? "fa-check-circle" : "fa-exclamation-triangle",
+                    ActionUrl = $"/Customer/MyRentals",
+                    IsRead = false,
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.Notifications.Add(notification);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Rentals/Approve
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [SessionAuthorization(Roles = new[] { "Admin" })]
+        public async Task<IActionResult> Approve(int id)
+        {
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userRole != "Admin")
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var rental = await _context.Rentals
+                .Include(r => r.Car)
+      .Include(r => r.Customer)
+               .FirstOrDefaultAsync(r => r.RentalId == id);
+
+            if (rental == null)
+            {
+                return NotFound();
+            }
+
+            if (rental.Status != "Pending")
+            {
+                TempData["Error"] = "Only pending rentals can be approved.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Update rental status
+            rental.Status = "Active";
+
+            // Update car status
+            rental.Car.Status = "Rented";
+
+            _context.Update(rental);
+            _context.Update(rental.Car);
+
+            // Create notification for customer
+            var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
+            if (customerUser != null)
+            {
+                var notification = new Notification
+                {
+                    UserId = customerUser.UserId,
+                    Title = "Rental Approved",
+                    Message = $"Your rental request for {rental.Car.Brand} {rental.Car.Model} has been approved! Pick-up date: {rental.RentalDate:MMM dd, yyyy}. Please bring your government ID and payment.",
+                    Type = "Success",
+                    Icon = "fa-check-circle",
+                    ActionUrl = "/Customer/MyRentals",
+                    IsRead = false,
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.Notifications.Add(notification);
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"Rental #{rental.RentalId} has been approved successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Rentals/Reject
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [SessionAuthorization(Roles = new[] { "Admin" })]
+        public async Task<IActionResult> Reject(int id, string? rejectionReason)
+        {
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userRole != "Admin")
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var rental = await _context.Rentals
+                          .Include(r => r.Car)
+               .Include(r => r.Customer)
+                    .FirstOrDefaultAsync(r => r.RentalId == id);
+
+            if (rental == null)
+            {
+                return NotFound();
+            }
+
+            if (rental.Status != "Pending")
+            {
+                TempData["Error"] = "Only pending rentals can be rejected.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Update rental status
+            rental.Status = "Rejected";
+
+            // Add rejection reason to notes
+            if (!string.IsNullOrEmpty(rejectionReason))
+            {
+                rental.Notes = string.IsNullOrEmpty(rental.Notes)
+            ? $"Rejected: {rejectionReason}"
+                : $"{rental.Notes}\nRejected: {rejectionReason}";
+            }
+
+            // Car remains available (wasn't rented)
+            rental.Car.Status = "Available";
+
+            _context.Update(rental);
+            _context.Update(rental.Car);
+
+            // Create notification for customer
+            var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
+            if (customerUser != null)
+            {
+                var notification = new Notification
+                {
+                    UserId = customerUser.UserId,
+                    Title = "Rental Request Rejected",
+                    Message = $"Unfortunately, your rental request for {rental.Car.Brand} {rental.Car.Model} has been rejected. " +
+                    (string.IsNullOrEmpty(rejectionReason) ? "Please contact us for more information." : $"Reason: {rejectionReason}"),
+                    Type = "Danger",
+                    Icon = "fa-times-circle",
+                    ActionUrl = "/Customer/MyRentals",
+                    IsRead = false,
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.Notifications.Add(notification);
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"Rental #{rental.RentalId} has been rejected.";
             return RedirectToAction(nameof(Index));
         }
 

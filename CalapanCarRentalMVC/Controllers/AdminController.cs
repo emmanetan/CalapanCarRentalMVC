@@ -49,7 +49,68 @@ namespace CalapanCarRentalMVC.Controllers
        m.DateCompleted.Value.Month == DateTime.Now.Month &&
         m.DateCompleted.Value.Year == DateTime.Now.Year);
 
-    return View();
+            // Report Trends - Monthly data
+       var currentMonth = DateTime.Now.Month;
+   var currentYear = DateTime.Now.Year;
+   var lastMonth = DateTime.Now.AddMonths(-1);
+
+   // This Month
+         ViewBag.ThisMonthRentals = await _context.Rentals
+    .CountAsync(r => r.RentalDate.Month == currentMonth && r.RentalDate.Year == currentYear);
+   
+    ViewBag.ThisMonthRevenue = await _context.Rentals
+      .Where(r => r.RentalDate.Month == currentMonth && r.RentalDate.Year == currentYear)
+      .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+
+            // Last Month
+       ViewBag.LastMonthRentals = await _context.Rentals
+          .CountAsync(r => r.RentalDate.Month == lastMonth.Month && r.RentalDate.Year == lastMonth.Year);
+   
+          ViewBag.LastMonthRevenue = await _context.Rentals
+     .Where(r => r.RentalDate.Month == lastMonth.Month && r.RentalDate.Year == lastMonth.Year)
+         .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+
+            // Calculate percentage changes
+            ViewBag.RentalsChange = ViewBag.LastMonthRentals > 0 
+           ? Math.Round(((ViewBag.ThisMonthRentals - ViewBag.LastMonthRentals) / (double)ViewBag.LastMonthRentals) * 100, 1)
+        : 0;
+            
+       ViewBag.RevenueChange = ViewBag.LastMonthRevenue > 0 
+      ? Math.Round(((ViewBag.ThisMonthRevenue - ViewBag.LastMonthRevenue) / ViewBag.LastMonthRevenue) * 100, 1)
+    : 0;
+
+    // This Year
+         ViewBag.ThisYearRentals = await _context.Rentals
+                .CountAsync(r => r.RentalDate.Year == currentYear);
+            
+            ViewBag.ThisYearRevenue = await _context.Rentals
+          .Where(r => r.RentalDate.Year == currentYear)
+         .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+
+     // Monthly data for chart (last 6 months)
+   var monthlyRentalCounts = new List<int>();
+  var monthlyRevenue = new List<decimal>();
+            var monthLabels = new List<string>();
+
+  for (int i = 5; i >= 0; i--)
+        {
+             var date = DateTime.Now.AddMonths(-i);
+          var count = await _context.Rentals
+      .CountAsync(r => r.RentalDate.Month == date.Month && r.RentalDate.Year == date.Year);
+     var revenue = await _context.Rentals
+                    .Where(r => r.RentalDate.Month == date.Month && r.RentalDate.Year == date.Year)
+          .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+
+          monthlyRentalCounts.Add(count);
+    monthlyRevenue.Add(revenue);
+          monthLabels.Add(date.ToString("MMM"));
+    }
+
+       ViewBag.MonthlyRentalCounts = monthlyRentalCounts;
+ViewBag.MonthlyRevenue = monthlyRevenue;
+            ViewBag.MonthLabels = monthLabels;
+
+      return View();
         }
 
         // GET: Admin/Profile

@@ -34,6 +34,24 @@
     </div>
 }
 
+@if (Model.LicenseExpiryDate < DateTime.Now)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <h5 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>License Expired!</h5>
+        <p>Your driver's license has expired on <strong>@Model.LicenseExpiryDate.ToString("MMMM dd, yyyy")</strong>.</p>
+        <p class="mb-0"><strong>You cannot book any cars until you update your license information.</strong> Please update your license details below.</p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <h5 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i>License Expiring Soon</h5>
+        <p class="mb-0">Your driver's license will expire on <strong>@Model.LicenseExpiryDate.ToString("MMMM dd, yyyy")</strong>. Please renew it soon to avoid interruption in car rental services.</p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="row">
     <!-- Profile Information -->
     <div class="col-lg-8 mb-4">
@@ -164,9 +182,18 @@
                 <a asp-action="MyRentals" class="btn btn-outline-primary">
                     <i class="fas fa-list me-2"></i>View My Rentals
                 </a>
+                @if (Model.LicenseExpiryDate >= DateTime.Now)
+                {
                 <a asp-controller="Cars" asp-action="Index" class="btn btn-outline-success">
                     <i class="fas fa-car me-2"></i>Browse Cars
                 </a>
+                }
+                else
+                {
+                <button class="btn btn-outline-secondary" disabled title="License expired">
+                    <i class="fas fa-car me-2"></i>Browse Cars (License Expired)
+                </button>
+                }
                 <a asp-action="Dashboard" class="btn btn-outline-info">
                     <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
                 </a>
@@ -230,14 +257,20 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="LicenseExpiryDate" class="form-label">License Expiry Date</label>
-                            <input asp-for="LicenseExpiryDate" type="date" class="form-control" required />
+                            <input asp-for="LicenseExpiryDate" type="date" class="form-control" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
                             <span asp-validation-for="LicenseExpiryDate" class="text-danger"></span>
+                            @if (Model.LicenseExpiryDate < DateTime.Now)
+                            {
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Your license is expired. Please update with a valid expiry date.
+                            </small>
+                            }
                         </div>
                     </div>
 
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
-                        <strong>Note:</strong> Ensure all information is accurate, especially your license details, as they are required for car rentals.
+                        <strong>Note:</strong> Ensure all information is accurate, especially your license details. You must have a valid license to book cars.
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -4,6 +4,7 @@ using CalapanCarRentalMVC.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CalapanCarRentalMVC.Migrations
 {
     [DbContext(typeof(CarRentalContext))]
-    partial class CarRentalContextModelSnapshot : ModelSnapshot
+    [Migration("20251031091738_AddEmailVerification")]
+    partial class AddEmailVerification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,7 +97,7 @@ namespace CalapanCarRentalMVC.Migrations
                             CarId = 1,
                             Brand = "Toyota",
                             Color = "White",
-                            CreatedAt = new DateTime(2025, 10, 31, 18, 7, 40, 172, DateTimeKind.Local).AddTicks(7157),
+                            CreatedAt = new DateTime(2025, 10, 31, 17, 17, 38, 320, DateTimeKind.Local).AddTicks(3586),
                             DailyRate = 1500.00m,
                             Description = "Fuel-efficient and reliable sedan perfect for city driving.",
                             GasType = "Gasoline",
@@ -111,7 +114,7 @@ namespace CalapanCarRentalMVC.Migrations
                             CarId = 2,
                             Brand = "Honda",
                             Color = "Black",
-                            CreatedAt = new DateTime(2025, 10, 31, 18, 7, 40, 172, DateTimeKind.Local).AddTicks(7311),
+                            CreatedAt = new DateTime(2025, 10, 31, 17, 17, 38, 320, DateTimeKind.Local).AddTicks(3744),
                             DailyRate = 2000.00m,
                             Description = "Sporty sedan with advanced features and comfort.",
                             GasType = "Gasoline",
@@ -128,7 +131,7 @@ namespace CalapanCarRentalMVC.Migrations
                             CarId = 3,
                             Brand = "Mitsubishi",
                             Color = "Silver",
-                            CreatedAt = new DateTime(2025, 10, 31, 18, 7, 40, 172, DateTimeKind.Local).AddTicks(7314),
+                            CreatedAt = new DateTime(2025, 10, 31, 17, 17, 38, 320, DateTimeKind.Local).AddTicks(3748),
                             DailyRate = 3000.00m,
                             Description = "Spacious SUV perfect for family trips and adventures.",
                             GasType = "Diesel",
@@ -327,38 +330,6 @@ namespace CalapanCarRentalMVC.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("CalapanCarRentalMVC.Models.PasswordReset", b =>
-                {
-                    b.Property<int>("ResetId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ResetId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("ResetCode")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("varchar(6)");
-
-                    b.HasKey("ResetId");
-
-                    b.ToTable("PasswordResets");
-                });
-
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Rental", b =>
                 {
                     b.Property<int>("RentalId")
@@ -466,7 +437,7 @@ namespace CalapanCarRentalMVC.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedAt = new DateTime(2025, 10, 31, 18, 7, 40, 172, DateTimeKind.Local).AddTicks(58),
+                            CreatedAt = new DateTime(2025, 10, 31, 17, 17, 38, 319, DateTimeKind.Local).AddTicks(6110),
                             Email = "admin@calapancarrental.com",
                             Password = "admin123",
                             Role = "Admin",

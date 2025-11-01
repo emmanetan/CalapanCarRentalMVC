@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using CalapanCarRentalMVC.Data;
 using CalapanCarRentalMVC.Models;
 using CalapanCarRentalMVC.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using System.Security.Claims;
 
 namespace CalapanCarRentalMVC.Controllers
 {
@@ -18,13 +21,23 @@ namespace CalapanCarRentalMVC.Controllers
         }
 
         // GET: Account/Login
-        public IActionResult Login()
+        public IActionResult Login(bool? cancelled = null, bool? error = null)
         {
             // If user is coming from a direct navigation (not from trying to rent a car),
             // and there's no redirect message, clear any stale RedirectCarId
             if (TempData["RedirectMessage"] == null && TempData.ContainsKey("RedirectCarId"))
             {
                 TempData.Remove("RedirectCarId");
+            }
+
+            // Handle Google authentication cancellation or error
+            if (cancelled == true)
+            {
+                ViewBag.Warning = "Google sign-in was cancelled. You can try again or login with your email and password.";
+            }
+            else if (error == true)
+            {
+                ViewBag.Error = "An error occurred during Google sign-in. Please try again or use traditional login.";
             }
 
             return View();
@@ -81,6 +94,180 @@ namespace CalapanCarRentalMVC.Controllers
 
             ViewBag.Error = "Invalid email/username or password";
             return View();
+        }
+
+        // POST: External Login (Google)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider)
+        {
+            // Store redirect car ID in TempData for after login
+            var redirectCarId = TempData["RedirectCarId"];
+            if (redirectCarId != null)
+            {
+                TempData.Keep("RedirectCarId");
+                TempData.Keep("RedirectMessage");
+            }
+
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, provider);
+        }
+
+        // GET: Account/ExternalLoginCallback
+        public async Task<IActionResult> ExternalLoginCallback(string? remoteError = null)
+        {
+            // Handle errors from external provider (e.g., user cancelled)
+            if (!string.IsNullOrEmpty(remoteError))
+            {
+                TempData["Error"] = $"Error from Google: {remoteError}";
+                return RedirectToAction("Login");
+            }
+
+            try
+            {
+                var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+                if (!result.Succeeded || result.Principal == null)
+                {
+                    TempData["Error"] = "Google sign-in was cancelled or failed. Please try again.";
+                    return RedirectToAction("Login");
+                }
+
+                var claims = result.Principal.Claims;
+                var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+                var providerId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    TempData["Error"] = "Unable to retrieve email from Google account.";
+                    return RedirectToAction("Login");
+                }
+
+                // Check if user already exists with this Google account
+                var existingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.ExternalLoginProvider == "Google" && u.ExternalLoginProviderId == providerId);
+
+                if (existingUser != null)
+                {
+                    // User exists, log them in
+                    HttpContext.Session.SetString("UserId", existingUser.UserId.ToString());
+                    HttpContext.Session.SetString("Username", existingUser.Username);
+                    HttpContext.Session.SetString("UserRole", existingUser.Role);
+
+                    if (existingUser.Role == "Admin")
+                    {
+                        return RedirectToAction("Dashboard", "Admin");
+                    }
+                    else
+                    {
+                        // Check for car rental redirect
+                        if (TempData["RedirectCarId"] != null)
+                        {
+                            var carIdValue = TempData["RedirectCarId"];
+                            if (carIdValue is int carId)
+                            {
+                                TempData.Remove("RedirectCarId");
+                                TempData.Remove("RedirectMessage");
+                                return RedirectToAction("Create", "Rentals", new { carId = carId });
+                            }
+                        }
+                        return RedirectToAction("Dashboard", "Customer");
+                    }
+                }
+
+                // Check if user exists with same email but different provider
+                var userWithEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (userWithEmail != null)
+                {
+                    TempData["Error"] = "An account with this email already exists. Please login with your password or contact support.";
+                    return RedirectToAction("Login");
+                }
+
+                // New user - create account
+                return await CreateGoogleUser(email, name, providerId);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception if you have logging configured
+                TempData["Error"] = "An error occurred during Google sign-in. Please try again or use traditional login.";
+                return RedirectToAction("Login");
+            }
+        }
+
+        private async Task<IActionResult> CreateGoogleUser(string email, string name, string providerId)
+        {
+            // Generate username from email
+            string username = email.Split('@')[0];
+
+            // Check if username already exists, append number if needed
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            int counter = 1;
+            string originalUsername = username;
+            while (existingUser != null)
+            {
+                username = $"{originalUsername}{counter}";
+                existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+                counter++;
+            }
+
+            // Create User account (no password needed for external login)
+            var user = new User
+            {
+                Username = username,
+                Password = string.Empty, // No password for external login
+                Email = email,
+                Role = "Customer",
+                ExternalLoginProvider = "Google",
+                ExternalLoginProviderId = providerId,
+                CreatedAt = DateTime.Now
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // Split full name
+            var nameParts = (name ?? username).Trim().Split(' ', 2);
+            string firstName = nameParts[0];
+            string lastName = nameParts.Length > 1 ? nameParts[1] : "";
+
+            // Create Customer profile
+            var customer = new Customer
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                PhoneNumber = "", // To be filled in profile
+                Address = "", // To be filled in profile
+                LicenseNumber = "", // To be filled in profile
+                LicenseExpiryDate = DateTime.Now.AddYears(1),
+                CreatedAt = DateTime.Now
+            };
+
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+
+            // Log in the user
+            HttpContext.Session.SetString("UserId", user.UserId.ToString());
+            HttpContext.Session.SetString("Username", user.Username);
+            HttpContext.Session.SetString("UserRole", user.Role);
+
+            TempData["Success"] = "Account created successfully with Google! Please complete your profile.";
+
+            // Check for car rental redirect
+            if (TempData["RedirectCarId"] != null)
+            {
+                var carIdValue = TempData["RedirectCarId"];
+                if (carIdValue is int carId)
+                {
+                    TempData.Remove("RedirectCarId");
+                    TempData.Remove("RedirectMessage");
+                    return RedirectToAction("Create", "Rentals", new { carId = carId });
+                }
+            }
+
+            return RedirectToAction("Dashboard", "Customer");
         }
 
         // GET: Account/Register

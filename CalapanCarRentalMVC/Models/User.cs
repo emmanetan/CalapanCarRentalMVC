@@ -11,7 +11,6 @@ namespace CalapanCarRentalMVC.Models
         [StringLength(100)]
         public string Username { get; set; } = string.Empty;
 
-        [Required]
         [StringLength(100)]
         public string Password { get; set; } = string.Empty;
 
@@ -23,6 +22,10 @@ namespace CalapanCarRentalMVC.Models
         [EmailAddress]
         [StringLength(100)]
         public string Email { get; set; } = string.Empty;
+
+        // External login properties
+        public string? ExternalLoginProvider { get; set; } // "Google", "Facebook", etc.
+        public string? ExternalLoginProviderId { get; set; } // Unique ID from provider
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }

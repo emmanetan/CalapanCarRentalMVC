@@ -4,330 +4,440 @@
 }
 
 <div class="page-header">
-<div class="d-flex justify-content-between align-items-center">
-      <div>
-        <h1><i class="fas fa-chart-line me-2"></i>Reports & Analytics</h1>
-      <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-     <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
-<li class="breadcrumb-item active">Reports</li>
-     </ol>
-        </nav>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="fas fa-chart-line me-2"></i>Reports & Analytics</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Reports</li>
+                </ol>
+            </nav>
         </div>
-      <div>
-        <button class="btn btn-primary" onclick="window.print()">
-<i class="fas fa-print me-1"></i>Print Report
-            </button>
-</div>
+        <div>
+            <a asp-controller="Reports" asp-action="ExportToExcel" class="btn btn-success">
+                <i class="fas fa-file-excel me-1"></i>Download Excel Report
+            </a>
+        </div>
     </div>
 </div>
 
 <!-- Summary Statistics -->
 <div class="row mb-4">
-    <div class="col-md-3 mb-3">
-     <div class="stat-card">
-<div class="d-flex justify-content-between align-items-center">
-  <div>
-          <p class="text-muted mb-1">Total Revenue</p>
-    <h3 class="text-success">@Html.Raw("&#8369;")@ViewBag.TotalRevenue.ToString("N2")</h3>
-              </div>
-       <i class="fas fa-dollar-sign text-success"></i>
-</div>
-     </div>
-    </div>
-    <div class="col-md-3 mb-3">
-  <div class="stat-card">
-      <div class="d-flex justify-content-between align-items-center">
- <div>
-            <p class="text-muted mb-1">Total Rentals</p>
-         <h3>@ViewBag.TotalRentals</h3>
-     </div>
-     <i class="fas fa-file-contract"></i>
-    </div>
-  </div>
-    </div>
-    <div class="col-md-3 mb-3">
-    <div class="stat-card">
-      <div class="d-flex justify-content-between align-items-center">
-           <div>
-  <p class="text-muted mb-1">Active Rentals</p>
-     <h3 class="text-warning">@ViewBag.ActiveRentals</h3>
-      </div>
-       <i class="fas fa-spinner text-warning"></i>
-  </div>
-  </div>
-    </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-6 col-md-3 col-lg mb-3">
         <div class="stat-card">
- <div class="d-flex justify-content-between align-items-center">
-          <div>
-      <p class="text-muted mb-1">Completed Rentals</p>
-      <h3 class="text-primary">@ViewBag.CompletedRentals</h3>
-     </div>
-         <i class="fas fa-check-circle text-primary"></i>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1 small">Total Revenue</p>
+                    <h3 class="text-success mb-0 fs-5 fs-md-4">@Html.Raw("&#8369;")<span class="d-none d-sm-inline">@ViewBag.TotalRevenue.ToString("N2")</span><span class="d-sm-none">@ViewBag.TotalRevenue.ToString("N0")</span></h3>
+                </div>
+                <i class="fas fa-dollar-sign text-success d-none d-sm-inline"></i>
+            </div>
+        </div>
     </div>
-  </div>
- </div>
+    <div class="col-6 col-md-3 col-lg mb-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1 small">Total Rentals</p>
+                    <h3 class="mb-0 fs-5 fs-md-4">@ViewBag.TotalRentals</h3>
+                </div>
+                <i class="fas fa-file-contract d-none d-sm-inline"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 col-lg mb-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1 small">Active Rentals</p>
+                    <h3 class="text-warning mb-0 fs-5 fs-md-4">@ViewBag.ActiveRentals</h3>
+                </div>
+                <i class="fas fa-spinner text-warning d-none d-sm-inline"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 col-lg mb-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1 small">Completed Rentals</p>
+                    <h3 class="text-primary mb-0 fs-5 fs-md-4">@ViewBag.CompletedRentals</h3>
+                </div>
+                <i class="fas fa-check-circle text-primary d-none d-sm-inline"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 col-lg mb-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1 small">Total Customers</p>
+                    <h3 class="text-info mb-0 fs-5 fs-md-4">@ViewBag.TotalCustomers</h3>
+                </div>
+                <i class="fas fa-users text-info d-none d-sm-inline"></i>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Revenue Chart -->
 <div class="row">
- <div class="col-lg-8 mb-4">
-      <div class="dashboard-widget">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5><i class="fas fa-chart-line me-2"></i>Revenue Trends</h5>
-   <div class="btn-group" role="group">
-    <button type="button" class="btn btn-sm btn-outline-primary active" onclick="loadRevenueChart('daily')">Daily</button>
-     <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadRevenueChart('weekly')">Weekly</button>
- <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadRevenueChart('monthly')">Monthly</button>
-  </div>
+    <div class="col-lg-8 mb-4">
+        <div class="dashboard-widget">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5><i class="fas fa-chart-line me-2"></i>Revenue Trends</h5>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-danger active" onclick="loadRevenueChart('daily')">Daily</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="loadRevenueChart('weekly')">Weekly</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="loadRevenueChart('monthly')">Monthly</button>
+                </div>
             </div>
-    <canvas id="revenueChart" height="80"></canvas>
-     </div>
+            <canvas id="revenueChart" height="80"></canvas>
+        </div>
 
-    <!-- Popular Cars Chart -->
- <div class="dashboard-widget mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-       <h5><i class="fas fa-car me-2"></i>Most Rented Vehicles</h5>
-     <div class="btn-group" role="group">
-    <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadPopularCarsChart('daily')">Daily</button>
-<button type="button" class="btn btn-sm btn-outline-primary" onclick="loadPopularCarsChart('weekly')">Weekly</button>
-   <button type="button" class="btn btn-sm btn-outline-primary active" onclick="loadPopularCarsChart('monthly')">Monthly</button>
- </div>
-       </div>
+        <!-- Popular Cars Chart -->
+        <div class="dashboard-widget mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5><i class="fas fa-car me-2"></i>Most Rented Vehicles</h5>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="loadPopularCarsChart('daily')">Daily</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="loadPopularCarsChart('weekly')">Weekly</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger active" onclick="loadPopularCarsChart('monthly')">Monthly</button>
+                </div>
+            </div>
             <canvas id="popularCarsChart" height="80"></canvas>
-   </div>
+        </div>
     </div>
 
     <div class="col-lg-4 mb-4">
-     <!-- Rental Status Chart -->
-<div class="dashboard-widget">
-   <h5><i class="fas fa-pie-chart me-2"></i>Rental Status Distribution</h5>
-   <canvas id="statusChart" height="200"></canvas>
+        <!-- Rental Status Chart -->
+        <div class="dashboard-widget">
+            <h5><i class="fas fa-pie-chart me-2"></i>Rental Status Distribution</h5>
+            <canvas id="statusChart" height="200"></canvas>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-        let revenueChart, statusChart, popularCarsChart;
+    <script>
+                let revenueChart, statusChart, popularCarsChart;
 
-        // Revenue Chart
-   async function loadRevenueChart(period) {
- // Update active button
-        document.querySelectorAll('.btn-group button').forEach(btn => {
-    if (btn.textContent.toLowerCase() === period) {
-  btn.classList.add('active');
-       } else {
-    btn.classList.remove('active');
- }
-     });
+                // Revenue Chart
+           async function loadRevenueChart(period) {
+         // Update active button
+                document.querySelectorAll('.btn-group button').forEach(btn => {
+            if (btn.textContent.toLowerCase() === period) {
+          btn.classList.add('active');
+               } else {
+            btn.classList.remove('active');
+         }
+             });
 
-     try {
-  const response = await fetch(`/Reports/GetRevenueData?period=${period}`);
+             try {
+          const response = await fetch(`/Reports/GetRevenueData?period=${period}`);
+                 const data = await response.json();
+
+           const ctx = document.getElementById('revenueChart').getContext('2d');
+
+                  if (revenueChart) {
+           revenueChart.destroy();
+                }
+
+           revenueChart = new Chart(ctx, {
+          type: 'line',
+           data: {
+         labels: data.map(d => d.date),
+              datasets: [{
+             label: 'Revenue (\u20B1)',
+            data: data.map(d => d.revenue),
+           borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+               tension: 0.4,
+              fill: true
+         }, {
+             label: 'Number of Rentals',
+               data: data.map(d => d.count),
+         borderColor: 'rgb(255, 99, 132)',
+         backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          tension: 0.4,
+           fill: true,
+        yAxisID: 'y1'
+            }]
+         },
+          options: {
+          responsive: true,
+        maintainAspectRatio: true,
+          interaction: {
+         mode: 'index',
+          intersect: false
+        },
+            plugins: {
+               legend: {
+             display: true,
+            position: 'top'
+         },
+        tooltip: {
+              callbacks: {
+          label: function(context) {
+        let label = context.dataset.label || '';
+            if (label) {
+        label += ': ';
+             }
+            if (context.datasetIndex === 0) {
+           label += '\u20B1' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                 } else {
+               label += context.parsed.y;
+        }
+          return label;
+             }
+           }
+             }
+           },
+            scales: {
+              y: {
+         type: 'linear',
+            display: true,
+            position: 'left',
+         ticks: {
+           callback: function(value) {
+               return '\u20B1' + value.toLocaleString();
+          }
+           }
+        },
+            y1: {
+           type: 'linear',
+             display: true,
+            position: 'right',
+              grid: {
+           drawOnChartArea: false
+               }
+         }
+            }
+            }
+                });
+        } catch (error) {
+          console.error('Error loading revenue chart:', error);
+            }
+           }
+
+             // Rental Status Chart
+            async function loadStatusChart() {
+            try {
+          const response = await fetch('/Reports/GetRentalStatusData');
+                const data = await response.json();
+
+         const ctx = document.getElementById('statusChart').getContext('2d');
+
+               if (statusChart) {
+             statusChart.destroy();
+          }
+
+              const colors = {
+                      'Active': 'rgba(255, 193, 7, 0.8)',
+          'Completed': 'rgba(13, 110, 253, 0.8)',
+             'Pending': 'rgba(255, 159, 64, 0.8)',
+                'Cancelled': 'rgba(220, 53, 69, 0.8)',
+        'Rejected': 'rgba(108, 117, 125, 0.8)'
+         };
+
+           statusChart = new Chart(ctx, {
+            type: 'doughnut',
+              data: {
+         labels: data.map(d => d.status),
+             datasets: [{
+                data: data.map(d => d.count),
+                backgroundColor: data.map(d => colors[d.status] || 'rgba(150, 150, 150, 0.8)')
+          }]
+          },
+             options: {
+            responsive: true,
+          maintainAspectRatio: true,
+           plugins: {
+                legend: {
+            position: 'bottom'
+              },
+              tooltip: {
+              callbacks: {
+           label: function(context) {
+         let label = context.label || '';
+             if (label) {
+          label += ': ';
+         }
+              label += context.parsed + ' rentals';
+         return label;
+               }
+          }
+               }
+            }
+               }
+           });
+                } catch (error) {
+            console.error('Error loading status chart:', error);
+                }
+                }
+
+            // Popular Cars Chart
+           async function loadPopularCarsChart(period) {
+         try {
+                  const response = await fetch(`/Reports/GetPopularCarsData?period=${period}`);
          const data = await response.json();
 
-   const ctx = document.getElementById('revenueChart').getContext('2d');
+               const ctx = document.getElementById('popularCarsChart').getContext('2d');
 
-          if (revenueChart) {
-   revenueChart.destroy();
-        }
+           if (popularCarsChart) {
+            popularCarsChart.destroy();
+           }
 
-   revenueChart = new Chart(ctx, {
-  type: 'line',
-   data: {
- labels: data.map(d => d.date),
-      datasets: [{
-     label: 'Revenue (?)',
-             data: data.map(d => d.revenue),
-   borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-       tension: 0.4,
-      fill: true
-      }, {
-           label: 'Number of Rentals',
-       data: data.map(d => d.count),
- borderColor: 'rgb(255, 99, 132)',
- backgroundColor: 'rgba(255, 99, 132, 0.2)',
-  tension: 0.4,
-      fill: true,
-      yAxisID: 'y1'
-    }]
- },
-    options: {
-       responsive: true,
-maintainAspectRatio: true,
-  interaction: {
-       mode: 'index',
-  intersect: false
-},
-    plugins: {
-       legend: {
-     display: true,
-      position: 'top'
- },
-tooltip: {
-        callbacks: {
-  label: function(context) {
-let label = context.dataset.label || '';
-    if (label) {
-label += ': ';
-     }
-    if (context.datasetIndex === 0) {
-        label += '?' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-         } else {
-       label += context.parsed.y;
-}
-  return label;
-     }
-   }
-     }
-   },
-      scales: {
-      y: {
- type: 'linear',
-    display: true,
-    position: 'left',
-       ticks: {
-         callback: function(value) {
-       return '?' + value.toLocaleString();
-  }
-   }
-},
-    y1: {
-   type: 'linear',
-       display: true,
-    position: 'right',
-      grid: {
-   drawOnChartArea: false
-       }
-        }
-    }
-             }
-        });
-} catch (error) {
-  console.error('Error loading revenue chart:', error);
-    }
-   }
-
-     // Rental Status Chart
-    async function loadStatusChart() {
-    try {
-  const response = await fetch('/Reports/GetRentalStatusData');
-        const data = await response.json();
-
- const ctx = document.getElementById('statusChart').getContext('2d');
-
-       if (statusChart) {
-     statusChart.destroy();
-  }
-
-      const colors = {
-              'Active': 'rgba(255, 193, 7, 0.8)',
-  'Completed': 'rgba(13, 110, 253, 0.8)',
-     'Pending': 'rgba(255, 159, 64, 0.8)',
-        'Cancelled': 'rgba(220, 53, 69, 0.8)',
-'Rejected': 'rgba(108, 117, 125, 0.8)'
- };
-
-   statusChart = new Chart(ctx, {
-    type: 'doughnut',
-      data: {
- labels: data.map(d => d.status),
-     datasets: [{
+           popularCarsChart = new Chart(ctx, {
+           type: 'bar',
+         data: {
+            labels: data.map(d => d.car),
+                    datasets: [{
+               label: 'Number of Rentals',
         data: data.map(d => d.count),
-        backgroundColor: data.map(d => colors[d.status] || 'rgba(150, 150, 150, 0.8)')
-  }]
-  },
-     options: {
-    responsive: true,
-  maintainAspectRatio: true,
-   plugins: {
-        legend: {
-    position: 'bottom'
-      },
-      tooltip: {
-      callbacks: {
-   label: function(context) {
- let label = context.label || '';
-     if (label) {
-  label += ': ';
- }
-      label += context.parsed + ' rentals';
- return label;
-       }
-  }
-       }
-    }
-       }
-   });
-        } catch (error) {
-    console.error('Error loading status chart:', error);
-        }
-        }
+             backgroundColor: 'rgba(54, 162, 235, 0.8)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+               borderWidth: 1
+                }]
+              },
+            options: {
+           responsive: true,
+          maintainAspectRatio: true,
+               indexAxis: 'y',
+           plugins: {
+          legend: {
+            display: false
+             },
+              tooltip: {
+         callbacks: {
+              afterLabel: function(context) {
+          const revenue = data[context.dataIndex].revenue;
+        return 'Revenue: \u20B1' + revenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+           }
+          }
+               }
+           },
+         scales: {
+               x: {
+             beginAtZero: true,
+         ticks: {
+        stepSize: 1
+                }
+             }
+             }
+          }
+            });
+         } catch (error) {
+                console.error('Error loading popular cars chart:', error);
+                    }
+         }
 
-    // Popular Cars Chart
-   async function loadPopularCarsChart(period) {
- try {
-          const response = await fetch(`/Reports/GetPopularCarsData?period=${period}`);
- const data = await response.json();
-
-       const ctx = document.getElementById('popularCarsChart').getContext('2d');
-
-   if (popularCarsChart) {
-    popularCarsChart.destroy();
-   }
-
-   popularCarsChart = new Chart(ctx, {
-   type: 'bar',
- data: {
-    labels: data.map(d => d.car),
-            datasets: [{
-       label: 'Number of Rentals',
-data: data.map(d => d.count),
-     backgroundColor: 'rgba(54, 162, 235, 0.8)',
-  borderColor: 'rgba(54, 162, 235, 1)',
-       borderWidth: 1
-        }]
-      },
-    options: {
-   responsive: true,
-  maintainAspectRatio: true,
-       indexAxis: 'y',
-   plugins: {
-  legend: {
-    display: false
-     },
-      tooltip: {
- callbacks: {
-      afterLabel: function(context) {
-         const revenue = data[context.dataIndex].revenue;
-return 'Revenue: ?' + revenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-   }
-    }
-            }
-   },
- scales: {
-       x: {
-     beginAtZero: true,
- ticks: {
-stepSize: 1
-        }
-     }
-     }
-  }
-    });
- } catch (error) {
-        console.error('Error loading popular cars chart:', error);
-            }
- }
-
-    // Initialize charts on page load
-  document.addEventListener('DOMContentLoaded', function() {
-     loadRevenueChart('daily');
- loadStatusChart();
-     loadPopularCarsChart('monthly');
-     });
+            // Initialize charts on page load
+          document.addEventListener('DOMContentLoaded', function() {
+             loadRevenueChart('daily');
+         loadStatusChart();
+             loadPopularCarsChart('monthly');
+             });
     </script>
+}
+@section Styles {
+    <style>
+   /* Responsive Chart Styles */
+        .chart-container {
+position: relative;
+   height: 300px;
+            width: 100%;
+ }
+
+    /* Desktop */
+ @@media (min-width: 992px) {
+            .chart-container {
+       height: 350px;
+       }
+  
+            .status-chart-container {
+ height: 400px;
+      }
+        }
+
+        /* Tablet */
+     @@media (min-width: 768px) and (max-width: 991px) {
+      .chart-container {
+  height: 300px;
+            }
+     
+          .status-chart-container {
+    height: 300px;
+        }
+    }
+
+        /* Mobile */
+@@media (max-width: 767px) {
+    .chart-container {
+  height: 250px;
+  }
+     
+ /* Make status chart smaller on mobile as requested */
+            .status-chart-container {
+             height: 200px;
+        }
+ 
+   .stat-card {
+  padding: 0.75rem;
+  }
+      
+ .stat-card h3 {
+ font-size: 1.25rem;
+            }
+  
+            .stat-card .text-muted {
+    font-size: 0.75rem;
+            }
+    
+   .dashboard-widget h5 {
+    font-size: 1rem;
+   }
+    
+        .btn-group {
+  display: flex;
+        }
+  
+      .btn-group .btn {
+     flex: 1;
+    font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+      }
+
+        /* Extra small mobile */
+      @@media (max-width: 575px) {
+       .page-header h1 {
+      font-size: 1.5rem;
+       }
+     
+         .stat-card h3 {
+ font-size: 1.1rem;
+   }
+        }
+
+        /* Responsive grid for 5 cards */
+        @@media (min-width: 1200px) {
+            /* On large screens, show all 5 cards in a row */
+       .row.mb-4 .col-lg {
+          flex: 0 0 20%;
+                max-width: 20%;
+        }
+        }
+
+        @@media (min-width: 992px) and (max-width: 1199px) {
+  /* On medium-large screens, show 3 cards then 2 cards */
+          .row.mb-4 .col-lg:nth-child(4),
+    .row.mb-4 .col-lg:nth-child(5) {
+    flex: 0 0 50%;
+     max-width: 50%;
+   }
+        }
+    </style>
 }

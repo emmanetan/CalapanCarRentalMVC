@@ -125,7 +125,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <p class="text-muted mb-1">Total Spent</p>
-                            <h3 class="text-primary">₱@Model.Where(r => r.Status == "Completed").Sum(r => r.TotalAmount).ToString("N2")</h3>
+                            <h3 class="text-primary">@Html.Raw("&#8369;")@Model.Where(r => r.Status == "Completed").Sum(r => r.TotalAmount).ToString("N2")</h3>
                         </div>
                         <i class="fas fa-dollar-sign text-primary"></i>
                     </div>
@@ -159,7 +159,6 @@
                     <table class="table admin-table">
                         <thead>
                             <tr>
-                                <th>Rental ID</th>
                                 <th>Car</th>
                                 <th>Pickup Date</th>
                                 <th>Return Date</th>
@@ -174,7 +173,6 @@
                             @foreach (var rental in Model.OrderByDescending(r => r.CreatedAt))
                             {
                                 <tr>
-                                    <td><strong>#@rental.RentalId</strong></td>
                                     <td>
                                         <div>
                                             <strong>@rental.Car.Brand @rental.Car.Model</strong>
@@ -210,11 +208,11 @@
                                         }
                                     </td>
                                     <td>
-                                        <strong class="text-success">₱@rental.TotalAmount.ToString("N2")</strong>
+                                        <strong class="text-success">@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong>
                                         @if (rental.LateFee.HasValue && rental.LateFee.Value > 0)
                                         {
                                             <br />
-                                            <small class="text-danger">Late Fee: ₱@rental.LateFee.Value.ToString("N2")</small>
+                                            <small class="text-danger">Late Fee: @Html.Raw("&#8369;")@rental.LateFee.Value.ToString("N2")</small>
                                         }
                                     </td>
                                     <td>
@@ -255,7 +253,6 @@
                         <table class="table admin-table">
                             <thead>
                                 <tr>
-                                    <th>Rental ID</th>
                                     <th>Car</th>
                                     <th>Pickup Date</th>
                                     <th>Return Date</th>
@@ -269,7 +266,6 @@
                                 @foreach (var rental in Model.Where(r => r.Status == "Active").OrderByDescending(r => r.CreatedAt))
                                 {
                                     <tr>
-                                        <td><strong>#@rental.RentalId</strong></td>
                                         <td>
                                             <div>
                                                 <strong>@rental.Car.Brand @rental.Car.Model</strong>
@@ -304,7 +300,7 @@
                                                 <span class="badge bg-primary"><i class="fas fa-university me-1"></i>@rental.PaymentMethod</span>
                                             }
                                         </td>
-                                        <td><strong class="text-success">₱@rental.TotalAmount.ToString("N2")</strong></td>
+                                        <td><strong class="text-success">@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong></td>
                                         <td>
                                             <a asp-controller="Rentals" asp-action="Details" asp-route-id="@rental.RentalId" class="btn btn-sm btn-outline-primary" title="View Details">
                                                 <i class="fas fa-eye"></i> <span class="btn-text">Details</span>
@@ -336,7 +332,6 @@
                         <table class="table admin-table">
                             <thead>
                                 <tr>
-                                    <th>Rental ID</th>
                                     <th>Car</th>
                                     <th>Rental Period</th>
                                     <th>Destination</th>
@@ -349,7 +344,6 @@
                                 @foreach (var rental in Model.Where(r => r.Status == "Completed").OrderByDescending(r => r.CreatedAt))
                                 {
                                     <tr>
-                                        <td><strong>#@rental.RentalId</strong></td>
                                         <td>
                                             <div>
                                                 <strong>@rental.Car.Brand @rental.Car.Model</strong>
@@ -383,11 +377,11 @@
                                             }
                                         </td>
                                         <td>
-                                            <strong class="text-success">₱@rental.TotalAmount.ToString("N2")</strong>
+                                            <strong class="text-success">@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong>
                                             @if (rental.LateFee.HasValue && rental.LateFee.Value > 0)
                                             {
                                                 <br />
-                                                <small class="text-danger">Late Fee: ₱@rental.LateFee.Value.ToString("N2")</small>
+                                                <small class="text-danger">Late Fee: @Html.Raw("&#8369;")@rental.LateFee.Value.ToString("N2")</small>
                                             }
                                         </td>
                                         <td>

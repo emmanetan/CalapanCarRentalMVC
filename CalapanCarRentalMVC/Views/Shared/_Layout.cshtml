@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CalapanCarRentalMVC.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="@(Context.Session.GetString("UserRole") == "Admin" || Context.Session.GetString("UserRole") == "Customer" ? "admin-body" : "")">
     @if (Context.Session.GetString("UserRole") == "Admin" || Context.Session.GetString("UserRole") == "Customer")

@@ -169,16 +169,16 @@
            var days = Math.ceil(hours / 24);
 
           if (days > 0) {
-              var total = days * dailyRate;
-                $('#estimatedTotal').text('₱' + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
-           $('#rentalDays').text(days + ' day' + (days > 1 ? 's' : '') + ' rental');
-            } else {
-            $('#estimatedTotal').text('₱0.00');
-         $('#rentalDays').text('Return date must be after rental date');
+             var total = days * dailyRate;
+ $('#estimatedTotal').text('\u20B1' + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+ $('#rentalDays').text(days + ' day' + (days > 1 ? 's' : '') + ' rental');
+          } else {
+           $('#estimatedTotal').text('\u20B10.00');
+ $('#rentalDays').text('Return date must be after rental date');
           }
               } else {
-         $('#estimatedTotal').text('₱0.00');
-           $('#rentalDays').text('Please select rental dates');
+         $('#estimatedTotal').text('\u20B10.00');
+         $('#rentalDays').text('Please select rental dates');
             }
             }
 

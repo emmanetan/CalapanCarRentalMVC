@@ -143,7 +143,7 @@
 
        <div class="mb-3">
        <label class="text-muted">Total Spent</label>
-      <h3 class="text-success">?@Model.Rentals.Where(r => r.Status == "Completed").Sum(r => r.TotalAmount).ToString("N2")</h3>
+      <h3 class="text-success">@Html.Raw("&#8369;")@Model.Rentals.Where(r => r.Status == "Completed").Sum(r => r.TotalAmount).ToString("N2")</h3>
  </div>
 
  <hr />
@@ -199,7 +199,7 @@
  <td>@rental.Car.Brand @rental.Car.Model</td>
          <td>@rental.RentalDate.ToString("MMM dd, yyyy")</td>
   <td>@rental.ReturnDate.ToString("MMM dd, yyyy")</td>
-       <td><strong>?@rental.TotalAmount.ToString("N2")</strong></td>
+       <td><strong>@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong></td>
          <td>
       @if (rental.Status == "Active")
      {

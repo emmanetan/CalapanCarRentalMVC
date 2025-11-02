@@ -40,208 +40,288 @@ namespace CalapanCarRentalMVC.Controllers
               .Take(5)
              .ToListAsync();
 
-         // Maintenance statistics
+            // Maintenance statistics
             ViewBag.UrgentMaintenance = await _context.Maintenances.CountAsync(m => m.Status == "Urgent");
-    ViewBag.ScheduledMaintenance = await _context.Maintenances.CountAsync(m => m.Status == "Scheduled");
-        ViewBag.CompletedMaintenance = await _context.Maintenances
-       .CountAsync(m => m.Status == "Completed" && 
-      m.DateCompleted.HasValue && 
-       m.DateCompleted.Value.Month == DateTime.Now.Month &&
-        m.DateCompleted.Value.Year == DateTime.Now.Year);
+            ViewBag.ScheduledMaintenance = await _context.Maintenances.CountAsync(m => m.Status == "Scheduled");
+            ViewBag.CompletedMaintenance = await _context.Maintenances
+           .CountAsync(m => m.Status == "Completed" &&
+          m.DateCompleted.HasValue &&
+           m.DateCompleted.Value.Month == DateTime.Now.Month &&
+            m.DateCompleted.Value.Year == DateTime.Now.Year);
 
             // Report Trends - Monthly data
-       var currentMonth = DateTime.Now.Month;
-   var currentYear = DateTime.Now.Year;
-   var lastMonth = DateTime.Now.AddMonths(-1);
+            var currentMonth = DateTime.Now.Month;
+            var currentYear = DateTime.Now.Year;
+            var lastMonth = DateTime.Now.AddMonths(-1);
 
-   // This Month
-         ViewBag.ThisMonthRentals = await _context.Rentals
-    .CountAsync(r => r.RentalDate.Month == currentMonth && r.RentalDate.Year == currentYear);
-   
-    ViewBag.ThisMonthRevenue = await _context.Rentals
-      .Where(r => r.RentalDate.Month == currentMonth && r.RentalDate.Year == currentYear)
-      .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+            // This Month
+            ViewBag.ThisMonthRentals = await _context.Rentals
+       .CountAsync(r => r.RentalDate.Month == currentMonth && r.RentalDate.Year == currentYear);
+
+            ViewBag.ThisMonthRevenue = await _context.Rentals
+              .Where(r => r.RentalDate.Month == currentMonth && r.RentalDate.Year == currentYear)
+              .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
 
             // Last Month
-       ViewBag.LastMonthRentals = await _context.Rentals
-          .CountAsync(r => r.RentalDate.Month == lastMonth.Month && r.RentalDate.Year == lastMonth.Year);
-   
-          ViewBag.LastMonthRevenue = await _context.Rentals
-     .Where(r => r.RentalDate.Month == lastMonth.Month && r.RentalDate.Year == lastMonth.Year)
-         .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+            ViewBag.LastMonthRentals = await _context.Rentals
+               .CountAsync(r => r.RentalDate.Month == lastMonth.Month && r.RentalDate.Year == lastMonth.Year);
+
+            ViewBag.LastMonthRevenue = await _context.Rentals
+       .Where(r => r.RentalDate.Month == lastMonth.Month && r.RentalDate.Year == lastMonth.Year)
+           .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
 
             // Calculate percentage changes
-            ViewBag.RentalsChange = ViewBag.LastMonthRentals > 0 
+            ViewBag.RentalsChange = ViewBag.LastMonthRentals > 0
            ? Math.Round(((ViewBag.ThisMonthRentals - ViewBag.LastMonthRentals) / (double)ViewBag.LastMonthRentals) * 100, 1)
         : 0;
-            
-       ViewBag.RevenueChange = ViewBag.LastMonthRevenue > 0 
-      ? Math.Round(((ViewBag.ThisMonthRevenue - ViewBag.LastMonthRevenue) / ViewBag.LastMonthRevenue) * 100, 1)
-    : 0;
 
-    // This Year
-         ViewBag.ThisYearRentals = await _context.Rentals
-                .CountAsync(r => r.RentalDate.Year == currentYear);
-            
+            ViewBag.RevenueChange = ViewBag.LastMonthRevenue > 0
+           ? Math.Round(((ViewBag.ThisMonthRevenue - ViewBag.LastMonthRevenue) / ViewBag.LastMonthRevenue) * 100, 1)
+         : 0;
+
+            // This Year
+            ViewBag.ThisYearRentals = await _context.Rentals
+                   .CountAsync(r => r.RentalDate.Year == currentYear);
+
             ViewBag.ThisYearRevenue = await _context.Rentals
           .Where(r => r.RentalDate.Year == currentYear)
          .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
 
-     // Monthly data for chart (last 6 months)
-   var monthlyRentalCounts = new List<int>();
-  var monthlyRevenue = new List<decimal>();
+            // Monthly data for chart (last 6 months) - Default view
+            var monthlyRentalCounts = new List<int>();
+            var monthlyRevenue = new List<decimal>();
             var monthLabels = new List<string>();
 
-  for (int i = 5; i >= 0; i--)
-        {
-             var date = DateTime.Now.AddMonths(-i);
-          var count = await _context.Rentals
-      .CountAsync(r => r.RentalDate.Month == date.Month && r.RentalDate.Year == date.Year);
-     var revenue = await _context.Rentals
-                    .Where(r => r.RentalDate.Month == date.Month && r.RentalDate.Year == date.Year)
-          .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+            for (int i = 5; i >= 0; i--)
+            {
+                var date = DateTime.Now.AddMonths(-i);
+                var count = await _context.Rentals
+            .CountAsync(r => r.RentalDate.Month == date.Month && r.RentalDate.Year == date.Year);
+                var revenue = await _context.Rentals
+                               .Where(r => r.RentalDate.Month == date.Month && r.RentalDate.Year == date.Year)
+                     .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
 
-          monthlyRentalCounts.Add(count);
-    monthlyRevenue.Add(revenue);
-          monthLabels.Add(date.ToString("MMM"));
-    }
+                monthlyRentalCounts.Add(count);
+                monthlyRevenue.Add(revenue);
+                monthLabels.Add(date.ToString("MMM"));
+            }
 
-       ViewBag.MonthlyRentalCounts = monthlyRentalCounts;
-ViewBag.MonthlyRevenue = monthlyRevenue;
+            ViewBag.MonthlyRentalCounts = monthlyRentalCounts;
+            ViewBag.MonthlyRevenue = monthlyRevenue;
             ViewBag.MonthLabels = monthLabels;
 
-      return View();
+            return View();
         }
 
         // GET: Admin/Profile
         public async Task<IActionResult> Profile()
-  {
+        {
             var userRole = HttpContext.Session.GetString("UserRole");
-    if (userRole != "Admin")
-  {
+            if (userRole != "Admin")
+            {
                 return RedirectToAction("Login", "Account");
-    }
-
-    var userId = HttpContext.Session.GetString("UserId");
- if (string.IsNullOrEmpty(userId))
-  {
-           return RedirectToAction("Login", "Account");
             }
 
-       var user = await _context.Users.FindAsync(int.Parse(userId));
-         if (user == null)
-    {
-           return RedirectToAction("Login", "Account");
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account");
             }
 
-       return View(user);
-     }
+            var user = await _context.Users.FindAsync(int.Parse(userId));
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            return View(user);
+        }
 
         // POST: Admin/Profile
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile([Bind("UserId,Username,Email,Password,Role,CreatedAt")] Models.User user, string? currentPassword, string? newPassword, string? confirmPassword)
-    {
+        {
             var userRole = HttpContext.Session.GetString("UserRole");
-   if (userRole != "Admin")
-       {
-    return RedirectToAction("Login", "Account");
-   }
-
-          var userId = HttpContext.Session.GetString("UserId");
-       if (string.IsNullOrEmpty(userId) || int.Parse(userId) != user.UserId)
-          {
-      return RedirectToAction("Login", "Account");
+            if (userRole != "Admin")
+            {
+                return RedirectToAction("Login", "Account");
             }
 
-    // Get current user from database
-         var currentUser = await _context.Users.FindAsync(user.UserId);
-         if (currentUser == null)
-         {
-     return RedirectToAction("Login", "Account");
-          }
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId) || int.Parse(userId) != user.UserId)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
-  // Remove password from ModelState if not changing
-       ModelState.Remove("Password");
-        if (!string.IsNullOrEmpty(newPassword))
-      {
+            // Remove password from ModelState if not changing
+            ModelState.Remove("Password");
+            if (!string.IsNullOrEmpty(newPassword))
+            {
                 ModelState.Remove("newPassword");
-         ModelState.Remove("confirmPassword");
-         ModelState.Remove("currentPassword");
-      }
+                ModelState.Remove("confirmPassword");
+                ModelState.Remove("currentPassword");
+            }
 
-         if (ModelState.IsValid)
-  {
-     try
-     {
-       // If changing password
-  if (!string.IsNullOrEmpty(newPassword))
-         {
- // Verify current password
-          if (string.IsNullOrEmpty(currentPassword))
-         {
-          TempData["Error"] = "Current password is required to change your password.";
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Get current user from database with AsNoTracking to avoid tracking conflicts
+                    var currentUser = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.UserId == user.UserId);
+                    if (currentUser == null)
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+
+                    // If changing password
+                    if (!string.IsNullOrEmpty(newPassword))
+                    {
+                        // Verify current password
+                        if (string.IsNullOrEmpty(currentPassword))
+                        {
+                            TempData["Error"] = "Current password is required to change your password.";
+                            return View(user);
+                        }
+
+                        if (currentUser.Password != currentPassword)
+                        {
+                            TempData["Error"] = "Current password is incorrect.";
+                            return View(user);
+                        }
+
+                        if (newPassword != confirmPassword)
+                        {
+                            TempData["Error"] = "New password and confirmation password do not match.";
+                            return View(user);
+                        }
+
+                        if (newPassword.Length < 6)
+                        {
+                            TempData["Error"] = "Password must be at least 6 characters long.";
+                            return View(user);
+                        }
+
+                        // Update password
+                        user.Password = newPassword; // In production, hash this
+                    }
+                    else
+                    {
+                        // Keep existing password if not changing
+                        user.Password = currentUser.Password;
+                    }
+
+                    // Update session with new username if changed
+                    if (user.Username != HttpContext.Session.GetString("Username"))
+                    {
+                        HttpContext.Session.SetString("Username", user.Username);
+                    }
+
+                    // Update the user entity
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Success"] = "Profile updated successfully!";
+                    return RedirectToAction(nameof(Profile));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserExists(user.UserId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
             return View(user);
- }
-
-      if (currentUser.Password != currentPassword)
-   {
-         TempData["Error"] = "Current password is incorrect.";
-   return View(user);
-             }
-
-         if (newPassword != confirmPassword)
-         {
-           TempData["Error"] = "New password and confirmation password do not match.";
-return View(user);
-  }
-
-    if (newPassword.Length < 6)
-          {
-       TempData["Error"] = "Password must be at least 6 characters long.";
-      return View(user);
-          }
-
- // Update password
-    user.Password = newPassword; // In production, hash this
         }
-     else
-       {
-          // Keep existing password if not changing
-          user.Password = currentUser.Password;
-           }
 
-     // Update session with new username if changed
-             if (user.Username != HttpContext.Session.GetString("Username"))
-   {
-     HttpContext.Session.SetString("Username", user.Username);
+        // GET: Admin/GetTrendsData
+        [HttpGet]
+        public async Task<IActionResult> GetTrendsData(string period = "monthly")
+        {
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userRole != "Admin")
+            {
+                return Unauthorized();
+            }
+
+            var rentalCounts = new List<int>();
+            var revenue = new List<decimal>();
+            var labels = new List<string>();
+
+            switch (period.ToLower())
+            {
+                case "daily":
+                    // Last 30 days
+                    for (int i = 29; i >= 0; i--)
+                    {
+                        var date = DateTime.Now.Date.AddDays(-i);
+                        var count = await _context.Rentals
+                               .CountAsync(r => r.RentalDate.Date == date);
+                         var rev = await _context.Rentals
+.Where(r => r.RentalDate.Date == date)
+      .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+
+                        rentalCounts.Add(count);
+                        revenue.Add(rev);
+                        labels.Add(date.ToString("MMM dd"));
+                    }
+                    break;
+
+                case "weekly":
+                     // Last 12 weeks
+     for (int i = 11; i >= 0; i--)
+            {
+         var endDate = DateTime.Now.Date.AddDays(-(i * 7));
+              var startDate = endDate.AddDays(-6);
+                  
+         var count = await _context.Rentals
+       .CountAsync(r => r.RentalDate.Date >= startDate && r.RentalDate.Date <= endDate);
+     var rev = await _context.Rentals
+       .Where(r => r.RentalDate.Date >= startDate && r.RentalDate.Date <= endDate)
+   .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+
+             rentalCounts.Add(count);
+   revenue.Add(rev);
+         labels.Add($"{startDate.ToString("MMM dd")} - {endDate.ToString("MMM dd")}");
+          }
+    break;
+
+                   case "monthly":
+          default:
+         // Last 6 months
+               for (int i = 5; i >= 0; i--)
+          {
+ var date = DateTime.Now.AddMonths(-i);
+      var count = await _context.Rentals
+      .CountAsync(r => r.RentalDate.Month == date.Month && r.RentalDate.Year == date.Year);
+    var rev = await _context.Rentals
+          .Where(r => r.RentalDate.Month == date.Month && r.RentalDate.Year == date.Year)
+        .SumAsync(r => (decimal?)r.TotalAmount) ?? 0;
+
+    rentalCounts.Add(count);
+   revenue.Add(rev);
+          labels.Add(date.ToString("MMM yyyy"));
+ }
+         break;
      }
 
-       _context.Update(user);
-await _context.SaveChangesAsync();
-
-  TempData["Success"] = "Profile updated successfully!";
-           return RedirectToAction(nameof(Profile));
-    }
-    catch (DbUpdateConcurrencyException)
-    {
-    if (!UserExists(user.UserId))
- {
-       return NotFound();
-    }
-         else
-        {
-       throw;
-      }
-        }
+     return Json(new
+            {
+     labels = labels,
+    rentalCounts = rentalCounts,
+  revenue = revenue
+     });
         }
 
-         return View(user);
-  }
-
-   private bool UserExists(int id)
+        private bool UserExists(int id)
         {
-  return _context.Users.Any(e => e.UserId == id);
+            return _context.Users.Any(e => e.UserId == id);
         }
     }
 }

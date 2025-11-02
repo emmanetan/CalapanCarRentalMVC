@@ -8,14 +8,14 @@
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h1><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h1>
-    <nav aria-label="breadcrumb">
-           <ol class="breadcrumb">
-                  <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
- </nav>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active">Dashboard</li>
+                </ol>
+            </nav>
         </div>
-    <div>
-     <span class="text-muted"><i class="fas fa-clock me-1"></i>@DateTime.Now.ToString("MMMM dd, yyyy")</span>
+        <div>
+            <span class="text-muted"><i class="fas fa-clock me-1"></i>@DateTime.Now.ToString("MMMM dd, yyyy")</span>
         </div>
     </div>
 </div>
@@ -24,46 +24,46 @@
 <div class="row mb-4">
     <div class="col-md-3 mb-3">
         <div class="stat-card">
-     <div class="d-flex justify-content-between align-items-center">
-  <div>
-      <p class="text-muted mb-1">Total Cars</p>
-             <h3>@ViewBag.TotalCars</h3>
-      </div>
-      <i class="fas fa-car"></i>
-        </div>
-        </div>
-    </div>
-<div class="col-md-3 mb-3">
-<div class="stat-card">
-       <div class="d-flex justify-content-between align-items-center">
-         <div>
-                 <p class="text-muted mb-1">Available Cars</p>
-         <h3 class="text-success">@ViewBag.AvailableCars</h3>
-    </div>
-           <i class="fas fa-check-circle text-success"></i>
-        </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-    <div class="stat-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-           <p class="text-muted mb-1">Active Rentals</p>
-                <h3 class="text-warning">@ViewBag.ActiveRentals</h3>
+                    <p class="text-muted mb-1">Total Cars</p>
+                    <h3>@ViewBag.TotalCars</h3>
                 </div>
-     <i class="fas fa-file-contract text-warning"></i>
-    </div>
+                <i class="fas fa-car"></i>
+            </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
-  <div class="stat-card">
+        <div class="stat-card">
             <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <p class="text-muted mb-1">Total Revenue</p>
-       <h3 class="text-success">@Html.Raw("&#8369;")@ViewBag.TotalRevenue.ToString("N2")</h3>
+                <div>
+                    <p class="text-muted mb-1">Available Cars</p>
+                    <h3 class="text-success">@ViewBag.AvailableCars</h3>
+                </div>
+                <i class="fas fa-check-circle text-success"></i>
+            </div>
+        </div>
     </div>
-      <i class="fas fa-dollar-sign text-success"></i>
-         </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Active Rentals</p>
+                    <h3 class="text-warning">@ViewBag.ActiveRentals</h3>
+                </div>
+                <i class="fas fa-file-contract text-warning"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Total Revenue</p>
+                    <h3 class="text-success">@Html.Raw("&#8369;")@ViewBag.TotalRevenue.ToString("N2")</h3>
+                </div>
+                <i class="fas fa-dollar-sign text-success"></i>
+            </div>
         </div>
     </div>
 </div>
@@ -73,101 +73,116 @@
     <!-- Report Trends -->
     <div class="col-lg-7 mb-3">
         <div class="dashboard-widget">
- <h5><i class="fas fa-chart-bar me-2"></i>Report Trends</h5>
-      
-       <!-- Chart Canvas -->
-      <div class="mb-3">
-     <canvas id="trendsChart" height="200"></canvas>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Report Trends</h5>
+
+                <!-- Period Selector Buttons -->
+                <div class="btn-group btn-group-sm" role="group" aria-label="Period selector">
+                    <button type="button" class="btn btn-outline-danger active" data-period="daily" onclick="updateTrendsChart('daily')">
+                        <i class="fas fa-calendar-day me-1"></i>Daily
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" data-period="weekly" onclick="updateTrendsChart('weekly')">
+                        <i class="fas fa-calendar-week me-1"></i>Weekly
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" data-period="monthly" onclick="updateTrendsChart('monthly')">
+                        <i class="fas fa-calendar-alt me-1"></i>Monthly
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chart Canvas -->
+            <div class="mb-3">
+                <canvas id="trendsChart" height="100"></canvas>
             </div>
 
             <hr class="my-2">
 
-<!-- Monthly Comparison -->
-   <div class="row">
-       <div class="col-md-6 mb-3">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-   <small class="text-muted">This Month Rentals</small>
-              <div class="d-flex align-items-center">
-                 <strong class="text-primary me-2">@ViewBag.ThisMonthRentals</strong>
-              @if (ViewBag.RentalsChange > 0)
-          {
-<span class="badge bg-success"><i class="fas fa-arrow-up"></i> @ViewBag.RentalsChange%</span>
-  }
-      else if (ViewBag.RentalsChange < 0)
-      {
-         <span class="badge bg-danger"><i class="fas fa-arrow-down"></i> @Math.Abs(ViewBag.RentalsChange)%</span>
-      }
-             else
-         {
-       <span class="badge bg-secondary"><i class="fas fa-minus"></i> 0%</span>
-         }
-      </div>
-         </div>
-       </div>
+            <!-- Monthly Comparison -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted">This Month Rentals</small>
+                        <div class="d-flex align-items-center">
+                            <strong class="text-primary me-2">@ViewBag.ThisMonthRentals</strong>
+                            @if (ViewBag.RentalsChange > 0)
+                            {
+                                <span class="badge bg-success"><i class="fas fa-arrow-up"></i> @ViewBag.RentalsChange%</span>
+                            }
+                            else if (ViewBag.RentalsChange < 0)
+                            {
+                                <span class="badge bg-danger"><i class="fas fa-arrow-down"></i> @Math.Abs(ViewBag.RentalsChange)%</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary"><i class="fas fa-minus"></i> 0%</span>
+                            }
+                        </div>
+                    </div>
+                </div>
 
-       <div class="col-md-6 mb-3">
-           <div class="d-flex justify-content-between align-items-center mb-2">
-      <small class="text-muted">This Month Revenue</small>
-     <div class="d-flex align-items-center">
-         <strong class="text-success me-2">@Html.Raw("&#8369;")@ViewBag.ThisMonthRevenue.ToString("N2")</strong>
-         @if (ViewBag.RevenueChange > 0)
-         {
-     <span class="badge bg-success"><i class="fas fa-arrow-up"></i> @ViewBag.RevenueChange%</span>
-       }
-    else if (ViewBag.RevenueChange < 0)
-            {
-   <span class="badge bg-danger"><i class="fas fa-arrow-down"></i> @Math.Abs(ViewBag.RevenueChange)%</span>
-  }
-            else
-       {
-          <span class="badge bg-secondary"><i class="fas fa-minus"></i> 0%</span>
-      }
-    </div>
-       </div>
-     </div>
-     </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted">This Month Revenue</small>
+                        <div class="d-flex align-items-center">
+                            <strong class="text-success me-2">@Html.Raw("&#8369;")@ViewBag.ThisMonthRevenue.ToString("N2")</strong>
+                            @if (ViewBag.RevenueChange > 0)
+                            {
+                                <span class="badge bg-success"><i class="fas fa-arrow-up"></i> @ViewBag.RevenueChange%</span>
+                            }
+                            else if (ViewBag.RevenueChange < 0)
+                            {
+                                <span class="badge bg-danger"><i class="fas fa-arrow-down"></i> @Math.Abs(ViewBag.RevenueChange)%</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary"><i class="fas fa-minus"></i> 0%</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
 
- <hr class="my-2">
+            <hr class="my-2">
 
             <div class="row text-center">
-          <div class="col-6">
-        <small class="text-muted d-block">Year Total Rentals</small>
-     <strong class="text-primary">@ViewBag.ThisYearRentals</strong>
-       </div>
                 <div class="col-6">
-          <small class="text-muted d-block">Year Total Revenue</small>
- <strong class="text-success">@Html.Raw("&#8369;")@ViewBag.ThisYearRevenue.ToString("N2")</strong>
-         </div>
-         </div>
+                    <small class="text-muted d-block">Year Total Rentals</small>
+                    <strong class="text-primary">@ViewBag.ThisYearRentals</strong>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted d-block">Year Total Revenue</small>
+                    <strong class="text-success">@Html.Raw("&#8369;")@ViewBag.ThisYearRevenue.ToString("N2")</strong>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
-<div class="col-lg-5 mb-3">
+    <div class="col-lg-5 mb-3">
         <div class="dashboard-widget">
             <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
             <div class="quick-actions">
-          <a asp-controller="Cars" asp-action="Create" class="quick-action-btn text-decoration-none">
-              <i class="fas fa-plus-circle"></i>
-    <span>Add New Car</span>
-     </a>
-         <a asp-controller="Customers" asp-action="Create" class="quick-action-btn text-decoration-none">
-   <i class="fas fa-user-plus"></i>
-         <span>Add Customer</span>
-      </a>
-         <a asp-controller="Rentals" asp-action="Create" class="quick-action-btn text-decoration-none">
-       <i class="fas fa-file-alt"></i>
-              <span>New Rental</span>
-  </a>
- <a asp-controller="Maintenance" asp-action="Index" class="quick-action-btn text-decoration-none">
-                <i class="fas fa-tools"></i>
-         <span>Maintenance</span>
-            </a>
-        <a asp-controller="Reports" asp-action="Index" class="quick-action-btn text-decoration-none">
-             <i class="fas fa-chart-line"></i>
-             <span>View Reports</span>
+                <a asp-controller="Cars" asp-action="Create" class="quick-action-btn text-decoration-none">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add New Car</span>
                 </a>
-      </div>
+                <a asp-controller="Customers" asp-action="Create" class="quick-action-btn text-decoration-none">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Add Customer</span>
+                </a>
+                <a asp-controller="Rentals" asp-action="Create" class="quick-action-btn text-decoration-none">
+                    <i class="fas fa-file-alt"></i>
+                    <span>New Rental</span>
+                </a>
+                <a asp-controller="Maintenance" asp-action="Index" class="quick-action-btn text-decoration-none">
+                    <i class="fas fa-tools"></i>
+                    <span>Maintenance</span>
+                </a>
+                <a asp-controller="Reports" asp-action="Index" class="quick-action-btn text-decoration-none">
+                    <i class="fas fa-chart-line"></i>
+                    <span>View Reports</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -176,253 +191,299 @@
     <!-- Recent Rentals -->
     <div class="col-lg-8 mb-4">
         <div class="dashboard-widget">
-       <h5><i class="fas fa-history me-2"></i>Recent Rentals</h5>
+            <h5><i class="fas fa-history me-2"></i>Recent Rentals</h5>
             @if (ViewBag.RecentRentals != null && ViewBag.RecentRentals.Count > 0)
             {
-<div class="table-responsive">
- <table class="table admin-table mb-0">
-             <thead>
-                   <tr>
-             <th>Rental ID</th>
-      <th>Customer</th>
-           <th>Car</th>
-         <th>Rental Date</th>
-     <th>Return Date</th>
-      <th>Status</th>
-        <th>Amount</th>
-  </tr>
-      </thead>
-          <tbody>
-     @foreach (var rental in ViewBag.RecentRentals)
-         {
-        <tr>
-     <td><strong>#@rental.RentalId</strong></td>
-             <td>@rental.Customer.FirstName @rental.Customer.LastName</td>
-  <td>@rental.Car.Brand @rental.Car.Model</td>
-    <td>@rental.RentalDate.ToString("MMM dd, yyyy")</td>
-         <td>@rental.ReturnDate.ToString("MMM dd, yyyy")</td>
-    <td>
-          @if (rental.Status == "Active")
-        {
-   <span class="badge bg-success">@rental.Status</span>
-              }
-    else if (rental.Status == "Completed")
-         {
-      <span class="badge bg-primary">@rental.Status</span>
-      }
-          else
-           {
-     <span class="badge bg-warning">@rental.Status</span>
-            }
- </td>
-                  <td><strong>@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong></td>
-      </tr>
-                }
-      </tbody>
-          </table>
-  </div>
+                <div class="table-responsive">
+                    <table class="table admin-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Rental ID</th>
+                                <th>Customer</th>
+                                <th>Car</th>
+                                <th>Rental Date</th>
+                                <th>Return Date</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rental in ViewBag.RecentRentals)
+                            {
+                                <tr>
+                                    <td><strong>#@rental.RentalId</strong></td>
+                                    <td>@rental.Customer.FirstName @rental.Customer.LastName</td>
+                                    <td>@rental.Car.Brand @rental.Car.Model</td>
+                                    <td>@rental.RentalDate.ToString("MMM dd, yyyy")</td>
+                                    <td>@rental.ReturnDate.ToString("MMM dd, yyyy")</td>
+                                    <td>
+                                        @if (rental.Status == "Active")
+                                        {
+                                            <span class="badge bg-success">@rental.Status</span>
+                                        }
+                                        else if (rental.Status == "Completed")
+                                        {
+                                            <span class="badge bg-primary">@rental.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning">@rental.Status</span>
+                                        }
+                                    </td>
+                                    <td><strong>@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             }
             else
-   {
-    <div class="text-center py-4">
-    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-   <p class="text-muted">No recent rentals</p>
- </div>
-          }
+            {
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No recent rentals</p>
+                </div>
+            }
         </div>
 
         <!-- Maintenance Overview -->
         <div class="dashboard-widget mt-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5><i class="fas fa-tools me-2"></i>Maintenance Overview</h5>
-        <a asp-controller="Maintenance" asp-action="Index" class="btn btn-sm btn-admin-primary">
-      <i class="fas fa-eye me-1"></i>View All
-       </a>
-  </div>
+                <h5><i class="fas fa-tools me-2"></i>Maintenance Overview</h5>
+                <a asp-controller="Maintenance" asp-action="Index" class="btn btn-sm btn-admin-primary">
+                    <i class="fas fa-eye me-1"></i>View All
+                </a>
+            </div>
             <div class="row">
-  <div class="col-md-4 text-center mb-2">
-       <div class="p-3 bg-danger bg-opacity-10 rounded">
-     <h3 class="text-danger mb-1">@(ViewBag.UrgentMaintenance ?? 0)</h3>
-      <small class="text-muted">Urgent</small>
-         </div>
-    </div>
-      <div class="col-md-4 text-center mb-2">
-               <div class="p-3 bg-warning bg-opacity-10 rounded">
-  <h3 class="text-warning mb-1">@(ViewBag.ScheduledMaintenance ?? 0)</h3>
-             <small class="text-muted">Scheduled</small>
-    </div>
-          </div>
-     <div class="col-md-4 text-center mb-2">
-         <div class="p-3 bg-success bg-opacity-10 rounded">
-         <h3 class="text-success mb-1">@(ViewBag.CompletedMaintenance ?? 0)</h3>
-       <small class="text-muted">Completed (This Month)</small>
-       </div>
-      </div>
-       </div>
+                <div class="col-md-4 text-center mb-2">
+                    <div class="p-3 bg-danger bg-opacity-10 rounded">
+                        <h3 class="text-white mb-1">@(ViewBag.UrgentMaintenance ?? 0)</h3>
+                        <small class="text-white">Urgent</small>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center mb-2">
+                    <div class="p-3 bg-warning bg-opacity-10 rounded">
+                        <h3 class="text-white mb-1">@(ViewBag.ScheduledMaintenance ?? 0)</h3>
+                        <small class="text-white">Scheduled</small>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center mb-2">
+                    <div class="p-3 bg-success bg-opacity-10 rounded">
+                        <h3 class="text-white mb-1">@(ViewBag.CompletedMaintenance ?? 0)</h3>
+                        <small class="text-white">Completed (This Month)</small>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Fleet Overview -->
     <div class="col-lg-4 mb-4">
-   <div class="dashboard-widget">
-      <h5><i class="fas fa-car-side me-2"></i>Fleet Overview</h5>
-  <div class="mb-3">
-        <div class="d-flex justify-content-between mb-2">
- <span>Available</span>
-       <strong class="text-success">@ViewBag.AvailableCars</strong>
-          </div>
-  <div class="progress" style="height: 8px;">
-         <div class="progress-bar bg-success" role="progressbar" 
-        style="width: @(ViewBag.TotalCars > 0 ? (ViewBag.AvailableCars * 100.0 / ViewBag.TotalCars) : 0)%"></div>
-</div>
-  </div>
+        <div class="dashboard-widget">
+            <h5><i class="fas fa-car-side me-2"></i>Fleet Overview</h5>
             <div class="mb-3">
                 <div class="d-flex justify-content-between mb-2">
-    <span>Rented</span>
-           <strong class="text-warning">@ViewBag.RentedCars</strong>
-      </div>
-            <div class="progress" style="height: 8px;">
-         <div class="progress-bar bg-warning" role="progressbar" 
-   style="width: @(ViewBag.TotalCars > 0 ? (ViewBag.RentedCars * 100.0 / ViewBag.TotalCars) : 0)%"></div>
-      </div>
-          </div>
-     <div>
-         <div class="d-flex justify-content-between mb-2">
-        <span>Total Vehicles</span>
-  <strong class="text-primary">@ViewBag.TotalCars</strong>
-  </div>
+                    <span>Available</span>
+                    <strong class="text-success">@ViewBag.AvailableCars</strong>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success" role="progressbar"
+                         style="width: @(ViewBag.TotalCars > 0 ? (ViewBag.AvailableCars * 100.0 / ViewBag.TotalCars) : 0)%"></div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Rented</span>
+                    <strong class="text-warning">@ViewBag.RentedCars</strong>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-warning" role="progressbar"
+                         style="width: @(ViewBag.TotalCars > 0 ? (ViewBag.RentedCars * 100.0 / ViewBag.TotalCars) : 0)%"></div>
+                </div>
+            </div>
+            <div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Total Vehicles</span>
+                    <strong class="text-primary">@ViewBag.TotalCars</strong>
+                </div>
             </div>
             <hr>
-<div class="text-center">
-          <a asp-controller="Cars" asp-action="Index" class="btn btn-sm btn-admin-primary w-100">
-       <i class="fas fa-eye me-1"></i>View All Cars
- </a>
+            <div class="text-center">
+                <a asp-controller="Cars" asp-action="Index" class="btn btn-sm btn-admin-primary w-100">
+                    <i class="fas fa-eye me-1"></i>View All Cars
+                </a>
+            </div>
         </div>
-      </div>
 
-      <div class="dashboard-widget mt-3">
-  <h5><i class="fas fa-users me-2"></i>Customer Stats</h5>
-       <div class="text-center py-3">
- <h2 class="text-primary mb-2">@ViewBag.TotalCustomers</h2>
-    <p class="text-muted mb-3">Total Customers</p>
+        <div class="dashboard-widget mt-3">
+            <h5><i class="fas fa-users me-2"></i>Customer Stats</h5>
+            <div class="text-center py-3">
+                <h2 class="text-primary mb-2">@ViewBag.TotalCustomers</h2>
+                <p class="text-muted mb-3">Total Customers</p>
                 <a asp-controller="Customers" asp-action="Index" class="btn btn-sm btn-admin-primary w-100">
-          <i class="fas fa-eye me-1"></i>View All Customers
-         </a>
-     </div>
+                    <i class="fas fa-eye me-1"></i>View All Customers
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+    /* Custom styling for period selector buttons */
+        .btn-outline-danger.active {
+          background-color: #dc3545 !important;
+      border-color: #dc3545 !important;
+     color: white !important;
+        }
+   
+        .btn-outline-danger:hover {
+       background-color: #dc3545;
+     border-color: #dc3545;
+            color: white;
+ }
+        
+        .btn-outline-danger {
+       color: #dc3545;
+ border-color: #dc3545;
+        }
+    </style>
     <script>
-   // Wait for DOM to be fully loaded
-     document.addEventListener('DOMContentLoaded', function() {
-            try {
-            // Data from server
-   var monthlyData = {
-labels: [@String.Join(",", ((IEnumerable<string>)ViewBag.MonthLabels).Select(x => $"'{x}'"))],
-            datasets: [{
-             label: 'Rentals',
-     data: [@String.Join(",", ((IEnumerable<int>)ViewBag.MonthlyRentalCounts).Select(x => x.ToString()))],
-           backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 2,
-    tension: 0.4,
-fill: true
-        },
-         {
-      label: 'Revenue (₱)',
-             data: [@String.Join(",", ((IEnumerable<decimal>)ViewBag.MonthlyRevenue).Select(x => x.ToString("F2"))),
-],
-    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-     borderColor: 'rgba(75, 192, 192, 1)',
-     borderWidth: 2,
-          tension: 0.4,
-          fill: true,
-            yAxisID: 'y1'
-       }]
-         };
+          // Global variable to store the chart instance
+      let trendsChart = null;
+     let currentPeriod = 'daily'; // Default to daily view
 
-                // Get canvas element
-   var canvas = document.getElementById('trendsChart');
-if (!canvas) {
-         console.error('Canvas element not found');
-       return;
-}
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+           // Initialize with daily view
+        updateTrendsChart('daily');
+           });
 
-          // Chart initialization
-          var ctx = canvas.getContext('2d');
-                var trendsChart = new Chart(ctx, {
-         type: 'line',
-         data: monthlyData,
-      options: {
-       responsive: true,
-             maintainAspectRatio: true,
-   interaction: {
-         mode: 'index',
-          intersect: false
- },
-    plugins: {
-                legend: {
-        display: true,
- position: 'top'
+        // Function to update trends chart based on selected period
+  function updateTrendsChart(period) {
+      // Update button states
+    document.querySelectorAll('[data-period]').forEach(btn => {
+       btn.classList.remove('active');
+          });
+       document.querySelector(`[data-period="${period}"]`).classList.add('active');
+
+           // Store current period
+       currentPeriod = period;
+
+          // Fetch data from server
+   fetch(`/Admin/GetTrendsData?period=${period}`)
+        .then(response => response.json())
+           .then(data => {
+      // Destroy existing chart if it exists
+   if (trendsChart) {
+   trendsChart.destroy();
+      }
+
+    // Prepare chart data
+         const chartData = {
+        labels: data.labels,
+             datasets: [{
+          label: 'Rentals',
+        data: data.rentalCounts,
+          backgroundColor: 'rgba(54, 162, 235, 0.6)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+ borderWidth: 2,
+   tension: 0.4,
+          fill: true
     },
-            tooltip: {
- callbacks: {
-  label: function(context) {
-           let label = context.dataset.label || '';
-   if (label) {
-         label += ': ';
-                 }
-         if (context.datasetIndex === 1) {
-  label += '₱' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-       } else {
-         label += context.parsed.y;
-          }
-    return label;
-                }
+            {
+                 label: 'Revenue (₱)',
+      data: data.revenue,
+      backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+      borderWidth: 2,
+    tension: 0.4,
+         fill: true,
+          yAxisID: 'y1'
+       }]
+             };
+
+               // Get canvas element
+       const canvas = document.getElementById('trendsChart');
+      if (!canvas) {
+         console.error('Canvas element not found');
+             return;
+              }
+
+            // Create new chart
+     const ctx = canvas.getContext('2d');
+                trendsChart = new Chart(ctx, {
+          type: 'line',
+ data: chartData,
+    options: {
+   responsive: true,
+           maintainAspectRatio: true,
+        interaction: {
+       mode: 'index',
+ intersect: false
+        },
+ plugins: {
+      legend: {
+         display: true,
+       position: 'top'
+           },
+       tooltip: {
+     callbacks: {
+            label: function(context) {
+          let label = context.dataset.label || '';
+  if (label) {
+ label += ': ';
+           }
+              if (context.datasetIndex === 1) {
+     label += '\u20B1' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          } else {
+              label += context.parsed.y;
+      }
+     return label;
+           }
+            }
+ }
+       },
+          scales: {
+      y: {
+    type: 'linear',
+display: true,
+          position: 'left',
+                beginAtZero: true,
+        title: {
+         display: true,
+    text: 'Number of Rentals'
+             }
+   },
+    y1: {
+        type: 'linear',
+          display: true,
+           position: 'right',
+  beginAtZero: true,
+ grid: {
+     drawOnChartArea: false
+            },
+   title: {
+   display: true,
+         text: 'Revenue (₱)'
+         },
+  ticks: {
+       callback: function(value) {
+          return '\u20B1' + value.toLocaleString();
          }
             }
-      },
-scales: {
-       y: {
-          type: 'linear',
-      display: true,
-        position: 'left',
-       beginAtZero: true,
-      title: {
-     display: true,
-     text: 'Number of Rentals'
-             }
- },
-         y1: {
-            type: 'linear',
-    display: true,
-       position: 'right',
-            beginAtZero: true,
- grid: {
-    drawOnChartArea: false
-      },
-      title: {
-  display: true,
-      text: 'Revenue (₱)'
-   },
-     ticks: {
-              callback: function(value) {
-  return '₱' + value.toLocaleString();
-   }
-   }
- }
-            }
-      }
-                });
-
-            console.log('Chart initialized successfully');
-            } catch (error) {
-          console.error('Error initializing chart:', error);
+              }
     }
-        });
+          }
+         });
+
+       console.log(`Chart updated successfully with ${period} data`);
+   })
+        .catch(error => {
+  console.error('Error fetching trends data:', error);
+                });
+             }
     </script>
 }
 

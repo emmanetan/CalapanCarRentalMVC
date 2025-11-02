@@ -74,10 +74,10 @@
 
   <hr />
 
-       <h5 class="mb-3"><i class="fas fa-id-card me-2"></i>License Information</h5>
+ <h5 class="mb-3"><i class="fas fa-id-card me-2"></i>License Information</h5>
 
    <div class="row mb-3">
-        <div class="col-md-6">
+     <div class="col-md-6">
       <label class="text-muted">License Number</label>
   <p><strong>@Model.LicenseNumber</strong></p>
      </div>
@@ -87,7 +87,7 @@
      @Model.LicenseExpiryDate.ToString("MMMM dd, yyyy")
       @if (Model.LicenseExpiryDate < DateTime.Now)
          {
-             <span class="badge bg-danger ms-2">Expired</span>
+     <span class="badge bg-danger ms-2">Expired</span>
    }
        else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
      {
@@ -97,10 +97,29 @@
  {
     <span class="badge bg-success ms-2">Valid</span>
    }
-      </p>
+  </p>
        </div>
    </div>
+
+<div class="mb-3">
+   <label class="text-muted">Driver License Document</label>
+    @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
+{
+        <div class="d-flex align-items-center gap-2">
+   <a href="@Model.DriverLicensePath" target="_blank" class="btn btn-sm btn-outline-primary">
+      <i class="fas fa-eye me-1"></i>View Document
+  </a>
+  <a href="@Model.DriverLicensePath" download class="btn btn-sm btn-outline-success">
+  <i class="fas fa-download me-1"></i>Download
+        </a>
  </div>
+     }
+ else
+       {
+          <p class="text-muted"><i class="fas fa-exclamation-circle me-1"></i>No driver license uploaded</p>
+  }
+      </div>
+  </div>
     </div>
 
     <div class="col-lg-4">

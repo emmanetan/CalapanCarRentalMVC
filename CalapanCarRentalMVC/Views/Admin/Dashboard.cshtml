@@ -215,7 +215,7 @@
      <span class="badge bg-warning">@rental.Status</span>
             }
  </td>
-                  <td><strong>?@rental.TotalAmount.ToString("N2")</strong></td>
+                  <td><strong>@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong></td>
       </tr>
                 }
       </tbody>
@@ -314,39 +314,115 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Example data for the chart
-        var monthlyData = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+   // Wait for DOM to be fully loaded
+     document.addEventListener('DOMContentLoaded', function() {
+            try {
+            // Data from server
+   var monthlyData = {
+labels: [@String.Join(",", ((IEnumerable<string>)ViewBag.MonthLabels).Select(x => $"'{x}'"))],
             datasets: [{
-                label: 'Rentals',
-                data: [@String.Join(",", ((IEnumerable<int>)ViewBag.MonthlyRentalCounts).Select(x => x.ToString()))],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            },
-            {
-                label: 'Revenue',
-                data: [@String.Join(",", ((IEnumerable<decimal>)ViewBag.MonthlyRevenue).Select(x => x.ToString("F2")))],
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        };
+             label: 'Rentals',
+     data: [@String.Join(",", ((IEnumerable<int>)ViewBag.MonthlyRentalCounts).Select(x => x.ToString()))],
+           backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 2,
+    tension: 0.4,
+fill: true
+        },
+         {
+      label: 'Revenue (₱)',
+             data: [@String.Join(",", ((IEnumerable<decimal>)ViewBag.MonthlyRevenue).Select(x => x.ToString("F2"))),
+],
+    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+     borderColor: 'rgba(75, 192, 192, 1)',
+     borderWidth: 2,
+          tension: 0.4,
+          fill: true,
+            yAxisID: 'y1'
+       }]
+         };
 
-        // Chart initialization
-        var ctx = document.getElementById('trendsChart').getContext('2d');
-        var trendsChart = new Chart(ctx, {
-            type: 'line',
-            data: monthlyData,
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                // Get canvas element
+   var canvas = document.getElementById('trendsChart');
+if (!canvas) {
+         console.error('Canvas element not found');
+       return;
+}
+
+          // Chart initialization
+          var ctx = canvas.getContext('2d');
+                var trendsChart = new Chart(ctx, {
+         type: 'line',
+         data: monthlyData,
+      options: {
+       responsive: true,
+             maintainAspectRatio: true,
+   interaction: {
+         mode: 'index',
+          intersect: false
+ },
+    plugins: {
+                legend: {
+        display: true,
+ position: 'top'
+    },
+            tooltip: {
+ callbacks: {
+  label: function(context) {
+           let label = context.dataset.label || '';
+   if (label) {
+         label += ': ';
+                 }
+         if (context.datasetIndex === 1) {
+  label += '₱' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+       } else {
+         label += context.parsed.y;
+          }
+    return label;
                 }
-            });
+         }
+            }
+      },
+scales: {
+       y: {
+          type: 'linear',
+      display: true,
+        position: 'left',
+       beginAtZero: true,
+      title: {
+     display: true,
+     text: 'Number of Rentals'
+             }
+ },
+         y1: {
+            type: 'linear',
+    display: true,
+       position: 'right',
+            beginAtZero: true,
+ grid: {
+    drawOnChartArea: false
+      },
+      title: {
+  display: true,
+      text: 'Revenue (₱)'
+   },
+     ticks: {
+              callback: function(value) {
+  return '₱' + value.toLocaleString();
+   }
+   }
+ }
+            }
+      }
+                });
+
+            console.log('Chart initialized successfully');
+            } catch (error) {
+          console.error('Error initializing chart:', error);
+    }
+        });
     </script>
 }
 

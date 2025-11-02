@@ -138,7 +138,7 @@ namespace CalapanCarRentalMVC.Controllers
         // POST: Customer/UpdateProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile([Bind("CustomerId,FirstName,LastName,Email,PhoneNumber,Address,LicenseNumber,LicenseExpiryDate,CreatedAt")] Models.Customer customer)
+        public async Task<IActionResult> UpdateProfile([Bind("CustomerId,FirstName,LastName,Email,PhoneNumber,Address,LicenseNumber,LicenseExpiryDate,CreatedAt")] Models.Customer customer, IFormFile? driverLicenseFile)
    {
    var userRole = HttpContext.Session.GetString("UserRole");
    var userId = HttpContext.Session.GetString("UserId");
@@ -152,21 +152,69 @@ namespace CalapanCarRentalMVC.Controllers
      if (user == null)
    {
         return RedirectToAction("Login", "Account");
-          }
+    }
 
   var existingCustomer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.Email == user.Email);
+        .FirstOrDefaultAsync(c => c.Email == user.Email);
 
-          if (existingCustomer == null || existingCustomer.CustomerId != customer.CustomerId)
+    if (existingCustomer == null || existingCustomer.CustomerId != customer.CustomerId)
    {
      TempData["Error"] = "Unauthorized profile update attempt.";
-                return RedirectToAction("Profile");
+          return RedirectToAction("Profile");
       }
 
-            if (ModelState.IsValid)
+         if (ModelState.IsValid)
      {
       try
      {
+          // Handle driver license file upload
+  if (driverLicenseFile != null && driverLicenseFile.Length > 0)
+       {
+                 // Validate file size (max 5MB)
+              if (driverLicenseFile.Length > 5 * 1024 * 1024)
+    {
+         TempData["Error"] = "Driver license file size must not exceed 5MB.";
+        return RedirectToAction("Profile");
+            }
+
+ // Validate file extension
+             var allowedExtensions = new[] { ".pdf", ".png", ".jpg", ".jpeg" };
+             var fileExtension = Path.GetExtension(driverLicenseFile.FileName).ToLowerInvariant();
+         
+       if (!allowedExtensions.Contains(fileExtension))
+               {
+      TempData["Error"] = "Only PDF, PNG, and JPG files are allowed for driver license.";
+             return RedirectToAction("Profile");
+        }
+
+  // Create uploads folder if it doesn't exist
+           string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "licenses");
+          Directory.CreateDirectory(uploadsFolder);
+
+        // Generate unique filename
+   string uniqueFileName = $"license_{customer.CustomerId}_{Guid.NewGuid()}{fileExtension}";
+ string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+       // Delete old file if exists
+           if (!string.IsNullOrEmpty(existingCustomer.DriverLicensePath))
+    {
+ var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", existingCustomer.DriverLicensePath.TrimStart('/'));
+      if (System.IO.File.Exists(oldFilePath))
+           {
+  System.IO.File.Delete(oldFilePath);
+   }
+        }
+
+        // Save the file
+     using (var fileStream = new FileStream(filePath, FileMode.Create))
+       {
+           await driverLicenseFile.CopyToAsync(fileStream);
+      }
+
+   // Update the path
+     existingCustomer.DriverLicensePath = $"/uploads/licenses/{uniqueFileName}";
+             }
+
      // Update only the allowed fields
   existingCustomer.FirstName = customer.FirstName;
      existingCustomer.LastName = customer.LastName;
@@ -174,35 +222,35 @@ namespace CalapanCarRentalMVC.Controllers
    existingCustomer.PhoneNumber = customer.PhoneNumber;
         existingCustomer.Address = customer.Address;
  existingCustomer.LicenseNumber = customer.LicenseNumber;
-      existingCustomer.LicenseExpiryDate = customer.LicenseExpiryDate;
+    existingCustomer.LicenseExpiryDate = customer.LicenseExpiryDate;
 
           _context.Update(existingCustomer);
    await _context.SaveChangesAsync();
 
-        // Update user email if changed
-           if (user.Email != customer.Email)
+  // Update user email if changed
+  if (user.Email != customer.Email)
   {
-              user.Email = customer.Email;
+      user.Email = customer.Email;
        _context.Update(user);
           await _context.SaveChangesAsync();
   }
 
        TempData["Success"] = "Profile updated successfully!";
-                }
+      }
      catch (DbUpdateConcurrencyException)
     {
-                 TempData["Error"] = "An error occurred while updating your profile. Please try again.";
+ TempData["Error"] = "An error occurred while updating your profile. Please try again.";
           }
-   catch (Exception)
+   catch (Exception ex)
     {
-          TempData["Error"] = "An unexpected error occurred. Please try again.";
+          TempData["Error"] = $"An unexpected error occurred: {ex.Message}";
        }
 
       return RedirectToAction("Profile");
   }
 
-            TempData["Error"] = "Please correct the errors and try again.";
+  TempData["Error"] = "Please correct the errors and try again.";
    return RedirectToAction("Profile");
-        }
+   }
     }
 }

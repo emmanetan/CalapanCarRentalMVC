@@ -47,7 +47,7 @@ namespace CalapanCarRentalMVC.Controllers
         }
 
         // GET: Cars/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string? returnUrl)
         {
             SetLayout();
             if (id == null)
@@ -62,6 +62,7 @@ namespace CalapanCarRentalMVC.Controllers
                 return NotFound();
             }
 
+            ViewData["ReturnUrl"] = returnUrl;
             return View(car);
         }
 

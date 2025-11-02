@@ -131,6 +131,33 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-12">
+                    <div class="profile-info-item">
+                        <label class="text-muted mb-1"><i class="fas fa-file-upload me-2"></i>Driver License Document</label>
+                        @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
+                        {
+                        <div class="d-flex align-items-center gap-2">
+                            <p class="mb-0">
+                                <a href="@Model.DriverLicensePath" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>View Document
+                                </a>
+                                <a href="@Model.DriverLicensePath" download class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-download me-1"></i>Download
+                                </a>
+                            </p>
+                        </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted fw-bold">
+                                <i class="fas fa-exclamation-circle me-1"></i>No driver license uploaded
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
+
             <hr class="my-3" />
 
             <div class="profile-info-item">
@@ -206,7 +233,7 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form asp-controller="Customer" asp-action="UpdateProfile" method="post">
+            <form asp-controller="Customer" asp-action="UpdateProfile" method="post" enctype="multipart/form-data">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editProfileModalLabel">
                         <i class="fas fa-edit me-2"></i>Edit Profile
@@ -268,21 +295,45 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                         </div>
                     </div>
 
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Note:</strong> Ensure all information is accurate, especially your license details. You must have a valid license to book cars.
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+        <i class="fas fa-file-upload me-2"></i>Driver License Document
+               <small class="text-muted">(Optional - PDF, PNG, JPG - Max 5MB)</small>
+     </label>
+   @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
+  {
+   <div class="alert alert-info mb-2">
+       <i class="fas fa-info-circle me-2"></i>
+               Current document: <a href="@Model.DriverLicensePath" target="_blank" class="alert-link">View existing license</a>
+          </div>
+          }
+    <input type="file" name="driverLicenseFile" id="driverLicenseFile" class="form-control" accept=".pdf,.png,.jpg,.jpeg" />
+    <small class="text-muted d-block mt-1">
+         <i class="fas fa-info-circle me-1"></i>Accepted formats: PDF, PNG, JPG (Maximum size: 5MB)
+    @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
+   {
+      <span class="text-warning">
+      <br /><i class="fas fa-exclamation-triangle me-1"></i>Uploading a new file will replace the existing document.
+       </span>
+    }
+        </small>
+       </div>
+
+   <div class="alert alert-info">
+      <i class="fas fa-info-circle me-2"></i>
+   <strong>Note:</strong> Ensure all information is accurate, especially your license details. You must have a valid license to book cars.
+ </div>
+       </div>
+       <div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+             <i class="fas fa-times me-1"></i>Cancel
+         </button>
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-save me-1"></i>Save Changes
+      </button>
+    </div>
+      </form>
+ </div>
     </div>
 </div>
 

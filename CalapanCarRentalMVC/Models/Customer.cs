@@ -35,6 +35,10 @@ namespace CalapanCarRentalMVC.Models
 
         public DateTime LicenseExpiryDate { get; set; }
 
+        [StringLength(500)]
+        [Display(Name = "Driver License Document")]
+        public string? DriverLicensePath { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation property

@@ -94,7 +94,7 @@ namespace CalapanCarRentalMVC.Controllers
         // POST: Customers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CustomerId,FirstName,LastName,Email,PhoneNumber,Address,LicenseNumber,LicenseExpiryDate,CreatedAt")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("CustomerId,FirstName,LastName,Email,PhoneNumber,Address,LicenseNumber,LicenseExpiryDate,CreatedAt")] Customer customer, IFormFile? driverLicenseFile)
         {
             if (id != customer.CustomerId)
             {
@@ -105,8 +105,67 @@ namespace CalapanCarRentalMVC.Controllers
             {
                 try
                 {
+                    // Get existing customer to preserve DriverLicensePath
+                    var existingCustomer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(c => c.CustomerId == id);
+
+                    // Handle driver license file upload
+                    if (driverLicenseFile != null && driverLicenseFile.Length > 0)
+                    {
+                        // Validate file size (max 5MB)
+                        if (driverLicenseFile.Length > 5 * 1024 * 1024)
+                        {
+                            TempData["Error"] = "Driver license file size must not exceed 5MB.";
+                            return RedirectToAction("Edit", new { id = customer.CustomerId });
+                        }
+
+                        // Validate file extension
+                        var allowedExtensions = new[] { ".pdf", ".png", ".jpg", ".jpeg" };
+                        var fileExtension = Path.GetExtension(driverLicenseFile.FileName).ToLowerInvariant();
+
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            TempData["Error"] = "Only PDF, PNG, and JPG files are allowed for driver license.";
+                            return RedirectToAction("Edit", new { id = customer.CustomerId });
+                        }
+
+                        // Create uploads folder if it doesn't exist
+                        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "licenses");
+                        Directory.CreateDirectory(uploadsFolder);
+
+                        // Generate unique filename
+                        string uniqueFileName = $"license_{customer.CustomerId}_{Guid.NewGuid()}{fileExtension}";
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        // Delete old file if exists
+                        if (existingCustomer != null && !string.IsNullOrEmpty(existingCustomer.DriverLicensePath))
+                        {
+                            var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", existingCustomer.DriverLicensePath.TrimStart('/'));
+                            if (System.IO.File.Exists(oldFilePath))
+                            {
+                                System.IO.File.Delete(oldFilePath);
+                            }
+                        }
+
+                        // Save the file
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await driverLicenseFile.CopyToAsync(fileStream);
+                        }
+
+                        // Update the path
+                        customer.DriverLicensePath = $"/uploads/licenses/{uniqueFileName}";
+                    }
+                    else if (existingCustomer != null)
+                    {
+                        // Preserve existing path if no new file uploaded
+                        customer.DriverLicensePath = existingCustomer.DriverLicensePath;
+                    }
+
                     _context.Update(customer);
                     await _context.SaveChangesAsync();
+
+                    TempData["Success"] = "Customer updated successfully!";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -119,7 +178,10 @@ namespace CalapanCarRentalMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["Error"] = $"An error occurred: {ex.Message}";
+                }
             }
             return View(customer);
         }

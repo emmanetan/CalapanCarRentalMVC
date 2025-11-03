@@ -39,6 +39,10 @@ namespace CalapanCarRentalMVC.Models
         [Display(Name = "Driver License Document")]
         public string? DriverLicensePath { get; set; }
 
+        [StringLength(500)]
+        [Display(Name = "Profile Picture")]
+        public string? ProfilePicturePath { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation property

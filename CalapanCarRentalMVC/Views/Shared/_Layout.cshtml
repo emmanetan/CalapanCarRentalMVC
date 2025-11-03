@@ -47,21 +47,13 @@
 
             <!-- Left Sidebar - Fixed on Scroll -->
             <aside class="admin-sidebar" id="adminSidebar">
-                <!-- User Profile Section -->
-                <div class="sidebar-user-profile">
-                    <div class="user-avatar">
-                        <i class="fas fa-user@(Context.Session.GetString("UserRole") == "Admin" ? "-shield" : "-circle") fa-3x"></i>
-                    </div>
-                    <div class="user-info">
-                        <h6 class="user-name">@Context.Session.GetString("Username")</h6>
-                        <p class="user-role">@Context.Session.GetString("UserRole")</p>
-                    </div>
-                </div>
+   <!-- User Profile Section -->
+      @await Component.InvokeAsync("UserProfile")
 
-                <div class="sidebar-divider"></div>
+        <div class="sidebar-divider"></div>
 
-                <!-- Sidebar Navigation Menu -->
-                <ul class="sidebar-menu">
+      <!-- Sidebar Navigation Menu -->
+     <ul class="sidebar-menu">
                     @if (Context.Session.GetString("UserRole") == "Admin")
                     {
                         <!-- Admin Specific Menu -->

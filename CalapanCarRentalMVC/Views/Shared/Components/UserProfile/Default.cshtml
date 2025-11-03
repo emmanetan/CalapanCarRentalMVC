@@ -1,0 +1,23 @@
+@model dynamic
+@{
+    var username = Model.Username;
+    var role = Model.Role;
+    var profilePicture = Model.ProfilePicture as string;
+}
+
+<div class="sidebar-user-profile">
+    <div class="user-avatar">
+        @if (!string.IsNullOrEmpty(profilePicture))
+        {
+  <img src="@profilePicture" alt="Profile Picture" class="profile-avatar" />
+        }
+        else
+        {
+            <i class="fas fa-user@(role == "Admin" ? "-shield" : "-circle") fa-3x"></i>
+        }
+    </div>
+    <div class="user-info">
+        <h6 class="user-name">@username</h6>
+        <p class="user-role">@role</p>
+  </div>
+</div>

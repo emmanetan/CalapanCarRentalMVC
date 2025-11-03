@@ -56,6 +56,12 @@ namespace CalapanCarRentalMVC.Models
         [Display(Name = "Payment Receipt")]
         public string? PaymentReceiptPath { get; set; }
 
+        [Required]
+        [Display(Name = "GPS Tracking Consent")]
+        public bool GpsTrackingConsent { get; set; } = false;
+
+        public DateTime? GpsConsentDate { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties

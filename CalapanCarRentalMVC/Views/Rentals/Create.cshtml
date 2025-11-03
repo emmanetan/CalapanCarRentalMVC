@@ -130,6 +130,31 @@
                             <span asp-validation-for="Notes" class="text-danger"></span>
                         </div>
 
+                        <!-- GPS Tracking Consent Checkbox -->
+                        <div class="mb-4">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary bg-opacity-10">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-map-marked-alt me-2"></i>Vehicle Tracking Consent
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" asp-for="GpsTrackingConsent" id="gpsConsent" required>
+                                        <label class="form-check-label" for="gpsConsent">
+                                            <strong>I agree that the rental company may track the vehicle's location for security and safety purposes.</strong>
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Vehicle tracking helps us ensure your safety, recover stolen vehicles, and provide roadside assistance when needed. 
+                                        Your location data is used solely for security purposes and will be handled in accordance with our privacy policy.
+                                    </small>
+                                    <span asp-validation-for="GpsTrackingConsent" class="text-danger d-block mt-2"></span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="alert alert-warning">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             <strong>Important:</strong> Please ensure you have a valid driver's license and the government ID you upload will be surrendered upon vehicle pick-up.

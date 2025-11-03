@@ -142,6 +142,26 @@
        </div>
       </div>
 
+   <!-- GPS Tracking Consent -->
+    <div class="mb-3">
+        <label class="text-muted">GPS Tracking Consent</label>
+           <p>
+        @if (Model.GpsTrackingConsent)
+       {
+   <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Consented</span>
+     @if (Model.GpsConsentDate.HasValue)
+            {
+        <br />
+     <small class="text-muted">Agreed on: @Model.GpsConsentDate.Value.ToString("MMM dd, yyyy hh:mm tt")</small>
+      }
+      }
+  else
+     {
+     <span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Not Consented</span>
+     }
+     </p>
+     </div>
+
         <hr />
 
             <h6 class="mb-3"><i class="fas fa-dollar-sign me-2 text-primary"></i>Payment Details</h6>

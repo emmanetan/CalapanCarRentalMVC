@@ -13,18 +13,12 @@
  {
      <h1><i class="fas fa-file-contract text-primary me-2"></i>Manage Rentals</h1>
 }
-      @if (Context.Session.GetString("UserRole") == "Admin" && ViewBag.CustomerId == null)
-     {
-    <a asp-action="Create" class="btn btn-primary">
-     <i class="fas fa-plus me-2"></i>New Rental
-    </a>
-        }
-        else if (ViewBag.CustomerId != null)
+        @if (ViewBag.CustomerId != null)
  {
       <a asp-controller="Customers" asp-action="Details" asp-route-id="@ViewBag.CustomerId" class="btn btn-secondary">
 <i class="fas fa-arrow-left me-2"></i>Back to Customer
     </a>
-       }
+  }
     </div>
 
     @if (TempData["Success"] != null)
@@ -159,20 +153,32 @@
            <div class="col-md-3">
        <h6 class="text-muted mb-2 border-bottom pb-2">
       <i class="fas fa-info-circle me-2"></i>Details
-             </h6>
-          <div class="d-flex justify-content-between align-items-center mb-2">
+     </h6>
+  <div class="d-flex justify-content-between align-items-center mb-2">
  <span class="text-muted">Total:</span>
         <h5 class="text-primary mb-0">@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</h5>
           </div>
        <small class="text-muted d-block mb-1">
-                <i class="fas fa-credit-card me-1"></i>@rental.PaymentMethod
+       <i class="fas fa-credit-card me-1"></i>@rental.PaymentMethod
      </small>
     @if (!string.IsNullOrEmpty(rental.Destination))
         {
-     <small class="text-muted d-block">
-      <i class="fas fa-map-marker-alt me-1"></i>@rental.Destination
+     <small class="text-muted d-block mb-1">
+  <i class="fas fa-map-marker-alt me-1"></i>@rental.Destination
       </small>
     }
+     @if (rental.GpsTrackingConsent)
+    {
+       <small class="text-success d-block">
+  <i class="fas fa-check-circle me-1"></i>GPS Tracking Consented
+ </small>
+    }
+    else
+         {
+     <small class="text-muted d-block">
+        <i class="fas fa-times-circle me-1"></i>No GPS Consent
+  </small>
+   }
       </div>
                </div>
              </div>

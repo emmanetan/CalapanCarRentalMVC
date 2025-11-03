@@ -73,27 +73,27 @@
     <!-- Report Trends -->
     <div class="col-lg-7 mb-3">
         <div class="dashboard-widget">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Report Trends</h5>
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+   <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Report Trends</h5>
 
-                <!-- Period Selector Buttons -->
-                <div class="btn-group btn-group-sm" role="group" aria-label="Period selector">
-                    <button type="button" class="btn btn-outline-danger active" data-period="daily" onclick="updateTrendsChart('daily')">
-                        <i class="fas fa-calendar-day me-1"></i>Daily
-                    </button>
-                    <button type="button" class="btn btn-outline-danger" data-period="weekly" onclick="updateTrendsChart('weekly')">
-                        <i class="fas fa-calendar-week me-1"></i>Weekly
-                    </button>
-                    <button type="button" class="btn btn-outline-danger" data-period="monthly" onclick="updateTrendsChart('monthly')">
-                        <i class="fas fa-calendar-alt me-1"></i>Monthly
-                    </button>
-                </div>
+              <!-- Period Selector Buttons -->
+     <div class="btn-group btn-group-sm period-selector-buttons" role="group" aria-label="Period selector">
+          <button type="button" class="btn btn-outline-danger active" data-period="daily" onclick="updateTrendsChart('daily')">
+    <i class="fas fa-calendar-day d-none d-sm-inline me-1"></i><span class="btn-text">Daily</span>
+             </button>
+         <button type="button" class="btn btn-outline-danger" data-period="weekly" onclick="updateTrendsChart('weekly')">
+      <i class="fas fa-calendar-week d-none d-sm-inline me-1"></i><span class="btn-text">Weekly</span>
+  </button>
+        <button type="button" class="btn btn-outline-danger" data-period="monthly" onclick="updateTrendsChart('monthly')">
+   <i class="fas fa-calendar-alt d-none d-sm-inline me-1"></i><span class="btn-text">Monthly</span>
+               </button>
+          </div>
             </div>
 
-            <!-- Chart Canvas -->
-            <div class="mb-3">
-                <canvas id="trendsChart" height="100"></canvas>
-            </div>
+ <!-- Chart Canvas -->
+         <div class="mb-3">
+         <canvas id="trendsChart" height="100"></canvas>
+        </div>
 
             <hr class="my-2">
 
@@ -332,30 +332,72 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
     /* Custom styling for period selector buttons */
-        .btn-outline-danger.active {
-          background-color: #dc3545 !important;
+  .btn-outline-danger.active {
+     background-color: #dc3545 !important;
       border-color: #dc3545 !important;
      color: white !important;
-        }
+  }
    
-        .btn-outline-danger:hover {
-       background-color: #dc3545;
+    .btn-outline-danger:hover {
+   background-color: #dc3545;
      border-color: #dc3545;
-            color: white;
+ color: white;
  }
-        
+      
         .btn-outline-danger {
        color: #dc3545;
  border-color: #dc3545;
         }
+
+        /* Mobile responsive styles for period selector buttons */
+        @@media (max-width: 576px) {
+ .period-selector-buttons {
+        width: 100%;
+   }
+
+        .period-selector-buttons .btn {
+        font-size: 0.75rem;
+          padding: 0.35rem 0.5rem;
+    flex: 1;
+   }
+    
+     .period-selector-buttons .btn-text {
+ font-size: 0.7rem;
+  }
+         
+     .period-selector-buttons .btn i {
+     font-size: 0.7rem;
+   }
+ }
+
+@@media (min-width: 577px) and (max-width: 768px) {
+ .period-selector-buttons .btn {
+  font-size: 0.8rem;
+     padding: 0.4rem 0.65rem;
+       }
+
+     .period-selector-buttons .btn-text {
+     font-size: 0.75rem;
+      }
+        }
+
+        @@media (max-width: 768px) {
+        .dashboard-widget .d-flex.flex-wrap {
+    gap: 0.5rem !important;
+  }
+          
+ .dashboard-widget h5 {
+ font-size: 0.95rem;
+          }
+  }
     </style>
     <script>
-          // Global variable to store the chart instance
-      let trendsChart = null;
+   // Global variable to store the chart instance
+ let trendsChart = null;
      let currentPeriod = 'daily'; // Default to daily view
 
-        // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
+      // Wait for DOM to be fully loaded
+     document.addEventListener('DOMContentLoaded', function() {
            // Initialize with daily view
         updateTrendsChart('daily');
            });
@@ -368,14 +410,14 @@
           });
        document.querySelector(`[data-period="${period}"]`).classList.add('active');
 
-           // Store current period
+   // Store current period
        currentPeriod = period;
 
           // Fetch data from server
    fetch(`/Admin/GetTrendsData?period=${period}`)
         .then(response => response.json())
-           .then(data => {
-      // Destroy existing chart if it exists
+      .then(data => {
+   // Destroy existing chart if it exists
    if (trendsChart) {
    trendsChart.destroy();
       }
@@ -383,44 +425,44 @@
     // Prepare chart data
          const chartData = {
         labels: data.labels,
-             datasets: [{
-          label: 'Rentals',
-        data: data.rentalCounts,
+ datasets: [{
+  label: 'Rentals',
+     data: data.rentalCounts,
           backgroundColor: 'rgba(54, 162, 235, 0.6)',
           borderColor: 'rgba(54, 162, 235, 1)',
  borderWidth: 2,
    tension: 0.4,
           fill: true
     },
-            {
+    {
                  label: 'Revenue (₱)',
       data: data.revenue,
       backgroundColor: 'rgba(75, 192, 192, 0.6)',
-          borderColor: 'rgba(75, 192, 192, 1)',
+  borderColor: 'rgba(75, 192, 192, 1)',
       borderWidth: 2,
     tension: 0.4,
          fill: true,
-          yAxisID: 'y1'
+      yAxisID: 'y1'
        }]
-             };
+        };
 
-               // Get canvas element
+      // Get canvas element
        const canvas = document.getElementById('trendsChart');
       if (!canvas) {
-         console.error('Canvas element not found');
-             return;
-              }
+     console.error('Canvas element not found');
+        return;
+     }
 
-            // Create new chart
+     // Create new chart
      const ctx = canvas.getContext('2d');
-                trendsChart = new Chart(ctx, {
+      trendsChart = new Chart(ctx, {
           type: 'line',
  data: chartData,
     options: {
    responsive: true,
-           maintainAspectRatio: true,
+     maintainAspectRatio: true,
         interaction: {
-       mode: 'index',
+ mode: 'index',
  intersect: false
         },
  plugins: {
@@ -430,7 +472,7 @@
            },
        tooltip: {
      callbacks: {
-            label: function(context) {
+    label: function(context) {
           let label = context.dataset.label || '';
   if (label) {
  label += ': ';
@@ -438,7 +480,7 @@
               if (context.datasetIndex === 1) {
      label += '\u20B1' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
           } else {
-              label += context.parsed.y;
+      label += context.parsed.y;
       }
      return label;
            }
@@ -454,36 +496,36 @@ display: true,
         title: {
          display: true,
     text: 'Number of Rentals'
-             }
+           }
    },
     y1: {
         type: 'linear',
           display: true,
-           position: 'right',
+    position: 'right',
   beginAtZero: true,
  grid: {
-     drawOnChartArea: false
+   drawOnChartArea: false
             },
    title: {
    display: true,
-         text: 'Revenue (₱)'
+   text: 'Revenue (₱)'
          },
   ticks: {
        callback: function(value) {
-          return '\u20B1' + value.toLocaleString();
-         }
-            }
-              }
+  return '\u20B1' + value.toLocaleString();
+   }
+       }
+     }
     }
           }
-         });
+    });
 
        console.log(`Chart updated successfully with ${period} data`);
    })
         .catch(error => {
   console.error('Error fetching trends data:', error);
-                });
-             }
+    });
+  }
     </script>
 }
 

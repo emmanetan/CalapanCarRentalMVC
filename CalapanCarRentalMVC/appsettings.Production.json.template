@@ -11,19 +11,19 @@
     "SmtpServer": "smtp.gmail.com",
     "Port": 587,
     "Username": "carrentalcalapan@gmail.com"
-    // Password should be set via Environment Variables or Azure Key Vault
-    // Environment Variable: EmailSettings__Password
+    // password should be set via Environment Variables or Azure Key Vault
+    // environment Variable: EmailSettings__Password
   },
   "Authentication": {
     "Google": {
       "ClientId": "363448925251-5otd3q13al7csksm62o7ca7hapsv3vlb.apps.googleusercontent.com"
-      // ClientSecret should be set via Environment Variables or Azure Key Vault
-      // Environment Variable: Authentication__Google__ClientSecret
+      // clientSecret should be set via Environment Variables or Azure Key Vault
+      // environment Variable: Authentication__Google__ClientSecret
     }
   },
   "ConnectionStrings": {
-    // Set via Environment Variables or Azure Key Vault
-    // Environment Variable: ConnectionStrings__DefaultConnection
+    // set via Environment Variables or Azure Key Vault
+    // environment Variable: ConnectionStrings__DefaultConnection
     "DefaultConnection": ""
   }
 }

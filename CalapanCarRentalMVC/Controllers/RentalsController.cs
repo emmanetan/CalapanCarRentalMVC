@@ -21,9 +21,9 @@ namespace CalapanCarRentalMVC.Controllers
         public async Task<IActionResult> Index(string filterStatus, int? customerId)
         {
             var rentals = _context.Rentals
-               .Include(r => r.Car)
-                         .Include(r => r.Customer)
-              .AsQueryable();
+                .Include(r => r.Car)
+                .Include(r => r.Customer)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(filterStatus))
             {
@@ -45,7 +45,6 @@ namespace CalapanCarRentalMVC.Controllers
 
             return View(await rentals.OrderByDescending(r => r.CreatedAt).ToListAsync());
         }
-
         // GET: Rentals/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -57,7 +56,7 @@ namespace CalapanCarRentalMVC.Controllers
             var rental = await _context.Rentals
                 .Include(r => r.Car)
                 .Include(r => r.Customer)
-     .FirstOrDefaultAsync(m => m.RentalId == id);
+                .FirstOrDefaultAsync(m => m.RentalId == id);
 
             if (rental == null)
             {
@@ -162,188 +161,188 @@ namespace CalapanCarRentalMVC.Controllers
 
             // Validate GPS tracking consent
             if (!rental.GpsTrackingConsent)
-  {
-   ModelState.AddModelError("GpsTrackingConsent", "You must agree to GPS tracking for security and safety purposes to proceed with the rental.");
-    }
+            {
+                ModelState.AddModelError("GpsTrackingConsent", "You must agree to GPS tracking for security and safety purposes to proceed with the rental.");
+            }
 
             // Validate government ID file
-    if (governmentIdFile == null || governmentIdFile.Length == 0)
-   {
-      ModelState.AddModelError("", "Government ID is required");
-  }
+            if (governmentIdFile == null || governmentIdFile.Length == 0)
+            {
+                ModelState.AddModelError("", "Government ID is required");
+            }
             else if (governmentIdFile.Length > 5 * 1024 * 1024) // 5MB limit
- {
-         ModelState.AddModelError("", "Government ID file size must not exceed 5MB");
-        }
+            {
+                ModelState.AddModelError("", "Government ID file size must not exceed 5MB");
+            }
 
-   // Validate payment receipt for Gcash and Bank Transfer
-     if (rental.PaymentMethod == "Gcash" || rental.PaymentMethod == "Bank Transfer")
-          {
-  if (paymentReceiptFile == null || paymentReceiptFile.Length == 0)
-   {
-   ModelState.AddModelError("", "Payment receipt is required for " + rental.PaymentMethod);
-   }
+            // Validate payment receipt for Gcash and Bank Transfer
+            if (rental.PaymentMethod == "Gcash" || rental.PaymentMethod == "Bank Transfer")
+            {
+                if (paymentReceiptFile == null || paymentReceiptFile.Length == 0)
+                {
+                    ModelState.AddModelError("", "Payment receipt is required for " + rental.PaymentMethod);
+                }
                 else if (paymentReceiptFile.Length > 5 * 1024 * 1024)
-{
-               ModelState.AddModelError("", "Payment receipt file size must not exceed 5MB");
-    }
-    }
+                {
+                    ModelState.AddModelError("", "Payment receipt file size must not exceed 5MB");
+                }
+            }
 
-      // Remove TotalAmount from ModelState since we calculate it
+            // Remove TotalAmount from ModelState since we calculate it
             ModelState.Remove("TotalAmount");
-       // Remove Status from ModelState since we set it
-          ModelState.Remove("Status");
-       // Remove GovernmentIdPath from ModelState since we set it from the file
-       ModelState.Remove("GovernmentIdPath");
+            // Remove Status from ModelState since we set it
+            ModelState.Remove("Status");
+            // Remove GovernmentIdPath from ModelState since we set it from the file
+            ModelState.Remove("GovernmentIdPath");
             // Remove Car and Customer navigation properties from ModelState
-         ModelState.Remove("Car");
+            ModelState.Remove("Car");
             ModelState.Remove("Customer");
- // Remove GpsConsentDate from ModelState since we set it
+            // Remove GpsConsentDate from ModelState since we set it
             ModelState.Remove("GpsConsentDate");
 
-if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-          // Validate rental dates
-   if (rental.RentalDate < DateTime.Now)
-        {
-              ModelState.AddModelError("RentalDate", "Pick-up date cannot be in the past");
- ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
-  if (rental.CarId > 0)
-         {
-            var selectedCar1 = await _context.Cars.FindAsync(rental.CarId);
-        ViewBag.SelectedCar = selectedCar1;
- ViewBag.SelectedCarId = rental.CarId;
-    }
-           ViewBag.CustomerId = rental.CustomerId;
-   return View(rental);
-     }
+                // Validate rental dates
+                if (rental.RentalDate < DateTime.Now)
+                {
+                    ModelState.AddModelError("RentalDate", "Pick-up date cannot be in the past");
+                    ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
+                    if (rental.CarId > 0)
+                    {
+                        var selectedCar1 = await _context.Cars.FindAsync(rental.CarId);
+                        ViewBag.SelectedCar = selectedCar1;
+                        ViewBag.SelectedCarId = rental.CarId;
+                    }
+                    ViewBag.CustomerId = rental.CustomerId;
+                    return View(rental);
+                }
 
-    if (rental.ReturnDate <= rental.RentalDate)
-     {
-             ModelState.AddModelError("ReturnDate", "Return date must be after pick-up date");
-   ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
-   if (rental.CarId > 0)
-         {
-           var selectedCar2 = await _context.Cars.FindAsync(rental.CarId);
-             ViewBag.SelectedCar = selectedCar2;
-      ViewBag.SelectedCarId = rental.CarId;
-         }
- ViewBag.CustomerId = rental.CustomerId;
-         return View(rental);
-             }
+                if (rental.ReturnDate <= rental.RentalDate)
+                {
+                    ModelState.AddModelError("ReturnDate", "Return date must be after pick-up date");
+                    ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
+                    if (rental.CarId > 0)
+                    {
+                        var selectedCar2 = await _context.Cars.FindAsync(rental.CarId);
+                        ViewBag.SelectedCar = selectedCar2;
+                        ViewBag.SelectedCarId = rental.CarId;
+                    }
+                    ViewBag.CustomerId = rental.CustomerId;
+                    return View(rental);
+                }
 
-      // Upload Government ID
-           if (governmentIdFile != null && governmentIdFile.Length > 0)
-   {
-        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "government-ids");
-  Directory.CreateDirectory(uploadsFolder);
+                // Upload Government ID
+                if (governmentIdFile != null && governmentIdFile.Length > 0)
+                {
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "government-ids");
+                    Directory.CreateDirectory(uploadsFolder);
 
-       string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(governmentIdFile.FileName);
-           string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(governmentIdFile.FileName);
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-               await governmentIdFile.CopyToAsync(fileStream);
-         }
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await governmentIdFile.CopyToAsync(fileStream);
+                    }
 
-             rental.GovernmentIdPath = "/uploads/government-ids/" + uniqueFileName;
-           }
+                    rental.GovernmentIdPath = "/uploads/government-ids/" + uniqueFileName;
+                }
 
-     // Upload Payment Receipt for Gcash and Bank Transfer
+                // Upload Payment Receipt for Gcash and Bank Transfer
                 if (paymentReceiptFile != null && paymentReceiptFile.Length > 0)
                 {
-             string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "payment-receipts");
-       Directory.CreateDirectory(uploadsFolder);
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "payment-receipts");
+                    Directory.CreateDirectory(uploadsFolder);
 
-    string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(paymentReceiptFile.FileName);
-     string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(paymentReceiptFile.FileName);
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        {
-       await paymentReceiptFile.CopyToAsync(fileStream);
-   }
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await paymentReceiptFile.CopyToAsync(fileStream);
+                    }
 
-     rental.PaymentReceiptPath = "/uploads/payment-receipts/" + uniqueFileName;
-   }
+                    rental.PaymentReceiptPath = "/uploads/payment-receipts/" + uniqueFileName;
+                }
 
-     // Calculate total amount
-        var car = await _context.Cars.FindAsync(rental.CarId);
-    if (car != null)
-          {
-          if (car.Status != "Available")
-        {
-      ModelState.AddModelError("CarId", "This car is no longer available");
-          ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
-        ViewBag.CustomerId = rental.CustomerId;
-        return View(rental);
-        }
-
-                 var hours = (rental.ReturnDate - rental.RentalDate).TotalHours;
-           var days = (int)Math.Ceiling(hours / 24);
-       if (days < 1) days = 1;
-  rental.TotalAmount = car.DailyRate * days;
-
-       // Car remains available until rental is approved
-    // DON'T update car status yet - wait for admin approval
-    }
-       else
+                // Calculate total amount
+                var car = await _context.Cars.FindAsync(rental.CarId);
+                if (car != null)
                 {
-           ModelState.AddModelError("CarId", "Car not found");
-       ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
-      ViewBag.CustomerId = rental.CustomerId;
-        return View(rental);
-     }
+                    if (car.Status != "Available")
+                    {
+                        ModelState.AddModelError("CarId", "This car is no longer available");
+                        ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
+                        ViewBag.CustomerId = rental.CustomerId;
+                        return View(rental);
+                    }
 
-  // Set GPS consent timestamp
-    if (rental.GpsTrackingConsent)
-       {
-     rental.GpsConsentDate = DateTime.Now;
-     }
+                    var hours = (rental.ReturnDate - rental.RentalDate).TotalHours;
+                    var days = (int)Math.Ceiling(hours / 24);
+                    if (days < 1) days = 1;
+                    rental.TotalAmount = car.DailyRate * days;
 
-       rental.Status = "Pending"; // Changed from Active to Pending for approval workflow
+                    // Car remains available until rental is approved
+                    // DON'T update car status yet - wait for admin approval
+                }
+                else
+                {
+                    ModelState.AddModelError("CarId", "Car not found");
+                    ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
+                    ViewBag.CustomerId = rental.CustomerId;
+                    return View(rental);
+                }
+
+                // Set GPS consent timestamp
+                if (rental.GpsTrackingConsent)
+                {
+                    rental.GpsConsentDate = DateTime.Now;
+                }
+
+                rental.Status = "Pending"; // Changed from Active to Pending for approval workflow
                 rental.CreatedAt = DateTime.Now;
-    _context.Add(rental);
+                _context.Add(rental);
                 await _context.SaveChangesAsync();
 
-        // Create notification for ALL admin users
+                // Create notification for ALL admin users
                 var adminUsers = await _context.Users.Where(u => u.Role == "Admin").ToListAsync();
-foreach (var adminUser in adminUsers)
-         {
-        var adminNotification = new Notification
-           {
-          UserId = adminUser.UserId,
-        Title = "New Rental Request",
-    Message = $"{customer.FirstName} {customer.LastName} requested to rent {car.Brand} {car.Model}. Pick-up: {rental.RentalDate:MMM dd, yyyy}. Total: ₱{rental.TotalAmount:N2}. Please review and approve.",
-                 Type = "Info",
-  Icon = "fa-car",
-          ActionUrl = "/Rentals/Index?filterStatus=Pending",
-      IsRead = false,
-            CreatedAt = DateTime.Now
-    };
-     _context.Notifications.Add(adminNotification);
+                foreach (var adminUser in adminUsers)
+                {
+                    var adminNotification = new Notification
+                    {
+                        UserId = adminUser.UserId,
+                        Title = "New Rental Request",
+                        Message = $"{customer.FirstName} {customer.LastName} requested to rent {car.Brand} {car.Model}. Pick-up: {rental.RentalDate:MMM dd, yyyy}. Total: ₱{rental.TotalAmount:N2}. Please review and approve.",
+                        Type = "Info",
+                        Icon = "fa-car",
+                        ActionUrl = "/Rentals/Index?filterStatus=Pending",
+                        IsRead = false,
+                        CreatedAt = DateTime.Now
+                    };
+                    _context.Notifications.Add(adminNotification);
                 }
-      await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-   TempData["Success"] = "Car rental request submitted successfully! Please wait for admin approval.";
+                TempData["Success"] = "Car rental request submitted successfully! Please wait for admin approval.";
 
- if (userRole == "Customer")
- {
-           return RedirectToAction("MyRentals", "Customer");
-        }
+                if (userRole == "Customer")
+                {
+                    return RedirectToAction("MyRentals", "Customer");
+                }
 
-  return RedirectToAction(nameof(Index));
-  }
+                return RedirectToAction(nameof(Index));
+            }
 
-          ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
-    if (rental.CarId > 0)
-  {
-      var selectedCar = await _context.Cars.FindAsync(rental.CarId);
-ViewBag.SelectedCar = selectedCar;
-      ViewBag.SelectedCarId = rental.CarId;
-    }
-   ViewBag.CustomerId = rental.CustomerId;
+            ViewData["CarId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "CarId", "Brand", rental.CarId);
+            if (rental.CarId > 0)
+            {
+                var selectedCar = await _context.Cars.FindAsync(rental.CarId);
+                ViewBag.SelectedCar = selectedCar;
+                ViewBag.SelectedCarId = rental.CarId;
+            }
+            ViewBag.CustomerId = rental.CustomerId;
             return View(rental);
-    }
+        }
 
         // GET: Rentals/Edit/5
         [SessionAuthorization(Roles = new[] { "Admin" })]
@@ -424,9 +423,9 @@ ViewBag.SelectedCar = selectedCar;
             }
 
             var rental = await _context.Rentals
-        .Include(r => r.Car)
-       .Include(r => r.Customer)
-  .FirstOrDefaultAsync(m => m.RentalId == id);
+                .Include(r => r.Car)
+                .Include(r => r.Customer)
+                .FirstOrDefaultAsync(m => m.RentalId == id);
 
             if (rental == null)
             {
@@ -469,9 +468,9 @@ ViewBag.SelectedCar = selectedCar;
             }
 
             var rental = await _context.Rentals
-              .Include(r => r.Car)
-          .Include(r => r.Customer)
-             .FirstOrDefaultAsync(m => m.RentalId == id);
+                .Include(r => r.Car)
+                .Include(r => r.Customer)
+                .FirstOrDefaultAsync(m => m.RentalId == id);
 
             if (rental == null)
             {
@@ -488,9 +487,9 @@ ViewBag.SelectedCar = selectedCar;
         public async Task<IActionResult> Return(int id, DateTime actualReturnDate, decimal? additionalCharges, string? returnNotes)
         {
             var rental = await _context.Rentals
-      .Include(r => r.Car)
-        .Include(r => r.Customer)
-        .FirstOrDefaultAsync(r => r.RentalId == id);
+                .Include(r => r.Car)
+                .Include(r => r.Customer)
+                .FirstOrDefaultAsync(r => r.RentalId == id);
 
             if (rental == null)
             {
@@ -566,8 +565,8 @@ ViewBag.SelectedCar = selectedCar;
 
             var rental = await _context.Rentals
                 .Include(r => r.Car)
-      .Include(r => r.Customer)
-               .FirstOrDefaultAsync(r => r.RentalId == id);
+                .Include(r => r.Customer)
+                .FirstOrDefaultAsync(r => r.RentalId == id);
 
             if (rental == null)
             {
@@ -627,9 +626,9 @@ ViewBag.SelectedCar = selectedCar;
             }
 
             var rental = await _context.Rentals
-                          .Include(r => r.Car)
-               .Include(r => r.Customer)
-                    .FirstOrDefaultAsync(r => r.RentalId == id);
+                .Include(r => r.Car)
+                .Include(r => r.Customer)
+                .FirstOrDefaultAsync(r => r.RentalId == id);
 
             if (rental == null)
             {

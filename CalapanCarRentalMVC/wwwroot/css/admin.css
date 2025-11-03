@@ -40,7 +40,7 @@
     min-width: 350px;
     max-height: 500px;
     overflow-y: auto;
- border: none;
+    border: none;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     border-radius: 12px;
 }
@@ -55,7 +55,7 @@
 
 .notification-item {
     padding: 0.75rem 1.25rem;
-  transition: all 0.2s ease;
+    transition: all 0.2s ease;
     border-left: 3px solid transparent;
 }
 
@@ -101,13 +101,13 @@
     }
     
     .brand-text {
-     display: none;
+        display: none;
     }
 }
 
 /* Sidebar Styles - Sticky Position */
 .admin-sidebar {
- width: 280px;
+    width: 280px;
     background: linear-gradient(180deg, #D22C3C 0%, #982626 100%);
     color: #ffffff;
     position: fixed;
@@ -128,7 +128,7 @@
 /* Hide text and user info when collapsed */
 .admin-sidebar.collapsed .sidebar-user-profile .user-info,
 .admin-sidebar.collapsed .sidebar-link span {
-  opacity: 0;
+    opacity: 0;
     width: 0;
     display: none;
 }
@@ -180,7 +180,7 @@
 
 /* Add tooltip on hover for collapsed sidebar items */
 .admin-sidebar.collapsed .sidebar-link {
-  position: relative;
+    position: relative;
 }
 
 .admin-sidebar.collapsed .sidebar-link:hover::after {
@@ -193,10 +193,10 @@
     padding: 0.5rem 1rem;
     background: rgba(0, 0, 0, 0.9);
     color: #ffffff;
- border-radius: 5px;
+    border-radius: 5px;
     white-space: nowrap;
     font-size: 0.875rem;
-  z-index: 1050;
+    z-index: 1050;
     pointer-events: none;
     opacity: 0;
     animation: tooltipFadeIn 0.2s ease forwards;
@@ -239,7 +239,7 @@
     background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     display: flex;
- align-items: center;
+    align-items: center;
     justify-content: center;
     border: 3px solid rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
@@ -412,7 +412,7 @@
     width: 100%;
     height: calc(100vh - 56px);
     background: rgba(0, 0, 0, 0.5);
-  z-index: 1020;
+    z-index: 1020;
     transition: opacity 0.3s ease;
 }
 
@@ -459,7 +459,7 @@
 
 .stat-card:hover {
     transform: translateY(-5px);
- box-shadow: 0 8px 20px rgba(220, 53, 69, 0.15);
+    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.15);
     border-left-width: 6px;
 }
 
@@ -473,7 +473,7 @@
 .stat-card p {
     margin-bottom: 0;
     color: var(--text-muted);
-  font-weight: 500;
+    font-weight: 500;
 }
 
 .stat-card i {
@@ -585,7 +585,7 @@
 }
 
 .notification-dropdown::-webkit-scrollbar-thumb:hover {
-  background: #555;
+    background: #555;
 }
 
 /* Dashboard Specific Styles */
@@ -649,7 +649,7 @@
 
 .quick-action-btn span {
     display: block;
-  font-weight: 600;
+    font-weight: 600;
     color: var(--text-dark);
     font-size: 0.95rem;
 }
@@ -657,7 +657,7 @@
 /* Responsive Design */
 @media (max-width: 991px) {
     .admin-sidebar {
-   transform: translateX(-100%);
+        transform: translateX(-100%);
         width: 280px;
     }
 
@@ -671,7 +671,7 @@
 
     .admin-sidebar.collapsed .sidebar-user-profile .user-info,
     .admin-sidebar.collapsed .sidebar-link span {
-     display: block;
+        display: block;
     }
 
     .admin-sidebar.collapsed .user-avatar {
@@ -679,7 +679,7 @@
     }
 
   .admin-sidebar.collapsed .fa-chevron-down {
-    display: inline;
+        display: inline;
     }
 
     .admin-sidebar.collapsed .sidebar-link {
@@ -714,7 +714,7 @@
     }
 
     .page-header .d-flex {
-    flex-direction: column !important;
+        flex-direction: column !important;
         align-items: flex-start !important;
     }
 
@@ -728,7 +728,7 @@
     /* Stats Cards */
     .stat-card {
         margin-bottom: 1rem;
-      padding: 1rem;
+        padding: 1rem;
     }
 
     .stat-card h3 {
@@ -746,8 +746,8 @@
     }
 
     .quick-action-btn {
-    min-width: 100%;
- padding: 0.875rem;
+        min-width: 100%;
+        padding: 0.875rem;
     }
 
     .quick-action-btn i {
@@ -761,7 +761,7 @@
   /* Dashboard Widget */
     .dashboard-widget {
         padding: 1rem;
-     margin-bottom: 1rem;
+        margin-bottom: 1rem;
     }
 
     .dashboard-widget h5 {
@@ -771,8 +771,8 @@
 
     /* Page Header */
     .page-header {
-    padding: 0.75rem 1rem;
-   margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
     }
 
     .page-header h1 {
@@ -794,7 +794,7 @@
     }
 
     .admin-table tbody td {
-    padding: 0.75rem 0.5rem;
+        padding: 0.75rem 0.5rem;
     }
 
     /* Hide less important table columns on mobile */
@@ -808,7 +808,7 @@
 @media (max-width: 576px) {
     .admin-sidebar {
         width: 100%;
-     max-width: 280px;
+        max-width: 280px;
     }
 
     .stat-card {
@@ -825,15 +825,15 @@
 
     /* Page Header */
     .page-header {
-    padding: 0.75rem;
+        padding: 0.75rem;
     }
 
     .page-header h1 {
-   font-size: 1.1rem;
+        font-size: 1.1rem;
     }
 
     .page-header .text-muted {
-  font-size: 0.75rem;
+        font-size: 0.75rem;
     }
 
     /* Stats Cards - Stack vertically */
@@ -845,7 +845,7 @@
         font-size: 0.85rem;
     }
 
-.stat-card i {
+    .stat-card i {
         font-size: 1.75rem;
     }
 
@@ -861,12 +861,12 @@
     /* Buttons */
     .btn-admin-primary {
         padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+        font-size: 0.875rem;
     }
 
   /* Table - Make even more compact */
-  .table-responsive {
-  font-size: 0.75rem;
+    .table-responsive {
+        font-size: 0.75rem;
     }
 
     .admin-table thead th {
@@ -881,27 +881,27 @@
     /* Hide rental/return dates on extra small screens */
     .admin-table thead th:nth-child(4),
     .admin-table tbody td:nth-child(4) {
-    display: none;
+        display: none;
     }
 
     /* Stack stat card content better */
     .stat-card .d-flex {
-      flex-direction: column !important;
+        flex-direction: column !important;
         align-items: flex-start !important;
-    gap: 0.5rem;
+        gap: 0.5rem;
     }
 
     .stat-card .d-flex i {
-   margin-top: 0.5rem;
+        margin-top: 0.5rem;
     }
 
     /* Empty state */
     .text-center .fa-inbox {
-    font-size: 2rem !important;
+        font-size: 2rem !important;
     }
 
     .text-center .btn {
-   font-size: 0.875rem;
+        font-size: 0.875rem;
         padding: 0.5rem 1rem;
     }
 }
@@ -910,7 +910,7 @@
 @media (min-width: 768px) and (max-width: 991px) {
     .stat-card {
         padding: 1.25rem;
- }
+    }
 
     .stat-card h3 {
         font-size: 1.75rem;
@@ -933,12 +933,12 @@
 @media (max-height: 600px) and (orientation: landscape) {
     .page-header {
         padding: 0.75rem 1rem;
-     margin-bottom: 0.75rem;
+        margin-bottom: 0.75rem;
     }
 
     .stat-card {
-    padding: 0.875rem;
-  }
+        padding: 0.875rem;
+    }
 
     .dashboard-widget {
         padding: 1rem;

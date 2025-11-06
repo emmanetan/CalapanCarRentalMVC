@@ -118,39 +118,14 @@
                     {
                         <!-- Common Navigation Items for Customer -->
                         <li class="sidebar-item">
-       <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
-         asp-controller="Home" asp-action="Index"
-             data-title="Home">
-    <i class="fas fa-home"></i>
-            <span>Home</span>
-     </a>
-        </li>
-     <li class="sidebar-item">
         <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Cars" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
        asp-controller="Cars" asp-action="Index"
-  data-title="Browse Cars">
+  data-title="Browse Vehicles">
     <i class="fas fa-car"></i>
- <span>Browse Cars</span>
+ <span>Browse Vehicles</span>
        </a>
   </li>
-            <li class="sidebar-item">
-  <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Contact" ? "active" : "")"
-     asp-controller="Home" asp-action="Contact"
-    data-title="Contact">
-       <i class="fas fa-envelope"></i>
-        <span>Contact</span>
-        </a>
-        </li>
- <li class="sidebar-item">
-   <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "About" ? "active" : "")"
-     asp-controller="Home" asp-action="About"
-   data-title="About">
-           <i class="fas fa-info-circle"></i>
-    <span>About</span>
-        </a>
-        </li>
-
-     <li class="sidebar-divider"></li>
+            <li class="sidebar-divider"></li>
 
     <!-- Customer Specific Menu -->
       <li class="sidebar-item">

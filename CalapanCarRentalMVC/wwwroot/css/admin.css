@@ -313,6 +313,13 @@
     border-left-color: #ffffff;
 }
 
+/* Remove underline from sidebar links on hover */
+.sidebar-link:hover,
+.sidebar-link:focus,
+.sidebar-link:active {
+ text-decoration: none !important;
+}
+
 .sidebar-link.active {
     background: rgba(255, 255, 255, 0.15);
     color: #ffffff;

@@ -12,31 +12,31 @@ namespace CalapanCarRentalMVC.Filters
         public string[]? Roles { get; set; }
         public bool RequireAuthentication { get; set; } = true;
 
-   public override void OnActionExecuting(ActionExecutingContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             var session = context.HttpContext.Session;
             var userRole = session.GetString("UserRole");
-          var userId = session.GetString("UserId");
+            var userId = session.GetString("UserId");
 
-  // Check if user is authenticated
+            // Check if user is authenticated
             if (RequireAuthentication && string.IsNullOrEmpty(userId))
             {
-      context.Result = new RedirectToActionResult("Login", "Account", null);
-   return;
-  }
+                context.Result = new RedirectToActionResult("Login", "Account", null);
+                return;
+            }
 
-      // Check if user has required role
-  if (Roles != null && Roles.Length > 0)
+            // Check if user has required role
+            if (Roles != null && Roles.Length > 0)
             {
- if (string.IsNullOrEmpty(userRole) || !Roles.Contains(userRole))
-      {
-   // User is authenticated but doesn't have the required role
-               context.Result = new RedirectToActionResult("AccessDenied", "Account", null);
-    return;
-    }
-    }
+                if (string.IsNullOrEmpty(userRole) || !Roles.Contains(userRole))
+                {
+                    // User is authenticated but doesn't have the required role
+                    context.Result = new RedirectToActionResult("AccessDenied", "Account", null);
+                    return;
+                }
+            }
 
-      base.OnActionExecuting(context);
-    }
+            base.OnActionExecuting(context);
+        }
     }
 }

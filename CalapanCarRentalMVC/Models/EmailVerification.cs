@@ -7,12 +7,12 @@ namespace CalapanCarRentalMVC.Models
         [Key]
         public int VerificationId { get; set; }
 
-  [Required]
-  [EmailAddress]
+        [Required]
+        [EmailAddress]
         [StringLength(100)]
-   public string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
- [Required]
+        [Required]
         [StringLength(6)]
         public string VerificationCode { get; set; } = string.Empty;
 
@@ -20,13 +20,13 @@ namespace CalapanCarRentalMVC.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [Required]
-      public DateTime ExpiresAt { get; set; }
+        public DateTime ExpiresAt { get; set; }
 
         public bool IsUsed { get; set; } = false;
 
-    public bool IsExpired()
+        public bool IsExpired()
         {
-      return DateTime.Now > ExpiresAt;
-     }
+            return DateTime.Now > ExpiresAt;
+        }
     }
 }

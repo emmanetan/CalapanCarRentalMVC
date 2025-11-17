@@ -1,0 +1,339 @@
+@{
+    ViewData["Title"] = "Live Location Tracking";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-map-marked-alt"></i> Live Location Tracking</h2>
+                <div>
+                    <button id="refreshBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">Active Users: <span id="activeUserCount" class="badge bg-success">0</span></h5>
+                            <small class="text-muted">Last updated: <span id="lastUpdate">Never</span></small>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="autoRefreshToggle" checked>
+                            <label class="form-check-label" for="autoRefreshToggle">
+                                Auto-refresh (30s)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-map"></i> Real-Time Map</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map" style="height: 600px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-users"></i> Active Users</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="userList" class="list-group list-group-flush" style="max-height: 600px; overflow-y: auto;">
+                        <div class="text-center p-4 text-muted">
+                            <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+                            <p>Loading user locations...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-route"></i> Location History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="userDetailsContent">
+                        <p class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+                let map;
+           let markers = {};
+                let autoRefreshInterval;
+
+                // Initialize map centered on Oriental Mindoro, Philippines
+              function initMap() {
+          map = L.map('map').setView([13.4119, 121.1794], 10);
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+           }).addTo(map);
+          }
+
+            // Custom marker icons
+                function getMarkerIcon(role) {
+           const color = role === 'Admin' ? 'red' : 'blue';
+               return L.divIcon({
+               className: 'custom-marker',
+                        html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+             <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                      </div>`,
+                     iconSize: [30, 30],
+              iconAnchor: [15, 15]
+              });
+                }
+
+                // Fetch and display locations
+                async function fetchLocations() {
+              try {
+                const response = await fetch('@Url.Action("GetLatestLocations", "Location")');
+             const data = await response.json();
+
+                if (data.success) {
+                 updateMap(data.locations);
+           updateUserList(data.locations);
+                 document.getElementById('activeUserCount').textContent = data.locations.length;
+                        document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+            } else {
+                console.error('Error fetching locations:', data.message);
+          }
+           } catch (error) {
+                  console.error('Error:', error);
+                    }
+             }
+
+                // Update map markers
+                function updateMap(locations) {
+               // Clear existing markers
+                    Object.values(markers).forEach(marker => map.removeLayer(marker));
+          markers = {};
+
+                    // Add new markers
+               locations.forEach(location => {
+                 const marker = L.marker([location.latitude, location.longitude], {
+                            icon: getMarkerIcon(location.role)
+                        }).addTo(map);
+
+                        const popupContent = `
+               <div style="min-width: 200px;">
+              <h6>${location.username}</h6>
+                      <p class="mb-1"><strong>Role:</strong> ${location.role}</p>
+               <p class="mb-1"><strong>Email:</strong> ${location.email}</p>
+            <p class="mb-1"><strong>Accuracy:</strong> ${location.accuracy ? location.accuracy.toFixed(2) + 'm' : 'N/A'}</p>
+                    <p class="mb-1"><strong>Last Update:</strong> ${new Date(location.timestamp).toLocaleString()}</p>
+           <button class="btn btn-sm btn-primary mt-2" onclick="viewUserHistory(${location.userId}, '${location.username}')">
+                   <i class="fas fa-history"></i> View History
+            </button>
+                   </div>
+            `;
+
+           marker.bindPopup(popupContent);
+               markers[location.userId] = marker;
+             });
+
+                // Fit map to show all markers if there are any
+                    if (locations.length > 0) {
+            const bounds = L.latLngBounds(locations.map(l => [l.latitude, l.longitude]));
+             map.fitBounds(bounds, { padding: [50, 50] });
+         }
+                }
+
+                // Update user list
+                function updateUserList(locations) {
+              const userList = document.getElementById('userList');
+
+         if (locations.length === 0) {
+            userList.innerHTML = `
+                  <div class="text-center p-4 text-muted">
+                 <i class="fas fa-map-marker-alt fa-2x mb-2"></i>
+                        <p>No active users at the moment</p>
+                  </div>
+                   `;
+                      return;
+            }
+
+           userList.innerHTML = locations.map(location => {
+             const roleColor = location.role === 'Admin' ? 'danger' : 'primary';
+                 const timeAgo = getTimeAgo(new Date(location.timestamp));
+
+                return `
+         <div class="list-group-item list-group-item-action" onclick="focusOnUser(${location.userId}, ${location.latitude}, ${location.longitude})" style="cursor: pointer;">
+              <div class="d-flex w-100 justify-content-between align-items-center">
+               <div>
+            <h6 class="mb-1">
+                <i class="fas fa-user-circle text-${roleColor}"></i> ${location.username}
+                  </h6>
+                  <small class="text-muted">${location.email}</small>
+                 <br>
+            <span class="badge bg-${roleColor}">${location.role}</span>
+                    </div>
+               <small class="text-muted">${timeAgo}</small>
+                      </div>
+                    <div class="mt-2">
+                 <small class="text-muted">
+             <i class="fas fa-map-pin"></i> ${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}
+              </small>
+          </div>
+           </div>
+                        `;
+         }).join('');
+                }
+
+        // Focus on specific user
+                function focusOnUser(userId, lat, lng) {
+               map.setView([lat, lng], 15);
+        if (markers[userId]) {
+                 markers[userId].openPopup();
+               }
+        }
+
+                // View user history
+                async function viewUserHistory(userId, username) {
+             const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+                    document.querySelector('#userDetailsModal .modal-title').innerHTML =
+                 `<i class="fas fa-route"></i> Location History - ${username}`;
+
+                    document.getElementById('userDetailsContent').innerHTML =
+               '<p class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
+
+             modal.show();
+
+                    try {
+              const response = await fetch(`@Url.Action("GetUserLocationHistory", "Location")?userId=${userId}&hours=24`);
+               const data = await response.json();
+
+                     if (data.success) {
+                      displayUserHistory(data.history);
+             } else {
+           document.getElementById('userDetailsContent').innerHTML =
+                    `<div class="alert alert-danger">${data.message}</div>`;
+                 }
+                    } catch (error) {
+                     document.getElementById('userDetailsContent').innerHTML =
+               '<div class="alert alert-danger">Error loading history</div>';
+              }
+                }
+
+                // Display user history
+                function displayUserHistory(history) {
+            if (history.length === 0) {
+                 document.getElementById('userDetailsContent').innerHTML =
+                   '<p class="text-muted text-center">No location history available for the last 24 hours.</p>';
+                  return;
+                    }
+
+                    const html = `
+                 <div class="table-responsive">
+                <table class="table table-striped table-sm">
+            <thead>
+             <tr>
+          <th>Timestamp</th>
+                   <th>Latitude</th>
+                 <th>Longitude</th>
+              <th>Accuracy</th>
+          </tr>
+               </thead>
+               <tbody>
+               ${history.map(h => `
+                <tr>
+            <td>${new Date(h.timestamp).toLocaleString()}</td>
+                       <td>${h.latitude.toFixed(6)}</td>
+             <td>${h.longitude.toFixed(6)}</td>
+            <td>${h.accuracy ? h.accuracy.toFixed(2) + 'm' : 'N/A'}</td>
+                </tr>
+                  `).join('')}
+            </tbody>
+              </table>
+             </div>
+        <p class="text-muted mt-2"><small>Total records: ${history.length}</small></p>
+                    `;
+
+          document.getElementById('userDetailsContent').innerHTML = html;
+                }
+
+                // Get time ago string
+                function getTimeAgo(date) {
+                    const seconds = Math.floor((new Date() - date) / 1000);
+
+            if (seconds < 60) return `${seconds}s ago`;
+             if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+                    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+                return `${Math.floor(seconds / 86400)}d ago`;
+              }
+
+                // Auto-refresh functionality
+                function setupAutoRefresh() {
+          const toggle = document.getElementById('autoRefreshToggle');
+
+                if (toggle.checked) {
+         autoRefreshInterval = setInterval(fetchLocations, 30000); // 30 seconds
+              }
+
+                    toggle.addEventListener('change', function() {
+              if (this.checked) {
+           autoRefreshInterval = setInterval(fetchLocations, 30000);
+               } else {
+                clearInterval(autoRefreshInterval);
+             }
+               });
+                }
+
+                // Manual refresh
+            document.getElementById('refreshBtn').addEventListener('click', fetchLocations);
+
+        // Initialize
+                document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+                    fetchLocations();
+            setupAutoRefresh();
+                });
+    </script>
+
+    <style>
+        .custom-marker {
+            background: none;
+            border: none;
+        }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+}

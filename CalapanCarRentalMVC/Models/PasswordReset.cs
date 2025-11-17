@@ -5,7 +5,7 @@ namespace CalapanCarRentalMVC.Models
     public class PasswordReset
     {
         [Key]
-    public int ResetId { get; set; }
+        public int ResetId { get; set; }
 
         [Required]
         [EmailAddress]
@@ -24,9 +24,9 @@ namespace CalapanCarRentalMVC.Models
 
         public bool IsUsed { get; set; } = false;
 
-     public bool IsExpired()
-    {
-   return DateTime.Now > ExpiresAt;
-      }
+        public bool IsExpired()
+        {
+            return DateTime.Now > ExpiresAt;
+        }
     }
 }

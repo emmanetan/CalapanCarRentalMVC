@@ -31,11 +31,11 @@
 
                     <!-- Right Side: Notifications -->
                     <div class="ms-auto">
-  <div class="navbar-actions d-flex align-items-center">
-      <!-- Notification Icon -->
-        @await Component.InvokeAsync("NotificationBell")
- </div>
-   </div>
+                        <div class="navbar-actions d-flex align-items-center">
+                            <!-- Notification Icon -->
+                            @await Component.InvokeAsync("NotificationBell")
+                        </div>
+                    </div>
                 </div>
             </nav>
         </header>
@@ -47,13 +47,13 @@
 
             <!-- Left Sidebar - Fixed on Scroll -->
             <aside class="admin-sidebar" id="adminSidebar">
-   <!-- User Profile Section -->
-      @await Component.InvokeAsync("UserProfile")
+                <!-- User Profile Section -->
+                @await Component.InvokeAsync("UserProfile")
 
-        <div class="sidebar-divider"></div>
+                <div class="sidebar-divider"></div>
 
-      <!-- Sidebar Navigation Menu -->
-     <ul class="sidebar-menu">
+                <!-- Sidebar Navigation Menu -->
+                <ul class="sidebar-menu">
                     @if (Context.Session.GetString("UserRole") == "Admin")
                     {
                         <!-- Admin Specific Menu -->
@@ -99,6 +99,13 @@
                                 <span>Reports & Analytics</span>
                             </a>
                         </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Location" && ViewContext.RouteData.Values["Action"]?.ToString() == "Track" ? "active" : "")"
+                               asp-controller="Location" asp-action="Track" data-title="Location Tracking">
+                                <i class="fas fa-map-marked-alt"></i>
+                                <span>Location Tracking</span>
+                            </a>
+                        </li>
                         <li class="sidebar-divider"></li>
                         <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")"
@@ -118,50 +125,57 @@
                     {
                         <!-- Common Navigation Items for Customer -->
                         <li class="sidebar-item">
-        <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Cars" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
-       asp-controller="Vehicle" asp-action="Index"
-  data-title="Browse Vehicles">
-    <i class="fas fa-car"></i>
- <span>Browse Vehicles</span>
-       </a>
-  </li>
-            <li class="sidebar-divider"></li>
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Cars" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-controller="Vehicle" asp-action="Index"
+                               data-title="Browse Vehicles">
+                                <i class="fas fa-car"></i>
+                                <span>Browse Vehicles</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-divider"></li>
 
-    <!-- Customer Specific Menu -->
-      <li class="sidebar-item">
-   <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
-     asp-controller="Customer" asp-action="Dashboard"
-          data-title="Dashboard">
-         <i class="fas fa-tachometer-alt"></i>
-    <span>Dashboard</span>
- </a>
-        </li>
-         <li class="sidebar-item">
-      <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "MyRentals" ? "active" : "")"
- asp-controller="Customer" asp-action="MyRentals"
-         data-title="My Rentals">
-  <i class="fas fa-file-contract"></i>
-  <span>My Rentals</span>
-         </a>
-    </li>
- <li class="sidebar-item">
-     <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")"
-     asp-controller="Customer" asp-action="Profile"
-  data-title="My Profile">
-  <i class="fas fa-user-circle"></i>
-    <span>My Profile</span>
-       </a>
-        </li>
-<li class="sidebar-divider"></li>
-    }
+                        <!-- Customer Specific Menu -->
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
+                               asp-controller="Customer" asp-action="Dashboard"
+                               data-title="Dashboard">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "MyRentals" ? "active" : "")"
+                               asp-controller="Customer" asp-action="MyRentals"
+                               data-title="My Rentals">
+                                <i class="fas fa-file-contract"></i>
+                                <span>My Rentals</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customer" && ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")"
+                               asp-controller="Customer" asp-action="Profile"
+                               data-title="My Profile">
+                                <i class="fas fa-user-circle"></i>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Location" && ViewContext.RouteData.Values["Action"]?.ToString() == "MyLocation" ? "active" : "")"
+                               asp-controller="Location" asp-action="MyLocation" data-title="My Location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>My Location</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-divider"></li>
+                    }
 
                     <!-- Logout -->
-  <li class="sidebar-item">
-            <a class="sidebar-link" asp-controller="Account" asp-action="Logout" data-title="Logout">
-                 <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-              </a>
-          </li>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" asp-controller="Account" asp-action="Logout" data-title="Logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
                 </ul>
             </aside>
 
@@ -230,39 +244,39 @@
             @RenderBody()
         </main>
 
-     <!-- Banner Section before Footer -->
+        <!-- Banner Section before Footer -->
         <section class="banner-section">
-          <div class="container-fluid p-0">
-   @{
-     // Check if banner.jpg exists and convert to Base64
-        var bannerPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "banner.jpg");
-        string base64Image = "";
-            
-             if (System.IO.File.Exists(bannerPath))
-          {
-          try
-          {
-     byte[] imageBytes = System.IO.File.ReadAllBytes(bannerPath);
-     base64Image = Convert.ToBase64String(imageBytes);
-      }
-               catch
-            {
-          base64Image = "";
-               }
-   }
-              }
-      
-       @if (!string.IsNullOrEmpty(base64Image))
-   {
-            <img src="data:image/jpeg;base64,@base64Image" 
-         alt="Calapan Car Rental Banner" 
-        class="img-fluid w-100" 
-          style="max-height: 400px; object-fit: cover;" />
-             }
+            <div class="container-fluid p-0">
+                @{
+                    // Check if banner.jpg exists and convert to Base64
+                    var bannerPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "banner.jpg");
+                    string base64Image = "";
+
+                    if (System.IO.File.Exists(bannerPath))
+                    {
+                        try
+                        {
+                            byte[] imageBytes = System.IO.File.ReadAllBytes(bannerPath);
+                            base64Image = Convert.ToBase64String(imageBytes);
+                        }
+                        catch
+                        {
+                            base64Image = "";
+                        }
+                    }
+                }
+
+                @if (!string.IsNullOrEmpty(base64Image))
+                {
+                    <img src="data:image/jpeg;base64,@base64Image"
+                         alt="Calapan Car Rental Banner"
+                         class="img-fluid w-100"
+                         style="max-height: 400px; object-fit: cover;" />
+                }
             </div>
         </section>
 
-<!-- Footer only for visitors -->
+        <!-- Footer only for visitors -->
         <footer class="bg-dark text-white py-4">
             <div class="container">
                 <div class="row">

@@ -17,6 +17,7 @@ namespace CalapanCarRentalMVC.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<EmailVerification> EmailVerifications { get; set; }
         public DbSet<PasswordReset> PasswordResets { get; set; }
+        public DbSet<LocationHistory> LocationHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,7 +48,13 @@ namespace CalapanCarRentalMVC.Data
    .HasForeignKey(n => n.UserId)
 .OnDelete(DeleteBehavior.Cascade);
 
-        // Seed initial data
+            modelBuilder.Entity<LocationHistory>()
+            .HasOne(l => l.User)
+                     .WithMany()
+          .HasForeignKey(l => l.UserId)
+          .OnDelete(DeleteBehavior.Cascade);
+
+            // Seed initial data
             modelBuilder.Entity<User>().HasData(
                   new User
                   {

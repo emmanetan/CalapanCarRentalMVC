@@ -6,66 +6,66 @@ using CalapanCarRentalMVC.Models;
 
 namespace CalapanCarRentalMVC.Services
 {
-  public class EmailService : IEmailService
+    public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<EmailService> _logger;
 
         public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
-    {
-        _configuration = configuration;
-     _logger = logger;
+        {
+            _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task SendEmailAsync(string toEmail, string subject, string body)
-  {
-   try
+        {
+            try
             {
-         var emailSettings = _configuration.GetSection("EmailSettings");
-       var from = emailSettings["From"];
- var smtpServer = emailSettings["SmtpServer"];
-             var port = int.Parse(emailSettings["Port"] ?? "587");
+                var emailSettings = _configuration.GetSection("EmailSettings");
+                var from = emailSettings["From"];
+                var smtpServer = emailSettings["SmtpServer"];
+                var port = int.Parse(emailSettings["Port"] ?? "587");
                 var username = emailSettings["Username"];
-     var password = emailSettings["Password"];
+                var password = emailSettings["Password"];
 
-             var message = new MimeMessage();
-   message.From.Add(new MailboxAddress("Calapan Car Rental", from));
-        message.To.Add(new MailboxAddress("", toEmail));
-          message.Subject = subject;
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Calapan Car Rental", from));
+                message.To.Add(new MailboxAddress("", toEmail));
+                message.Subject = subject;
 
                 var bodyBuilder = new BodyBuilder
                 {
-    HtmlBody = body
-    };
-      message.Body = bodyBuilder.ToMessageBody();
+                    HtmlBody = body
+                };
+                message.Body = bodyBuilder.ToMessageBody();
 
                 using var client = new SmtpClient();
-        
-        // Connect to Gmail SMTP server
-        await client.ConnectAsync(smtpServer, port, SecureSocketOptions.StartTls);
-             
-      // Authenticate
-       await client.AuthenticateAsync(username, password);
-    
-         // Send email
-       await client.SendAsync(message);
-                
-    // Disconnect
-     await client.DisconnectAsync(true);
 
-        _logger.LogInformation($"Email sent successfully to {toEmail}");
+                // Connect to Gmail SMTP server
+                await client.ConnectAsync(smtpServer, port, SecureSocketOptions.StartTls);
+
+                // Authenticate
+                await client.AuthenticateAsync(username, password);
+
+                // Send email
+                await client.SendAsync(message);
+
+                // Disconnect
+                await client.DisconnectAsync(true);
+
+                _logger.LogInformation($"Email sent successfully to {toEmail}");
             }
-    catch (Exception ex)
-    {
-          _logger.LogError($"Error sending email to {toEmail}: {ex.Message}");
-      throw;
-  }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error sending email to {toEmail}: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task SendVerificationCodeAsync(string toEmail, string verificationCode)
-     {
-   var subject = "Email Verification Code - Calapan Car Rental";
-       var body = $@"
+        {
+            var subject = "Email Verification Code - Calapan Car Rental";
+            var body = $@"
    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
              <div style='text-align: center; margin-bottom: 30px;'>
     <h2 style='color: #dc3545; margin: 0;'>?? Calapan Car Rental</h2>
@@ -107,12 +107,12 @@ namespace CalapanCarRentalMVC.Services
         ";
 
             await SendEmailAsync(toEmail, subject, body);
-}
+        }
 
         public async Task SendPasswordResetCodeAsync(string toEmail, string resetCode)
         {
             var subject = "Password Reset Code - Calapan Car Rental";
-         var body = $@"
+            var body = $@"
        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
          <div style='text-align: center; margin-bottom: 30px;'>
   <h2 style='color: #dc3545; margin: 0;'>?? Calapan Car Rental</h2>
@@ -155,13 +155,13 @@ namespace CalapanCarRentalMVC.Services
             </div>
             ";
 
-   await SendEmailAsync(toEmail, subject, body);
-     }
+            await SendEmailAsync(toEmail, subject, body);
+        }
 
         public async Task SendContactMessageAsync(string name, string email, string phone, string message)
         {
-  var subject = $"New Contact Message from {name}";
-  var body = $@"
+            var subject = $"New Contact Message from {name}";
+            var body = $@"
 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
     <div style='text-align: center; margin-bottom: 30px;'>
         <h2 style='color: #dc3545; margin: 0;'>?? Calapan Car Rental</h2>
@@ -210,8 +210,8 @@ namespace CalapanCarRentalMVC.Services
 </div>
             ";
 
-     // Send to your business email
-         await SendEmailAsync("carrentalcalapan@gmail.com", subject, body);
-  }
+            // Send to your business email
+            await SendEmailAsync("carrentalcalapan@gmail.com", subject, body);
+        }
     }
 }

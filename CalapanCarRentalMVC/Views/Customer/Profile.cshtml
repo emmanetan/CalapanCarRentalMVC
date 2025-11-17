@@ -11,20 +11,20 @@
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h1><i class="fas fa-user-circle me-2"></i>My Profile</h1>
-      <nav aria-label="breadcrumb">
-     <ol class="breadcrumb">
-             <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
-      <li class="breadcrumb-item active">My Profile</li>
-       </ol>
-  </nav>
- </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">My Profile</li>
+                </ol>
+            </nav>
+        </div>
     </div>
 </div>
 
 @if (TempData["Success"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-     <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
@@ -42,14 +42,14 @@
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <h5 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>License Expired!</h5>
         <p>Your driver's license has expired on <strong>@Model.LicenseExpiryDate.ToString("MMMM dd, yyyy")</strong>.</p>
-  <p class="mb-0"><strong>You cannot book any cars until you update your license information.</strong> Please update your license details below.</p>
+        <p class="mb-0"><strong>You cannot book any cars until you update your license information.</strong> Please update your license details below.</p>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
 {
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      <h5 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i>License Expiring Soon</h5>
+        <h5 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i>License Expiring Soon</h5>
         <p class="mb-0">Your driver's license will expire on <strong>@Model.LicenseExpiryDate.ToString("MMMM dd, yyyy")</strong>. Please renew it soon to avoid interruption in car rental services.</p>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -58,72 +58,72 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
 <div class="row">
     <!-- Profile Picture Section -->
     <div class="col-lg-4 mb-4">
-<div class="dashboard-widget text-center">
+        <div class="dashboard-widget text-center">
             <h5 class="mb-3"><i class="fas fa-camera me-2"></i>Profile Picture</h5>
 
             <div class="profile-picture-container mb-3 text-center">
-      @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
-              {
+                @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
+                {
                     <img src="@Model.ProfilePicturePath" alt="Profile Picture" class="profile-picture rounded-circle" style="width:200px; height:200px; object-fit: cover; border:4px solid #D12B3B;" />
-           }
-        else
-    {
+                }
+                else
+                {
                     <div class="profile-picture-placeholder rounded-circle d-flex align-items-center justify-content-center" style="width:200px; height:200px; background-color: #e9ecef; border:4px solid #D12B3B; margin:0 auto;">
-   <i class="fas fa-user" style="font-size:80px; color: #6c757d;"></i>
+                        <i class="fas fa-user" style="font-size:80px; color: #6c757d;"></i>
+                    </div>
+                }
+
+                <!-- Move Change Picture button below the avatar inside the container -->
+                <div class="mt-3">
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadProfilePictureModal">
+                        <i class="fas fa-camera me-1"></i>Change Picture
+                    </button>
+                </div>
             </div>
-        }
 
-        <!-- Move Change Picture button below the avatar inside the container -->
-        <div class="mt-3">
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadProfilePictureModal">
-                <i class="fas fa-camera me-1"></i>Change Picture
-            </button>
+            @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
+            {
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeProfilePicture()">
+                    <i class="fas fa-trash me-1"></i>Remove
+                </button>
+            }
         </div>
-      </div>
-
- @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
-    {
-      <button type="button" class="btn btn-danger btn-sm" onclick="removeProfilePicture()">
-        <i class="fas fa-trash me-1"></i>Remove
-      </button>
-  }
-      </div>
 
         <!-- Quick Actions -->
         <div class="dashboard-widget mt-3">
-         <h5 class="mb-3"><i class="fas fa-cog me-2"></i>Quick Actions</h5>
+            <h5 class="mb-3"><i class="fas fa-cog me-2"></i>Quick Actions</h5>
             <div class="d-grid gap-2">
-             <a asp-action="MyRentals" class="btn btn-outline-primary">
-     <i class="fas fa-list me-2"></i>View My Rentals
-      </a>
-      @if (Model.LicenseExpiryDate >= DateTime.Now)
-         {
- <a asp-controller="Vehicle" asp-action="Index" class="btn btn-outline-success">
+                <a asp-action="MyRentals" class="btn btn-outline-primary">
+                    <i class="fas fa-list me-2"></i>View My Rentals
+                </a>
+                @if (Model.LicenseExpiryDate >= DateTime.Now)
+                {
+                    <a asp-controller="Vehicle" asp-action="Index" class="btn btn-outline-success">
                         <i class="fas fa-car me-2"></i>Browse Vehicles
-        </a>
-          }
-    else
-      {
-    <button class="btn btn-outline-secondary" disabled title="License expired">
-        <i class="fas fa-car me-2"></i>Browse Cars (License Expired)
-         </button>
-            }
-   <a asp-action="Dashboard" class="btn btn-outline-info">
-    <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
-           </a>
-        </div>
+                    </a>
+                }
+                else
+                {
+                    <button class="btn btn-outline-secondary" disabled title="License expired">
+                        <i class="fas fa-car me-2"></i>Browse Cars (License Expired)
+                    </button>
+                }
+                <a asp-action="Dashboard" class="btn btn-outline-info">
+                    <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                </a>
+            </div>
         </div>
     </div>
 
- <!-- Profile Information -->
+    <!-- Profile Information -->
     <div class="col-lg-8 mb-4">
         <div class="dashboard-widget">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-  <h5><i class="fas fa-user me-2"></i>Personal Information</h5>
-    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-      <i class="fas fa-edit me-1"></i>Edit Profile
-    </button>
-  </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5><i class="fas fa-user me-2"></i>Personal Information</h5>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                    <i class="fas fa-edit me-1"></i>Edit Profile
+                </button>
+            </div>
 
             <div class="row mb-3">
                 <div class="col-md-6">
@@ -199,16 +199,16 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                         <label class="text-muted mb-1"><i class="fas fa-file-upload me-2"></i>Driver License Document</label>
                         @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
                         {
-                        <div class="d-flex align-items-center gap-2">
-                            <p class="mb-0">
-                                <a href="@Model.DriverLicensePath" target="_blank" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-eye me-1"></i>View Document
-                                </a>
-                                <a href="@Model.DriverLicensePath" download class="btn btn-sm btn-outline-success">
-                                    <i class="fas fa-download me-1"></i>Download
-                                </a>
-                            </p>
-                        </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <p class="mb-0">
+                                    <a href="@Model.DriverLicensePath" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>View Document
+                                    </a>
+                                    <a href="@Model.DriverLicensePath" download class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-download me-1"></i>Download
+                                    </a>
+                                </p>
+                            </div>
                         }
                         else
                         {
@@ -234,72 +234,72 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
 <div class="modal fade" id="uploadProfilePictureModal" tabindex="-1" aria-labelledby="uploadProfilePictureModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-    <div class="modal-header">
-     <h5 class="modal-title" id="uploadProfilePictureModalLabel">
-      <i class="fas fa-camera me-2"></i>Upload Profile Picture
-            </h5>
-           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadProfilePictureModalLabel">
+                    <i class="fas fa-camera me-2"></i>Upload Profile Picture
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-         <div class="alert alert-info">
-    <i class="fas fa-info-circle me-2"></i>
-         <strong>Instructions:</strong> Select an image, then use the crop tool to adjust. You can zoom in/out and move the image. Maximum file size: 5MB.
-    </div>
-    
-  <!-- File Input -->
-                <div class="mb-3">
-              <label for="profilePictureInput" class="form-label">Select Image</label>
-   <input type="file" class="form-control" id="profilePictureInput" accept="image/jpeg,image/png,image/jpg" />
-         <small class="text-muted">Accepted formats: JPG, JPEG, PNG (Max: 5MB)</small>
- </div>
-          
-    <!-- Image Preview and Cropper Container -->
-                <div id="cropperContainer" style="display: none;">
-         <div class="mb-3">
-          <div style="max-height: 400px; overflow: hidden;">
-       <img id="imageToCrop" style="max-width: 100%;" />
-     </div>
-  </div>
-  
-      <!-- Cropper Controls -->
-         <div class="d-flex justify-content-center gap-2 mb-3">
-   <button type="button" class="btn btn-sm btn-outline-secondary" id="zoomInBtn">
-        <i class="fas fa-search-plus"></i> Zoom In
-            </button>
-  <button type="button" class="btn btn-sm btn-outline-secondary" id="zoomOutBtn">
-    <i class="fas fa-search-minus"></i> Zoom Out
-              </button>
-         <button type="button" class="btn btn-sm btn-outline-secondary" id="rotateLeftBtn">
-     <i class="fas fa-undo"></i> Rotate Left
-              </button>
-           <button type="button" class="btn btn-sm btn-outline-secondary" id="rotateRightBtn">
-       <i class="fas fa-redo"></i> Rotate Right
-             </button>
-<button type="button" class="btn btn-sm btn-outline-secondary" id="resetBtn">
-               <i class="fas fa-sync"></i> Reset
-    </button>
-         </div>
-    
-     <!-- Preview -->
-    <div class="text-center">
-            <label class="form-label"><strong>Preview:</strong></label>
-         <div class="d-flex justify-content-center">
-  <div class="rounded-circle overflow-hidden" style="width: 150px; height: 150px; border: 2px solid #dee2e6;">
-            <div id="previewImage"></div>
-      </div>
-           </div>
-         </div>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Instructions:</strong> Select an image, then use the crop tool to adjust. You can zoom in/out and move the image. Maximum file size: 5MB.
                 </div>
+
+                <!-- File Input -->
+                <div class="mb-3">
+                    <label for="profilePictureInput" class="form-label">Select Image</label>
+                    <input type="file" class="form-control" id="profilePictureInput" accept="image/jpeg,image/png,image/jpg" />
+                    <small class="text-muted">Accepted formats: JPG, JPEG, PNG (Max: 5MB)</small>
+                </div>
+
+                <!-- Image Preview and Cropper Container -->
+                <div id="cropperContainer" style="display: none;">
+                    <div class="mb-3">
+                        <div style="max-height: 400px; overflow: hidden;">
+                            <img id="imageToCrop" style="max-width: 100%;" />
+                        </div>
+                    </div>
+
+                    <!-- Cropper Controls -->
+                    <div class="d-flex justify-content-center gap-2 mb-3">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="zoomInBtn">
+                            <i class="fas fa-search-plus"></i> Zoom In
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="zoomOutBtn">
+                            <i class="fas fa-search-minus"></i> Zoom Out
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="rotateLeftBtn">
+                            <i class="fas fa-undo"></i> Rotate Left
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="rotateRightBtn">
+                            <i class="fas fa-redo"></i> Rotate Right
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="resetBtn">
+                            <i class="fas fa-sync"></i> Reset
+                        </button>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="text-center">
+                        <label class="form-label"><strong>Preview:</strong></label>
+                        <div class="d-flex justify-content-center">
+                            <div class="rounded-circle overflow-hidden" style="width: 150px; height: 150px; border: 2px solid #dee2e6;">
+                                <div id="previewImage"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="uploadCroppedImageBtn" style="display: none;">
+                    <i class="fas fa-upload me-1"></i>Upload Picture
+                </button>
+            </div>
         </div>
-  <div class="modal-footer">
-         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-  <i class="fas fa-times me-1"></i>Cancel
-     </button>
-   <button type="button" class="btn btn-primary" id="uploadCroppedImageBtn" style="display: none;">
-   <i class="fas fa-upload me-1"></i>Upload Picture
-            </button>
-   </div>
-   </div>
     </div>
 </div>
 
@@ -362,51 +362,51 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                             <span asp-validation-for="LicenseExpiryDate" class="text-danger"></span>
                             @if (Model.LicenseExpiryDate < DateTime.Now)
                             {
-                            <small class="text-danger">
-                                <i class="fas fa-exclamation-triangle me-1"></i>Your license is expired. Please update with a valid expiry date.
-                            </small>
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>Your license is expired. Please update with a valid expiry date.
+                                </small>
                             }
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">
-        <i class="fas fa-file-upload me-2"></i>Driver License Document
-               <small class="text-muted">(Optional - PDF, PNG, JPG - Max 5MB)</small>
-     </label>
-   @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
-  {
-   <div class="alert alert-info mb-2">
-       <i class="fas fa-info-circle me-2"></i>
-               Current document: <a href="@Model.DriverLicensePath" target="_blank" class="alert-link">View existing license</a>
-          </div>
-          }
-    <input type="file" name="driverLicenseFile" id="driverLicenseFile" class="form-control" accept=".pdf,.png,.jpg,.jpeg" />
-    <small class="text-muted d-block mt-1">
-         <i class="fas fa-info-circle me-1"></i>Accepted formats: PDF, PNG, JPG (Maximum size: 5MB)
-    @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
-   {
-      <span class="text-warning">
-      <br /><i class="fas fa-exclamation-triangle me-1"></i>Uploading a new file will replace the existing document.
-       </span>
-    }
-        </small>
-       </div>
+                            <i class="fas fa-file-upload me-2"></i>Driver License Document
+                            <small class="text-muted">(Optional - PDF, PNG, JPG - Max 5MB)</small>
+                        </label>
+                        @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
+                        {
+                            <div class="alert alert-info mb-2">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Current document: <a href="@Model.DriverLicensePath" target="_blank" class="alert-link">View existing license</a>
+                            </div>
+                        }
+                        <input type="file" name="driverLicenseFile" id="driverLicenseFile" class="form-control" accept=".pdf,.png,.jpg,.jpeg" />
+                        <small class="text-muted d-block mt-1">
+                            <i class="fas fa-info-circle me-1"></i>Accepted formats: PDF, PNG, JPG (Maximum size: 5MB)
+                            @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
+                            {
+                                <span class="text-warning">
+                                    <br /><i class="fas fa-exclamation-triangle me-1"></i>Uploading a new file will replace the existing document.
+                                </span>
+                            }
+                        </small>
+                    </div>
 
-   <div class="alert alert-info">
-      <i class="fas fa-info-circle me-2"></i>
-   <strong>Note:</strong> Ensure all information is accurate, especially your license details. You must have a valid license to book cars.
- </div>
-       </div>
-       <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-             <i class="fas fa-times me-1"></i>Cancel
-         </button>
-      <button type="submit" class="btn btn-primary">
-        <i class="fas fa-save me-1"></i>Save Changes
-      </button>
-    </div>
-      </form>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> Ensure all information is accurate, especially your license details. You must have a valid license to book cars.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -415,243 +415,243 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    
+
     <!-- Cropper.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    
-    <script>
-   let cropper = null;
-        let currentFile = null;
 
-        // Handle file selection
-        document.getElementById('profilePictureInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            
- if (!file) return;
-   
-       // Validate file size (5MB)
-     if (file.size > 5 * 1024 * 1024) {
-       alert('File size must not exceed 5MB!');
-    e.target.value = '';
-              return;
-            }
-     
- // Validate file type
-   if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
-    alert('Only JPG, JPEG, and PNG files are allowed!');
-      e.target.value = '';
-       return;
-            }
-        
-       currentFile = file;
-            
-      // Read and display the image
-        const reader = new FileReader();
-          reader.onload = function(event) {
- const image = document.getElementById('imageToCrop');
-      image.src = event.target.result;
-        
-    // Destroy previous cropper instance if exists
-     if (cropper) {
-           cropper.destroy();
-              }
-   
-  // Show cropper container
-         document.getElementById('cropperContainer').style.display = 'block';
-    document.getElementById('uploadCroppedImageBtn').style.display = 'inline-block';
-     
-          // Initialize Cropper.js
-             cropper = new Cropper(image, {
-             aspectRatio: 1,
-        viewMode: 1,
-     preview: '#previewImage',
-        autoCropArea: 1,
-    responsive: true,
-    restore: false,
- guides: true,
-         center: true,
-       highlight: false,
-               cropBoxMovable: true,
-             cropBoxResizable: true,
-           toggleDragModeOnDblclick: false,
-    });
-            };
-      reader.readAsDataURL(file);
-        });
-        
-        // Zoom In
-        document.getElementById('zoomInBtn').addEventListener('click', function() {
-     if (cropper) {
-        cropper.zoom(0.1);
-}
-        });
-        
-        // Zoom Out
-   document.getElementById('zoomOutBtn').addEventListener('click', function() {
-            if (cropper) {
-        cropper.zoom(-0.1);
-            }
-        });
- 
-        // Rotate Left
-        document.getElementById('rotateLeftBtn').addEventListener('click', function() {
-  if (cropper) {
-    cropper.rotate(-90);
-            }
-   });
-        
-        // Rotate Right
-document.getElementById('rotateRightBtn').addEventListener('click', function() {
-            if (cropper) {
-     cropper.rotate(90);
-            }
-  });
-        
-        // Reset
-        document.getElementById('resetBtn').addEventListener('click', function() {
-            if (cropper) {
-        cropper.reset();
-      }
-        });
-        
-        // Upload cropped image
-   document.getElementById('uploadCroppedImageBtn').addEventListener('click', function() {
-     if (!cropper) return;
-  
-      // Get cropped canvas
-            const canvas = cropper.getCroppedCanvas({
-     width: 400,
-     height: 400,
- imageSmoothingEnabled: true,
-                imageSmoothingQuality: 'high',
-            });
-      
-        // Convert to blob
-   canvas.toBlob(function(blob) {
-           // Check size
-           if (blob.size > 5 * 1024 * 1024) {
-             alert('Cropped image size exceeds 5MB. Please zoom out or select a smaller area.');
-     return;
-          }
-       
-     // Convert to base64
+    <script>
+           let cropper = null;
+                let currentFile = null;
+
+                // Handle file selection
+                document.getElementById('profilePictureInput').addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+
+         if (!file) return;
+
+               // Validate file size (5MB)
+             if (file.size > 5 * 1024 * 1024) {
+               alert('File size must not exceed 5MB!');
+            e.target.value = '';
+                      return;
+                    }
+
+         // Validate file type
+           if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
+            alert('Only JPG, JPEG, and PNG files are allowed!');
+              e.target.value = '';
+               return;
+                    }
+
+               currentFile = file;
+
+              // Read and display the image
                 const reader = new FileReader();
-          reader.onloadend = function() {
-              const base64data = reader.result;
-      
-// Create form and submit
-            const form = document.createElement('form');
-      form.method = 'POST';
-  form.action = '@Url.Action("UpdateProfile", "Customer")';
-        
-              // Add CSRF token
-  const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-        const tokenInput = document.createElement('input');
-             tokenInput.type = 'hidden';
-    tokenInput.name = '__RequestVerificationToken';
-     tokenInput.value = token;
-          form.appendChild(tokenInput);
-        
-          // Add cropped image data
-            const imageInput = document.createElement('input');
-        imageInput.type = 'hidden';
-    imageInput.name = 'croppedImage';
-     imageInput.value = base64data;
-    form.appendChild(imageInput);
-    
-        // Add customer data
-   const customerIdInput = document.createElement('input');
-      customerIdInput.type = 'hidden';
-    customerIdInput.name = 'CustomerId';
-      customerIdInput.value = '@Model.CustomerId';
-            form.appendChild(customerIdInput);
-   
-      const firstNameInput = document.createElement('input');
-                    firstNameInput.type = 'hidden';
-           firstNameInput.name = 'FirstName';
-   firstNameInput.value = '@Model.FirstName';
-      form.appendChild(firstNameInput);
-         
-      const lastNameInput = document.createElement('input');
-        lastNameInput.type = 'hidden';
-          lastNameInput.name = 'LastName';
-     lastNameInput.value = '@Model.LastName';
-     form.appendChild(lastNameInput);
-   
-        const emailInput = document.createElement('input');
-           emailInput.type = 'hidden';
-  emailInput.name = 'Email';
-      emailInput.value = '@Model.Email';
-  form.appendChild(emailInput);
-         
-        const phoneInput = document.createElement('input');
-           phoneInput.type = 'hidden';
-  phoneInput.name = 'PhoneNumber';
-    phoneInput.value = '@Model.PhoneNumber';
-    form.appendChild(phoneInput);
-     
- const addressInput = document.createElement('input');
- addressInput.type = 'hidden';
-          addressInput.name = 'Address';
-        addressInput.value = '@Model.Address';
-          form.appendChild(addressInput);
-           
-        const licenseInput = document.createElement('input');
-             licenseInput.type = 'hidden';
-        licenseInput.name = 'LicenseNumber';
-        licenseInput.value = '@Model.LicenseNumber';
-          form.appendChild(licenseInput);
-       
-                const expiryInput = document.createElement('input');
-        expiryInput.type = 'hidden';
-    expiryInput.name = 'LicenseExpiryDate';
-         expiryInput.value = '@Model.LicenseExpiryDate.ToString("yyyy-MM-dd")';
-   form.appendChild(expiryInput);
-            
-           const createdAtInput = document.createElement('input');
-          createdAtInput.type = 'hidden';
-          createdAtInput.name = 'CreatedAt';
-     createdAtInput.value = '@Model.CreatedAt.ToString("o")';
-        form.appendChild(createdAtInput);
-           
-      document.body.appendChild(form);
-     form.submit();
-                };
-     reader.readAsDataURL(blob);
-            }, 'image/jpeg', 0.9);
-        });
-        
-      // Reset modal when closed
-        document.getElementById('uploadProfilePictureModal').addEventListener('hidden.bs.modal', function() {
-    if (cropper) {
-       cropper.destroy();
-    cropper = null;
-       }
-document.getElementById('profilePictureInput').value = '';
-   document.getElementById('cropperContainer').style.display = 'none';
-     document.getElementById('uploadCroppedImageBtn').style.display = 'none';
-        });
-        
-    // Remove profile picture
-        function removeProfilePicture() {
-  if (!confirm('Are you sure you want to remove your profile picture?')) {
-   return;
-            }
-            
-        // Create form and submit
-    const form = document.createElement('form');
- form.method = 'POST';
-       form.action = '@Url.Action("RemoveProfilePicture", "Customer")';
-        
- const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-        const tokenInput = document.createElement('input');
-  tokenInput.type = 'hidden';
-   tokenInput.name = '__RequestVerificationToken';
-  tokenInput.value = token;
-        form.appendChild(tokenInput);
-         
-   document.body.appendChild(form);
-        form.submit();
+                  reader.onload = function(event) {
+         const image = document.getElementById('imageToCrop');
+              image.src = event.target.result;
+
+            // Destroy previous cropper instance if exists
+             if (cropper) {
+                   cropper.destroy();
+                      }
+
+          // Show cropper container
+                 document.getElementById('cropperContainer').style.display = 'block';
+            document.getElementById('uploadCroppedImageBtn').style.display = 'inline-block';
+
+                  // Initialize Cropper.js
+                     cropper = new Cropper(image, {
+                     aspectRatio: 1,
+                viewMode: 1,
+             preview: '#previewImage',
+                autoCropArea: 1,
+            responsive: true,
+            restore: false,
+         guides: true,
+                 center: true,
+               highlight: false,
+                       cropBoxMovable: true,
+                     cropBoxResizable: true,
+                   toggleDragModeOnDblclick: false,
+            });
+                    };
+              reader.readAsDataURL(file);
+                });
+
+                // Zoom In
+                document.getElementById('zoomInBtn').addEventListener('click', function() {
+             if (cropper) {
+                cropper.zoom(0.1);
         }
+                });
+
+                // Zoom Out
+           document.getElementById('zoomOutBtn').addEventListener('click', function() {
+                    if (cropper) {
+                cropper.zoom(-0.1);
+                    }
+                });
+
+                // Rotate Left
+                document.getElementById('rotateLeftBtn').addEventListener('click', function() {
+          if (cropper) {
+            cropper.rotate(-90);
+                    }
+           });
+
+                // Rotate Right
+        document.getElementById('rotateRightBtn').addEventListener('click', function() {
+                    if (cropper) {
+             cropper.rotate(90);
+                    }
+          });
+
+                // Reset
+                document.getElementById('resetBtn').addEventListener('click', function() {
+                    if (cropper) {
+                cropper.reset();
+              }
+                });
+
+                // Upload cropped image
+           document.getElementById('uploadCroppedImageBtn').addEventListener('click', function() {
+             if (!cropper) return;
+
+              // Get cropped canvas
+                    const canvas = cropper.getCroppedCanvas({
+             width: 400,
+             height: 400,
+         imageSmoothingEnabled: true,
+                        imageSmoothingQuality: 'high',
+                    });
+
+                // Convert to blob
+           canvas.toBlob(function(blob) {
+                   // Check size
+                   if (blob.size > 5 * 1024 * 1024) {
+                     alert('Cropped image size exceeds 5MB. Please zoom out or select a smaller area.');
+             return;
+                  }
+
+             // Convert to base64
+                        const reader = new FileReader();
+                  reader.onloadend = function() {
+                      const base64data = reader.result;
+
+        // Create form and submit
+                    const form = document.createElement('form');
+              form.method = 'POST';
+          form.action = '@Url.Action("UpdateProfile", "Customer")';
+
+                      // Add CSRF token
+          const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const tokenInput = document.createElement('input');
+                     tokenInput.type = 'hidden';
+            tokenInput.name = '__RequestVerificationToken';
+             tokenInput.value = token;
+                  form.appendChild(tokenInput);
+
+                  // Add cropped image data
+                    const imageInput = document.createElement('input');
+                imageInput.type = 'hidden';
+            imageInput.name = 'croppedImage';
+             imageInput.value = base64data;
+            form.appendChild(imageInput);
+
+                // Add customer data
+           const customerIdInput = document.createElement('input');
+              customerIdInput.type = 'hidden';
+            customerIdInput.name = 'CustomerId';
+              customerIdInput.value = '@Model.CustomerId';
+                    form.appendChild(customerIdInput);
+
+              const firstNameInput = document.createElement('input');
+                            firstNameInput.type = 'hidden';
+                   firstNameInput.name = 'FirstName';
+           firstNameInput.value = '@Model.FirstName';
+              form.appendChild(firstNameInput);
+
+              const lastNameInput = document.createElement('input');
+                lastNameInput.type = 'hidden';
+                  lastNameInput.name = 'LastName';
+             lastNameInput.value = '@Model.LastName';
+             form.appendChild(lastNameInput);
+
+                const emailInput = document.createElement('input');
+                   emailInput.type = 'hidden';
+          emailInput.name = 'Email';
+              emailInput.value = '@Model.Email';
+          form.appendChild(emailInput);
+
+                const phoneInput = document.createElement('input');
+                   phoneInput.type = 'hidden';
+          phoneInput.name = 'PhoneNumber';
+            phoneInput.value = '@Model.PhoneNumber';
+            form.appendChild(phoneInput);
+
+         const addressInput = document.createElement('input');
+         addressInput.type = 'hidden';
+                  addressInput.name = 'Address';
+                addressInput.value = '@Model.Address';
+                  form.appendChild(addressInput);
+
+                const licenseInput = document.createElement('input');
+                     licenseInput.type = 'hidden';
+                licenseInput.name = 'LicenseNumber';
+                licenseInput.value = '@Model.LicenseNumber';
+                  form.appendChild(licenseInput);
+
+                        const expiryInput = document.createElement('input');
+                expiryInput.type = 'hidden';
+            expiryInput.name = 'LicenseExpiryDate';
+                 expiryInput.value = '@Model.LicenseExpiryDate.ToString("yyyy-MM-dd")';
+           form.appendChild(expiryInput);
+
+                   const createdAtInput = document.createElement('input');
+                  createdAtInput.type = 'hidden';
+                  createdAtInput.name = 'CreatedAt';
+             createdAtInput.value = '@Model.CreatedAt.ToString("o")';
+                form.appendChild(createdAtInput);
+
+              document.body.appendChild(form);
+             form.submit();
+                        };
+             reader.readAsDataURL(blob);
+                    }, 'image/jpeg', 0.9);
+                });
+
+              // Reset modal when closed
+                document.getElementById('uploadProfilePictureModal').addEventListener('hidden.bs.modal', function() {
+            if (cropper) {
+               cropper.destroy();
+            cropper = null;
+               }
+        document.getElementById('profilePictureInput').value = '';
+           document.getElementById('cropperContainer').style.display = 'none';
+             document.getElementById('uploadCroppedImageBtn').style.display = 'none';
+                });
+
+            // Remove profile picture
+                function removeProfilePicture() {
+          if (!confirm('Are you sure you want to remove your profile picture?')) {
+           return;
+                    }
+
+                // Create form and submit
+            const form = document.createElement('form');
+         form.method = 'POST';
+               form.action = '@Url.Action("RemoveProfilePicture", "Customer")';
+
+         const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const tokenInput = document.createElement('input');
+          tokenInput.type = 'hidden';
+           tokenInput.name = '__RequestVerificationToken';
+          tokenInput.value = token;
+                form.appendChild(tokenInput);
+
+           document.body.appendChild(form);
+                form.submit();
+                }
     </script>
 }

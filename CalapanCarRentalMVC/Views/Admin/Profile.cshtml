@@ -6,19 +6,19 @@
 
 <div class="page-header">
     <div class="d-flex justify-content-between align-items-center">
-      <div>
-   <h1><i class="fas fa-user-circle me-2"></i>My Profile</h1>
-   <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
-         <li class="breadcrumb-item active">My Profile</li>
+        <div>
+            <h1><i class="fas fa-user-circle me-2"></i>My Profile</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">My Profile</li>
                 </ol>
-   </nav>
+            </nav>
         </div>
-     <div>
+        <div>
             <a asp-action="Dashboard" class="btn btn-secondary">
-     <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
-         </a>
+                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+            </a>
         </div>
     </div>
 </div>
@@ -26,7 +26,7 @@
 @if (TempData["Success"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
@@ -36,235 +36,237 @@
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
+    </div>
 }
 
 <div class="row">
     <div class="col-lg-8 mx-auto">
         <div class="dashboard-widget">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5><i class="fas fa-info-circle me-2"></i>Account Information</h5>
-        <button type="button" class="btn btn-warning btn-sm" id="editAccountBtn">
-            <i class="fas fa-edit me-1"></i>Edit Account
-      </button>
-    </div>
-  
-    <form asp-action="Profile" method="post" id="profileForm">
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-        <input type="hidden" asp-for="UserId" />
-        <input type="hidden" asp-for="Role" />
-        <input type="hidden" asp-for="CreatedAt" />
- <input type="hidden" asp-for="Password" />
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="text-muted">Role</label>
-         <p><span class="badge bg-danger">@Model.Role</span></p>
-     </div>
-        <div class="col-md-6">
-    <label class="text-muted">Member Since</label>
-    <p><i class="fas fa-calendar me-1"></i>@Model.CreatedAt.ToString("MMMM dd, yyyy")</p>
-          </div>
-        </div>
-
-     <hr />
-
-      <div class="mb-3">
-    <label asp-for="Username" class="form-label">Username</label>
-  <div class="input-group">
-           <span class="input-group-text"><i class="fas fa-user"></i></span>
-  <input asp-for="Username" class="form-control" placeholder="Enter username" readonly />
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5><i class="fas fa-info-circle me-2"></i>Account Information</h5>
+                <button type="button" class="btn btn-warning btn-sm" id="editAccountBtn">
+                    <i class="fas fa-edit me-1"></i>Edit Account
+                </button>
             </div>
-            <span asp-validation-for="Username" class="text-danger"></span>
-    </div>
 
-        <div class="mb-3">
-        <label asp-for="Email" class="form-label">Email Address</label>
-         <div class="input-group">
-         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-         <input asp-for="Email" class="form-control" placeholder="admin@example.com" readonly />
-  </div>
-  <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
+            <form asp-action="Profile" method="post" id="profileForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="Role" />
+                <input type="hidden" asp-for="CreatedAt" />
+                <input type="hidden" asp-for="Password" />
 
-        <div id="passwordSection" style="display: none;">
-    <hr />
-
-            <h6 class="mb-3"><i class="fas fa-key me-2"></i>Change Password (Optional)</h6>
-    <div class="alert alert-info">
-         <i class="fas fa-info-circle me-2"></i>
-                <small>Leave password fields empty if you don't want to change your password. <strong>You must enter your current password to make changes.</strong></small>
- </div>
-
-        <div class="mb-3">
-        <label for="currentPassword" class="form-label">Current Password <span class="text-danger">*</span></label>
-       <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-lock"></i></span>
-   <input type="password" id="currentPassword" name="currentPassword" class="form-control" placeholder="Enter your current password" />
-        <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
-     <i class="fas fa-eye"></i>
-       </button>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="text-muted">Role</label>
+                        <p><span class="badge bg-danger">@Model.Role</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted">Member Since</label>
+                        <p><i class="fas fa-calendar me-1"></i>@Model.CreatedAt.ToString("MMMM dd, yyyy")</p>
+                    </div>
                 </div>
-          <small class="text-muted">Required to change password</small>
- </div>
 
- <div class="mb-3">
-   <label for="newPassword" class="form-label">New Password</label>
-             <div class="input-group">
-            <span class="input-group-text"><i class="fas fa-lock"></i></span>
-     <input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="Enter new password (min 6 characters)" />
-      <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
- <i class="fas fa-eye"></i>
-   </button>
-   </div>
-       <small class="text-muted">Minimum 6 characters</small>
-        </div>
+                <hr />
 
-            <div class="mb-3">
-    <label for="confirmPassword" class="form-label">Confirm New Password</label>
-    <div class="input-group">
-      <span class="input-group-text"><i class="fas fa-lock"></i></span>
-      <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm new password" />
-        <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
-                 <i class="fas fa-eye"></i>
-</button>
-   </div>
-        </div>
-        </div>
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input asp-for="Username" class="form-control" placeholder="Enter username" readonly />
+                    </div>
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
 
-        <hr />
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input asp-for="Email" class="form-control" placeholder="admin@example.com" readonly />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
 
-    <div class="d-flex gap-2" id="formButtons" style="display: none !important;">
-            <button type="submit" class="btn btn-admin-primary">
-  <i class="fas fa-save me-1"></i>Save Changes
-       </button>
-       <button type="button" class="btn btn-secondary" id="cancelEditBtn">
-    <i class="fas fa-times me-1"></i>Cancel
-         </button>
+                <div id="passwordSection" style="display: none;">
+                    <hr />
+
+                    <h6 class="mb-3"><i class="fas fa-key me-2"></i>Change Password (Optional)</h6>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small>Leave password fields empty if you don't want to change your password. <strong>You must enter your current password to make changes.</strong></small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Current Password <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" id="currentPassword" name="currentPassword" class="form-control" placeholder="Enter your current password" />
+                            <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Required to change password</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="Enter new password (min 6 characters)" />
+                            <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Minimum 6 characters</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm new password" />
+                            <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="d-flex gap-2" id="formButtons" style="display: none !important;">
+                    <button type="submit" class="btn btn-admin-primary">
+                        <i class="fas fa-save me-1"></i>Save Changes
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
 
         <!-- Account Statistics -->
         <div class="dashboard-widget mt-3">
-  <h5><i class="fas fa-chart-bar me-2"></i>Account Activity</h5>
-   
+            <h5><i class="fas fa-chart-bar me-2"></i>Account Activity</h5>
+
             <div class="row text-center">
- <div class="col-md-4 mb-3">
-        <div class="stat-card border-start border-primary border-4">
-      <i class="fas fa-calendar-alt fa-2x text-primary mb-2"></i>
-     <h6 class="text-muted">Account Age</h6>
-        <h4 class="mb-0">@((DateTime.Now - Model.CreatedAt).Days) Days</h4>
-     </div>
-         </div>
-      <div class="col-md-4 mb-3">
-<div class="stat-card border-start border-success border-4">
-          <i class="fas fa-sign-in-alt fa-2x text-success mb-2"></i>
-     <h6 class="text-muted">Last Login</h6>
-    <h4 class="mb-0">Today</h4>
-      </div>
+                <div class="col-md-4 mb-3">
+                    <div class="stat-card border-start border-primary border-4">
+                        <i class="fas fa-calendar-alt fa-2x text-primary mb-2"></i>
+                        <h6 class="text-muted">Account Age</h6>
+                        <h4 class="mb-0">@((DateTime.Now - Model.CreatedAt).Days) Days</h4>
+                    </div>
                 </div>
-   <div class="col-md-4 mb-3">
-         <div class="stat-card border-start border-info border-4">
-         <i class="fas fa-shield-alt fa-2x text-info mb-2"></i>
-          <h6 class="text-muted">Security</h6>
-           <h4 class="mb-0">Active</h4>
-          </div>
-       </div>
-        </div>
+                <div class="col-md-4 mb-3">
+                    <div class="stat-card border-start border-success border-4">
+                        <i class="fas fa-sign-in-alt fa-2x text-success mb-2"></i>
+                        <h6 class="text-muted">Last Login</h6>
+                        <h4 class="mb-0">Today</h4>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="stat-card border-start border-info border-4">
+                        <i class="fas fa-shield-alt fa-2x text-info mb-2"></i>
+                        <h6 class="text-muted">Security</h6>
+                        <h4 class="mb-0">Active</h4>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
-        // Edit Account Button functionality
-        document.getElementById('editAccountBtn').addEventListener('click', function () {
-            // Enable input fields
-     document.querySelector('input[name="Username"]').removeAttribute('readonly');
-    document.querySelector('input[name="Email"]').removeAttribute('readonly');
-    
-            // Show password section
-            document.getElementById('passwordSection').style.display = 'block';
-      
-    // Show form buttons
-document.getElementById('formButtons').style.display = 'flex';
-            
-        // Hide edit button
-      this.style.display = 'none';
-        });
+                // Edit Account Button functionality
+                document.getElementById('editAccountBtn').addEventListener('click', function () {
+                    // Enable input fields
+             document.querySelector('input[name="Username"]').removeAttribute('readonly');
+            document.querySelector('input[name="Email"]').removeAttribute('readonly');
 
-      // Cancel Edit Button functionality
-        document.getElementById('cancelEditBtn').addEventListener('click', function () {
-      // Reset form to original values
-         document.getElementById('profileForm').reset();
-       
-      // Disable input fields
-         document.querySelector('input[name="Username"]').setAttribute('readonly', 'readonly');
-  document.querySelector('input[name="Email"]').setAttribute('readonly', 'readonly');
-     
-  // Hide password section
-            document.getElementById('passwordSection').style.display = 'none';
- 
-         // Hide form buttons
-       document.getElementById('formButtons').style.display = 'none';
-      
-            // Show edit button
- document.getElementById('editAccountBtn').style.display = 'inline-block';
-      });
+                    // Show password section
+                    document.getElementById('passwordSection').style.display = 'block';
 
-        // Toggle password visibility for current password
-        document.getElementById('toggleCurrentPassword').addEventListener('click', function () {
-     const passwordField = document.getElementById('currentPassword');
-    const icon = this.querySelector('i');
-  
-            if (passwordField.type === 'password') {
+            // Show form buttons
+        document.getElementById('formButtons').style.display = 'flex';
+
+                // Hide edit button
+              this.style.display = 'none';
+                });
+
+              // Cancel Edit Button functionality
+                document.getElementById('cancelEditBtn').addEventListener('click', function () {
+              // Reset form to original values
+                 document.getElementById('profileForm').reset();
+
+              // Disable input fields
+                 document.querySelector('input[name="Username"]').setAttribute('readonly', 'readonly');
+          document.querySelector('input[name="Email"]').setAttribute('readonly', 'readonly');
+
+          // Hide password section
+                    document.getElementById('passwordSection').style.display = 'none';
+
+                 // Hide form buttons
+               document.getElementById('formButtons').style.display = 'none';
+
+                    // Show edit button
+         document.getElementById('editAccountBtn').style.display = 'inline-block';
+              });
+
+                // Toggle password visibility for current password
+                document.getElementById('toggleCurrentPassword').addEventListener('click', function () {
+             const passwordField = document.getElementById('currentPassword');
+            const icon = this.querySelector('i');
+
+                    if (passwordField.type === 'password') {
+                 passwordField.type = 'text';
+               icon.classList.remove('fa-eye');
+                 icon.classList.add('fa-eye-slash');
+                    } else {
+                 passwordField.type = 'password';
+                      icon.classList.remove('fa-eye-slash');
+               icon.classList.add('fa-eye');
+              }
+                });
+
+                // Toggle password visibility for new password
+                document.getElementById('toggleNewPassword').addEventListener('click', function () {
+           const passwordField = document.getElementById('newPassword');
+                    const icon = this.querySelector('i');
+
+                    if (passwordField.type === 'password') {
          passwordField.type = 'text';
-       icon.classList.remove('fa-eye');
-         icon.classList.add('fa-eye-slash');
-            } else {
-         passwordField.type = 'password';
+             icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+                    } else {
+               passwordField.type = 'password';
               icon.classList.remove('fa-eye-slash');
-       icon.classList.add('fa-eye');
-      }
-        });
-
-        // Toggle password visibility for new password
-        document.getElementById('toggleNewPassword').addEventListener('click', function () {
-   const passwordField = document.getElementById('newPassword');
-            const icon = this.querySelector('i');
-  
-            if (passwordField.type === 'password') {
- passwordField.type = 'text';
-     icon.classList.remove('fa-eye');
-    icon.classList.add('fa-eye-slash');
-            } else {
-       passwordField.type = 'password';
-      icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
- }
-        });
-
-  // Toggle password visibility for confirm password
-        document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
-    const passwordField = document.getElementById('confirmPassword');
-            const icon = this.querySelector('i');
-    
-            if (passwordField.type === 'password') {
-        passwordField.type = 'text';
-           icon.classList.remove('fa-eye');
- icon.classList.add('fa-eye-slash');
-     } else {
-         passwordField.type = 'password';
-     icon.classList.remove('fa-eye-slash');
                 icon.classList.add('fa-eye');
-  }
-        });
+         }
+                });
 
-    // Auto-hide success/error messages after 5 seconds
-        setTimeout(function() {
-    $('.alert').fadeOut('slow');
-        }, 5000);
+          // Toggle password visibility for confirm password
+                document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+            const passwordField = document.getElementById('confirmPassword');
+                    const icon = this.querySelector('i');
+
+                    if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                   icon.classList.remove('fa-eye');
+         icon.classList.add('fa-eye-slash');
+             } else {
+                 passwordField.type = 'password';
+             icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+          }
+                });
+
+            // Auto-hide success/error messages after 5 seconds
+                setTimeout(function() {
+            $('.alert').fadeOut('slow');
+                }, 5000);
     </script>
 }

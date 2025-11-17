@@ -35,23 +35,23 @@ builder.Services.AddAuthentication(options =>
     googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
     googleOptions.CallbackPath = "/signin-google";
     googleOptions.SaveTokens = true;
-    
+
     // Handle authentication failures gracefully
     googleOptions.Events.OnRemoteFailure = context =>
  {
-        // Check if user cancelled the authentication
-    if (context.Failure?.Message.Contains("access_denied") == true ||
-       context.Failure?.Message.Contains("denied") == true)
-        {
-            context.Response.Redirect("/Account/Login?cancelled=true");
-        }
+     // Check if user cancelled the authentication
+     if (context.Failure?.Message.Contains("access_denied") == true ||
+        context.Failure?.Message.Contains("denied") == true)
+     {
+         context.Response.Redirect("/Account/Login?cancelled=true");
+     }
      else
-  {
-   context.Response.Redirect("/Account/Login?error=true");
-        }
-        
-        context.HandleResponse();
-return Task.CompletedTask;
+     {
+         context.Response.Redirect("/Account/Login?error=true");
+     }
+
+     context.HandleResponse();
+     return Task.CompletedTask;
  };
 });
 

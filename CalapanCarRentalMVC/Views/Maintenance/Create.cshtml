@@ -1,19 +1,19 @@
 @model CalapanCarRentalMVC.Models.Maintenance
 @{
     ViewData["Title"] = "Schedule Maintenance";
-  Layout = "_Layout";
+    Layout = "_Layout";
 }
 
 <div class="page-header">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-     <h1><i class="fas fa-plus-circle me-2"></i>Schedule Maintenance</h1>
- <nav aria-label="breadcrumb">
-   <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
- <li class="breadcrumb-item"><a asp-action="Index">Maintenance</a></li>
-       <li class="breadcrumb-item active">Create</li>
-        </ol>
+            <h1><i class="fas fa-plus-circle me-2"></i>Schedule Maintenance</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Maintenance</a></li>
+                    <li class="breadcrumb-item active">Create</li>
+                </ol>
             </nav>
         </div>
     </div>
@@ -23,97 +23,99 @@
     <div class="col-lg-8 mx-auto">
         <div class="dashboard-widget">
             <h5><i class="fas fa-edit me-2"></i>Maintenance Details</h5>
-            
+
             <form asp-action="Create" method="post">
-     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                 <div class="mb-3">
-        <label asp-for="CarId" class="form-label">Vehicle</label>
-      <select asp-for="CarId" class="form-select" required>
-     <option value="">-- Select Vehicle --</option>
-          @foreach (var car in ViewBag.Cars)
-     {
-               <option value="@car.CarId">@car.Brand @car.Model - @car.PlateNumber</option>
-         }
-        </select>
-    <span asp-validation-for="CarId" class="text-danger"></span>
-            </div>
-
-<div class="mb-3">
-         <label asp-for="MaintenanceType" class="form-label">Maintenance Type</label>
-     <select asp-for="MaintenanceType" class="form-select" required>
-     <option value="">-- Select Type --</option>
-           <option value="Oil Change">Oil Change</option>
-   <option value="Tire Rotation">Tire Rotation</option>
-              <option value="Brake Service">Brake Service</option>
-        <option value="Engine Repair">Engine Repair</option>
-                <option value="Transmission Service">Transmission Service</option>
-        <option value="Air Conditioning Service">Air Conditioning Service</option>
-    <option value="Battery Replacement">Battery Replacement</option>
-  <option value="General Inspection">General Inspection</option>
-         <option value="Body Work">Body Work</option>
-     <option value="Other">Other</option>
-        </select>
-    <span asp-validation-for="MaintenanceType" class="text-danger"></span>
+                    <label asp-for="CarId" class="form-label">Vehicle</label>
+                    <select asp-for="CarId" class="form-select" required>
+                        <option value="">-- Select Vehicle --</option>
+                        @foreach (var car in ViewBag.Cars)
+                        {
+                            <option value="@car.CarId">@car.Brand @car.Model - @car.PlateNumber</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CarId" class="text-danger"></span>
                 </div>
 
-     <div class="mb-3">
-         <label asp-for="Description" class="form-label">Description</label>
-              <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe the maintenance work needed..." required></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-  </div>
+                <div class="mb-3">
+                    <label asp-for="MaintenanceType" class="form-label">Maintenance Type</label>
+                    <select asp-for="MaintenanceType" class="form-select" required>
+                        <option value="">-- Select Type --</option>
+                        <option value="Oil Change">Oil Change</option>
+                        <option value="Tire Rotation">Tire Rotation</option>
+                        <option value="Brake Service">Brake Service</option>
+                        <option value="Engine Repair">Engine Repair</option>
+                        <option value="Transmission Service">Transmission Service</option>
+                        <option value="Air Conditioning Service">Air Conditioning Service</option>
+                        <option value="Battery Replacement">Battery Replacement</option>
+                        <option value="General Inspection">General Inspection</option>
+                        <option value="Body Work">Body Work</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span asp-validation-for="MaintenanceType" class="text-danger"></span>
+                </div>
 
-  <div class="row">
-       <div class="col-md-6 mb-3">
-   <label asp-for="DateScheduled" class="form-label">Date Scheduled</label>
-         <input asp-for="DateScheduled" type="date" class="form-control" required />
-      <span asp-validation-for="DateScheduled" class="text-danger"></span>
-  </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe the maintenance work needed..." required></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
 
-              <div class="col-md-6 mb-3">
-  <label asp-for="Cost" class="form-label">Estimated Cost (@Html.Raw("&#8369;"))</label>
-          <input asp-for="Cost" type="number" step="0.01" class="form-control" placeholder="0.00" required />
-   <span asp-validation-for="Cost" class="text-danger"></span>
-        </div>
-          </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DateScheduled" class="form-label">Date Scheduled</label>
+                        <input asp-for="DateScheduled" type="date" class="form-control" required />
+                        <span asp-validation-for="DateScheduled" class="text-danger"></span>
+                    </div>
 
-    <div class="mb-3">
-           <label asp-for="Status" class="form-label">Status</label>
-     <select asp-for="Status" class="form-select" required>
-   <option value="Scheduled">Scheduled</option>
-     <option value="Urgent">Urgent</option>
-        </select>
-       <span asp-validation-for="Status" class="text-danger"></span>
-  <small class="form-text text-muted">
-      <i class="fas fa-info-circle"></i> Selecting "Scheduled" or "Urgent" will automatically set the vehicle status to "Maintenance" and make it unavailable for rental
-      </small>
- </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Cost" class="form-label">Estimated Cost (@Html.Raw("&#8369;"))</label>
+                        <input asp-for="Cost" type="number" step="0.01" class="form-control" placeholder="0.00" required />
+                        <span asp-validation-for="Cost" class="text-danger"></span>
+                    </div>
+                </div>
 
-  <div class="mb-3">
-       <label asp-for="ServiceProvider" class="form-label">Service Provider (Optional)</label>
-    <input asp-for="ServiceProvider" type="text" class="form-control" placeholder="e.g., ABC Auto Shop" />
-  <span asp-validation-for="ServiceProvider" class="text-danger"></span>
-           </div>
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">Status</label>
+                    <select asp-for="Status" class="form-select" required>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Urgent">Urgent</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-info-circle"></i> Selecting "Scheduled" or "Urgent" will automatically set the vehicle status to "Maintenance" and make it unavailable for rental
+                    </small>
+                </div>
 
- <div class="mb-3">
-    <label asp-for="Notes" class="form-label">Additional Notes (Optional)</label>
-     <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any additional information..."></textarea>
-          <span asp-validation-for="Notes" class="text-danger"></span>
-          </div>
+                <div class="mb-3">
+                    <label asp-for="ServiceProvider" class="form-label">Service Provider (Optional)</label>
+                    <input asp-for="ServiceProvider" type="text" class="form-control" placeholder="e.g., ABC Auto Shop" />
+                    <span asp-validation-for="ServiceProvider" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Notes" class="form-label">Additional Notes (Optional)</label>
+                    <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any additional information..."></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
 
                 <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-admin-primary">
-    <i class="fas fa-save me-1"></i>Schedule Maintenance
-    </button>
-          <a asp-action="Index" class="btn btn-secondary">
-        <i class="fas fa-times me-1"></i>Cancel
-                 </a>
+                    <button type="submit" class="btn btn-admin-primary">
+                        <i class="fas fa-save me-1"></i>Schedule Maintenance
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </a>
+                </div>
+            </form>
         </div>
-        </form>
-    </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

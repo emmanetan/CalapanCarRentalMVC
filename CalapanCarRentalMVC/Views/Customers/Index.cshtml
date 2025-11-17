@@ -8,17 +8,17 @@
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h1><i class="fas fa-users me-2"></i>Manage Customers</h1>
-     <nav aria-label="breadcrumb">
+            <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-  <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
-      <li class="breadcrumb-item active">Customers</li>
-    </ol>
-          </nav>
- </div>
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Customers</li>
+                </ol>
+            </nav>
+        </div>
         <div>
             <a asp-action="Create" class="btn btn-admin-primary">
-     <i class="fas fa-plus me-1"></i>Add Customer
-  </a>
+                <i class="fas fa-plus me-1"></i>Add Customer
+            </a>
         </div>
     </div>
 </div>
@@ -27,16 +27,16 @@
 <div class="card mb-4 shadow-sm">
     <div class="card-body">
         <form method="get" class="row g-3">
-       <div class="col-md-9">
-      <input type="text" name="searchString" class="form-control" 
-     placeholder="Search by name, email, or phone..." 
-    value="@Context.Request.Query["searchString"]" />
-   </div>
-     <div class="col-md-3">
-       <button type="submit" class="btn btn-primary w-100">
-     <i class="fas fa-search me-2"></i>Search
- </button>
-     </div>
+            <div class="col-md-9">
+                <input type="text" name="searchString" class="form-control"
+                       placeholder="Search by name, email, or phone..."
+                       value="@Context.Request.Query["searchString"]" />
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-2"></i>Search
+                </button>
+            </div>
         </form>
     </div>
 </div>
@@ -44,84 +44,84 @@
 <!-- Customers Table -->
 <div class="dashboard-widget">
     <h5><i class="fas fa-list me-2"></i>Customer List</h5>
-    
+
     @if (Model.Any())
- {
+    {
         <div class="table-responsive">
-      <table class="table admin-table">
-           <thead>
-         <tr>
-      <th>Customer Name</th>
-   <th>Contact</th>
-     <th>License No.</th>
-        <th>Address</th>
-      <th>Registered</th>
-          <th>Actions</th>
-           </tr>
-          </thead>
-    <tbody>
-            @foreach (var customer in Model)
-          {
-         <tr>
-              <td>
-  <strong>@customer.FirstName @customer.LastName</strong><br />
-    <small class="text-muted">@customer.Email</small>
-                </td>
-          <td>
-      <i class="fas fa-phone me-1"></i>@customer.PhoneNumber<br />
-           <small class="text-muted"><i class="fas fa-envelope me-1"></i>@customer.Email</small>
-           </td>
-      <td>
-    <strong>@customer.LicenseNumber</strong><br />
-  <small class="text-muted">
-             Expires: @customer.LicenseExpiryDate.ToString("MMM dd, yyyy")
-             @if (customer.LicenseExpiryDate < DateTime.Now)
-      {
-  <span class="badge bg-danger ms-1">Expired</span>
-          }
-        else if (customer.LicenseExpiryDate < DateTime.Now.AddMonths(1))
-               {
-       <span class="badge bg-warning ms-1">Expiring Soon</span>
-                 }
-   </small>
-       </td>
-     <td>@customer.Address</td>
-     <td>
-       <small class="text-muted">@customer.CreatedAt.ToString("MMM dd, yyyy")</small>
-               </td>
-          <td>
-           <div class="btn-group" role="group">
-       <a asp-action="Details" asp-route-id="@customer.CustomerId" 
-               class="btn btn-sm btn-info" title="View Details">
-  <i class="fas fa-eye"></i>
-          </a>
-      <a asp-controller="Rentals" asp-action="Index" asp-route-customerId="@customer.CustomerId"
-       class="btn btn-sm btn-success" title="Transaction History">
-         <i class="fas fa-history"></i>
-           </a>
-    <a asp-action="Edit" asp-route-id="@customer.CustomerId" 
-          class="btn btn-sm btn-warning" title="Edit">
-      <i class="fas fa-edit"></i>
-                  </a>
-                <a asp-action="Delete" asp-route-id="@customer.CustomerId" 
-  class="btn btn-sm btn-danger" title="Delete">
-  <i class="fas fa-trash"></i>
-       </a>
-     </div>
-</td>
-    </tr>
-         }
-           </tbody>
-          </table>
+            <table class="table admin-table">
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Contact</th>
+                        <th>License No.</th>
+                        <th>Address</th>
+                        <th>Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customer in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@customer.FirstName @customer.LastName</strong><br />
+                                <small class="text-muted">@customer.Email</small>
+                            </td>
+                            <td>
+                                <i class="fas fa-phone me-1"></i>@customer.PhoneNumber<br />
+                                <small class="text-muted"><i class="fas fa-envelope me-1"></i>@customer.Email</small>
+                            </td>
+                            <td>
+                                <strong>@customer.LicenseNumber</strong><br />
+                                <small class="text-muted">
+                                    Expires: @customer.LicenseExpiryDate.ToString("MMM dd, yyyy")
+                                    @if (customer.LicenseExpiryDate < DateTime.Now)
+                                    {
+                                        <span class="badge bg-danger ms-1">Expired</span>
+                                    }
+                                    else if (customer.LicenseExpiryDate < DateTime.Now.AddMonths(1))
+                                    {
+                                        <span class="badge bg-warning ms-1">Expiring Soon</span>
+                                    }
+                                </small>
+                            </td>
+                            <td>@customer.Address</td>
+                            <td>
+                                <small class="text-muted">@customer.CreatedAt.ToString("MMM dd, yyyy")</small>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@customer.CustomerId"
+                                       class="btn btn-sm btn-info" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a asp-controller="Rentals" asp-action="Index" asp-route-customerId="@customer.CustomerId"
+                                       class="btn btn-sm btn-success" title="Transaction History">
+                                        <i class="fas fa-history"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@customer.CustomerId"
+                                       class="btn btn-sm btn-warning" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@customer.CustomerId"
+                                       class="btn btn-sm btn-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     }
     else
     {
         <div class="text-center py-5">
-        <i class="fas fa-users fa-4x text-muted mb-3"></i>
- <h4 class="text-muted">No Customers Found</h4>
-       <p class="text-muted">Start by adding customers to the system.</p>
-        <a asp-action="Create" class="btn btn-admin-primary mt-3">
+            <i class="fas fa-users fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">No Customers Found</h4>
+            <p class="text-muted">Start by adding customers to the system.</p>
+            <a asp-action="Create" class="btn btn-admin-primary mt-3">
                 <i class="fas fa-plus me-1"></i>Add First Customer
             </a>
         </div>
@@ -131,140 +131,135 @@
 @section Styles {
     <style>
         /* Mobile responsive styles for Manage Customers page */
-    
+
         /* Tablet and below */
         @@media (max-width: 768px) {
-         .admin-table {
-           font-size: 0.85rem;
-        }
+            .admin-table {
+                font-size: 0.85rem;
+            }
 
-         .admin-table td, .admin-table th {
-        padding: 0.5rem 0.25rem;
-              white-space: nowrap;
-}
+                .admin-table td, .admin-table th {
+                    padding: 0.5rem 0.25rem;
+                    white-space: nowrap;
+                }
 
-          .admin-table .btn-group {
-   display: flex;
-             flex-wrap: nowrap;
- }
+                .admin-table .btn-group {
+                    display: flex;
+                    flex-wrap: nowrap;
+                }
 
-            .admin-table .btn-group .btn {
-      padding: 0.25rem 0.4rem;
-      font-size: 0.75rem;
-       }
+                    .admin-table .btn-group .btn {
+                        padding: 0.25rem 0.4rem;
+                        font-size: 0.75rem;
+                    }
 
-            .admin-table .btn-group .btn i {
-              font-size: 0.75rem;
-         }
+                        .admin-table .btn-group .btn i {
+                            font-size: 0.75rem;
+                        }
         }
 
         /* Mobile - 527px and below */
         @@media (max-width: 527px) {
-      /* Make table more compact */
-   .admin-table {
-            font-size: 0.75rem;
+            /* Make table more compact */
+            .admin-table {
+                font-size: 0.75rem;
             }
 
-   .admin-table td, .admin-table th {
-        padding: 0.4rem 0.2rem;
-         font-size: 0.75rem;
-      }
+                .admin-table td, .admin-table th {
+                    padding: 0.4rem 0.2rem;
+                    font-size: 0.75rem;
+                }
+                /* Make action buttons very compact */
+                .admin-table .btn-group {
+                    display: flex;
+                    flex-wrap: nowrap;
+                    gap: 2px;
+                }
 
-        /* Make action buttons very compact */
-        .admin-table .btn-group {
-   display: flex;
-    flex-wrap: nowrap;
-        gap: 2px;
-          }
+                    .admin-table .btn-group .btn {
+                        padding: 0.2rem 0.3rem;
+                        font-size: 0.65rem;
+                        min-width: auto;
+                        border-radius: 0.2rem;
+                    }
 
-            .admin-table .btn-group .btn {
-padding: 0.2rem 0.3rem;
-     font-size: 0.65rem;
-                min-width: auto;
-  border-radius: 0.2rem;
+                        .admin-table .btn-group .btn i {
+                            font-size: 0.7rem;
+                            margin: 0;
+                        }
+                /* Reduce badge sizes */
+                .admin-table .badge {
+                    font-size: 0.65rem;
+                    padding: 0.2rem 0.3rem;
+                }
+            /* Make page header responsive */
+            .page-header .d-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
             }
 
-      .admin-table .btn-group .btn i {
-   font-size: 0.7rem;
-             margin: 0;
-     }
-
-            /* Reduce badge sizes */
-            .admin-table .badge {
-                font-size: 0.65rem;
-    padding: 0.2rem 0.3rem;
-    }
-
-     /* Make page header responsive */
-     .page-header .d-flex {
-  flex-direction: column;
-     align-items: flex-start !important;
-         }
-
-          .page-header .btn {
-           margin-top: 0.5rem;
+            .page-header .btn {
+                margin-top: 0.5rem;
                 width: 100%;
-      font-size: 0.85rem;
+                font-size: 0.85rem;
             }
 
-       .page-header h1 {
-     font-size: 1.5rem;
-  }
-
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
             /* Search section */
-         .card-body .row {
+            .card-body .row {
                 gap: 0.5rem;
- }
+            }
 
             .card-body .btn {
-    font-size: 0.85rem;
- }
+                font-size: 0.85rem;
+            }
         }
 
         /* Extra small mobile - 400px and below */
         @@media (max-width: 400px) {
             .admin-table .btn-group {
-       flex-direction: column;
-    gap: 2px;
-          width: 100%;
-     }
+                flex-direction: column;
+                gap: 2px;
+                width: 100%;
+            }
 
-   .admin-table .btn-group .btn {
-    width: 100%;
-    padding: 0.25rem 0.3rem;
-            font-size: 0.65rem;
-        }
+                .admin-table .btn-group .btn {
+                    width: 100%;
+                    padding: 0.25rem 0.3rem;
+                    font-size: 0.65rem;
+                }
 
-          .admin-table .btn-group .btn i {
-           margin-right: 0.2rem;
-         }
-
-    /* Stack table cells vertically for better readability */
-.admin-table thead {
+                    .admin-table .btn-group .btn i {
+                        margin-right: 0.2rem;
+                    }
+            /* Stack table cells vertically for better readability */
+            .admin-table thead {
                 display: none;
-       }
+            }
 
             .admin-table tbody tr {
- display: block;
-    margin-bottom: 1rem;
-     border: 1px solid #dee2e6;
-      border-radius: 0.375rem;
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+                border-radius: 0.375rem;
                 padding: 0.5rem;
             }
 
-  .admin-table tbody td {
-     display: block;
-              text-align: left;
- padding: 0.3rem 0.5rem;
-    border: none;
-  }
+            .admin-table tbody td {
+                display: block;
+                text-align: left;
+                padding: 0.3rem 0.5rem;
+                border: none;
+            }
 
-      .admin-table tbody td:before {
-         content: attr(data-label);
-      font-weight: bold;
-     display: inline-block;
-           width: 100px;
-      }
+                .admin-table tbody td:before {
+                    content: attr(data-label);
+                    font-weight: bold;
+                    display: inline-block;
+                    width: 100px;
+                }
         }
     </style>
 }

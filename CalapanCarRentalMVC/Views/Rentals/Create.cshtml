@@ -147,7 +147,7 @@
                                     </div>
                                     <small class="text-muted d-block mt-2">
                                         <i class="fas fa-info-circle me-1"></i>
-                                        Vehicle tracking helps us ensure your safety, recover stolen vehicles, and provide roadside assistance when needed. 
+                                        Vehicle tracking helps us ensure your safety, recover stolen vehicles, and provide roadside assistance when needed.
                                         Your location data is used solely for security purposes and will be handled in accordance with our privacy policy.
                                     </small>
                                     <span asp-validation-for="GpsTrackingConsent" class="text-danger d-block mt-2"></span>
@@ -180,87 +180,87 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-            $(document).ready(function() {
-           var dailyRate = @(ViewBag.SelectedCar != null ? ((CalapanCarRentalMVC.Models.Car)ViewBag.SelectedCar).DailyRate : 0);
+                   $(document).ready(function() {
+                  var dailyRate = @(ViewBag.SelectedCar != null ? ((CalapanCarRentalMVC.Models.Car)ViewBag.SelectedCar).DailyRate : 0);
 
-               function calculateTotal() {
-           var rentalDate = $('#rentalDate').val();
-             var returnDate = $('#returnDate').val();
+                      function calculateTotal() {
+                  var rentalDate = $('#rentalDate').val();
+                    var returnDate = $('#returnDate').val();
 
-        if (rentalDate && returnDate && dailyRate > 0) {
-             var start = new Date(rentalDate);
-         var end = new Date(returnDate);
-              var hours = (end - start) / (1000 * 60 * 60);
-           var days = Math.ceil(hours / 24);
+               if (rentalDate && returnDate && dailyRate > 0) {
+                    var start = new Date(rentalDate);
+                var end = new Date(returnDate);
+                     var hours = (end - start) / (1000 * 60 * 60);
+                  var days = Math.ceil(hours / 24);
 
-          if (days > 0) {
-             var total = days * dailyRate;
- $('#estimatedTotal').text('\u20B1' + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
- $('#rentalDays').text(days + ' day' + (days > 1 ? 's' : '') + ' rental');
-          } else {
-           $('#estimatedTotal').text('\u20B10.00');
- $('#rentalDays').text('Return date must be after rental date');
-          }
-              } else {
-         $('#estimatedTotal').text('\u20B10.00');
-         $('#rentalDays').text('Please select rental dates');
-            }
-            }
+                 if (days > 0) {
+                    var total = days * dailyRate;
+        $('#estimatedTotal').text('\u20B1' + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+        $('#rentalDays').text(days + ' day' + (days > 1 ? 's' : '') + ' rental');
+                 } else {
+                  $('#estimatedTotal').text('\u20B10.00');
+        $('#rentalDays').text('Return date must be after rental date');
+                 }
+                     } else {
+                $('#estimatedTotal').text('\u20B10.00');
+                $('#rentalDays').text('Please select rental dates');
+                   }
+                   }
 
-             $('#rentalDate, #returnDate').on('change', calculateTotal);
+                    $('#rentalDate, #returnDate').on('change', calculateTotal);
 
-           // Set minimum return date based on rental date
-           $('#rentalDate').on('change', function() {
-          var rentalDateTime = new Date($(this).val());
-             var minReturnDateTime = new Date(rentalDateTime);
-            minReturnDateTime.setHours(minReturnDateTime.getHours() + 1);
-            $('#returnDate').attr('min', minReturnDateTime.toISOString().slice(0, 16));
-            });
+                  // Set minimum return date based on rental date
+                  $('#rentalDate').on('change', function() {
+                 var rentalDateTime = new Date($(this).val());
+                    var minReturnDateTime = new Date(rentalDateTime);
+                   minReturnDateTime.setHours(minReturnDateTime.getHours() + 1);
+                   $('#returnDate').attr('min', minReturnDateTime.toISOString().slice(0, 16));
+                   });
 
-         // Initialize if dates are pre-filled
-            calculateTotal();
+                // Initialize if dates are pre-filled
+                   calculateTotal();
 
-        // Function to toggle receipt upload section
-        function toggleReceiptUpload() {
-            var selectedMethod = $('#paymentMethod').val();
-            console.log('Payment method selected:', selectedMethod); // Debug log
+               // Function to toggle receipt upload section
+               function toggleReceiptUpload() {
+                   var selectedMethod = $('#paymentMethod').val();
+                   console.log('Payment method selected:', selectedMethod); // Debug log
 
-            if (selectedMethod === 'Gcash' || selectedMethod === 'Bank Transfer') {
-                $('#receiptUploadSection').slideDown(300);
-                $('#paymentReceiptFile').prop('required', true);
-            } else {
-                $('#receiptUploadSection').slideUp(300);
-                $('#paymentReceiptFile').prop('required', false);
-                $('#receiptError').text('');
-            }
-        }
+                   if (selectedMethod === 'Gcash' || selectedMethod === 'Bank Transfer') {
+                       $('#receiptUploadSection').slideDown(300);
+                       $('#paymentReceiptFile').prop('required', true);
+                   } else {
+                       $('#receiptUploadSection').slideUp(300);
+                       $('#paymentReceiptFile').prop('required', false);
+                       $('#receiptError').text('');
+                   }
+               }
 
-        // Show/hide receipt upload section based on payment method
-        $('#paymentMethod').on('change', function() {
-            toggleReceiptUpload();
-        });
+               // Show/hide receipt upload section based on payment method
+               $('#paymentMethod').on('change', function() {
+                   toggleReceiptUpload();
+               });
 
-        // Check on page load in case there's a pre-selected value
-        toggleReceiptUpload();
+               // Check on page load in case there's a pre-selected value
+               toggleReceiptUpload();
 
-        // Form validation for receipt
-        $('form').on('submit', function(e) {
-        var paymentMethod = $('#paymentMethod').val();
-         if (paymentMethod === 'Gcash' || paymentMethod === 'Bank Transfer') {
-          var receiptFile = $('#paymentReceiptFile')[0].files;
-             if (!receiptFile || receiptFile.length === 0) {
-             e.preventDefault();
-              $('#receiptError').text('Payment receipt is required for ' + paymentMethod);
-             $('#receiptUploadSection').slideDown(300);
-           $('html, body').animate({
-         scrollTop: $('#receiptUploadSection').offset().top - 100
-           }, 500);
-                    return false;
-                }
-            }
-        });
+               // Form validation for receipt
+               $('form').on('submit', function(e) {
+               var paymentMethod = $('#paymentMethod').val();
+                if (paymentMethod === 'Gcash' || paymentMethod === 'Bank Transfer') {
+                 var receiptFile = $('#paymentReceiptFile')[0].files;
+                    if (!receiptFile || receiptFile.length === 0) {
+                    e.preventDefault();
+                     $('#receiptError').text('Payment receipt is required for ' + paymentMethod);
+                    $('#receiptUploadSection').slideDown(300);
+                  $('html, body').animate({
+                scrollTop: $('#receiptUploadSection').offset().top - 100
+                  }, 500);
+                           return false;
+                       }
+                   }
+               });
 
-            });
+                   });
     </script>
 }
 

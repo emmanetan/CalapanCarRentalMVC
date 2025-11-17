@@ -1,41 +1,41 @@
 @model CalapanCarRentalMVC.Models.Rental
 @{
     ViewData["Title"] = "Rental Details";
-  Layout = "_Layout";
+    Layout = "_Layout";
 }
 
 <div class="page-header">
     <div class="d-flex justify-content-between align-items-center">
-  <div>
-        <h1><i class="fas fa-file-contract me-2"></i>Rental Details</h1>
+        <div>
+            <h1><i class="fas fa-file-contract me-2"></i>Rental Details</h1>
             <nav aria-label="breadcrumb">
-             <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
-           <li class="breadcrumb-item"><a asp-action="Index">Rentals</a></li>
-         <li class="breadcrumb-item active">Details</li>
-            </ol>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Rentals</a></li>
+                    <li class="breadcrumb-item active">Details</li>
+                </ol>
             </nav>
-  </div>
+        </div>
         <div>
             @if (Context.Session.GetString("UserRole") == "Admin")
             {
-      @if (Model.Status == "Active")
-  {
-               <a asp-action="Return" asp-route-id="@Model.RentalId" class="btn btn-success">
-             <i class="fas fa-check-circle me-1"></i>Mark as Returned
-     </a>
- }
-     @if (Model.Status != "Completed")
-              {
- <a asp-action="Edit" asp-route-id="@Model.RentalId" class="btn btn-warning">
-      <i class="fas fa-edit me-1"></i>Edit
-   </a>
-       }
+                @if (Model.Status == "Active")
+                {
+                    <a asp-action="Return" asp-route-id="@Model.RentalId" class="btn btn-success">
+                        <i class="fas fa-check-circle me-1"></i>Mark as Returned
+                    </a>
+                }
+                @if (Model.Status != "Completed")
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.RentalId" class="btn btn-warning">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </a>
+                }
             }
-<a asp-action="Index" class="btn btn-secondary">
-       <i class="fas fa-arrow-left me-1"></i>Back to List
-      </a>
-  </div>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to List
+            </a>
+        </div>
     </div>
 </div>
 
@@ -43,325 +43,325 @@
     <div class="col-lg-8">
         <div class="dashboard-widget">
             <h5><i class="fas fa-info-circle me-2"></i>Rental Information</h5>
-            
+
             <div class="row mb-3">
-           <div class="col-md-6">
-     <label class="text-muted">Rental ID</label>
-           <p><strong>#@Model.RentalId</strong></p>
-              </div>
-   <div class="col-md-6">
-        <label class="text-muted">Status</label>
-           <p>
-     @if (Model.Status == "Pending")
-  {
-           <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>Pending Approval</span>
- }
-       else if (Model.Status == "Active")
-            {
-               <span class="badge bg-success"><i class="fas fa-key me-1"></i>Active</span>
- }
-              else if (Model.Status == "Completed")
-                {
-       <span class="badge bg-primary"><i class="fas fa-check me-1"></i>Completed</span>
-  }
-       else if (Model.Status == "Rejected")
-      {
-         <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Rejected</span>
-      }
-     else if (Model.Status == "Cancelled")
-    {
-  <span class="badge bg-secondary"><i class="fas fa-ban me-1"></i>Cancelled</span>
-     }
- </p>
-     </div>
+                <div class="col-md-6">
+                    <label class="text-muted">Rental ID</label>
+                    <p><strong>#@Model.RentalId</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <label class="text-muted">Status</label>
+                    <p>
+                        @if (Model.Status == "Pending")
+                        {
+                            <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>Pending Approval</span>
+                        }
+                        else if (Model.Status == "Active")
+                        {
+                            <span class="badge bg-success"><i class="fas fa-key me-1"></i>Active</span>
+                        }
+                        else if (Model.Status == "Completed")
+                        {
+                            <span class="badge bg-primary"><i class="fas fa-check me-1"></i>Completed</span>
+                        }
+                        else if (Model.Status == "Rejected")
+                        {
+                            <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Rejected</span>
+                        }
+                        else if (Model.Status == "Cancelled")
+                        {
+                            <span class="badge bg-secondary"><i class="fas fa-ban me-1"></i>Cancelled</span>
+                        }
+                    </p>
+                </div>
             </div>
 
             <hr />
 
-    <h6 class="mb-3"><i class="fas fa-calendar-alt me-2 text-primary"></i>Rental Period</h6>
+            <h6 class="mb-3"><i class="fas fa-calendar-alt me-2 text-primary"></i>Rental Period</h6>
             <div class="row mb-3">
-    <div class="col-md-6">
- <label class="text-muted">Pick-up Date & Time</label>
-               <p>
-    <i class="fas fa-calendar me-1"></i>
-        <strong>@Model.RentalDate.ToString("MMMM dd, yyyy")</strong>
-         <br />
-            <small class="text-muted">@Model.RentalDate.ToString("hh:mm tt")</small>
-                    </p>
-       </div>
-      <div class="col-md-6">
-         <label class="text-muted">Expected Return Date & Time</label>
-           <p>
-        <i class="fas fa-calendar-check me-1"></i>
-    <strong>@Model.ReturnDate.ToString("MMMM dd, yyyy")</strong>
-                 <br />
-         <small class="text-muted">@Model.ReturnDate.ToString("hh:mm tt")</small>
-        </p>
-             </div>
-            </div>
-
-    @if (Model.ActualReturnDate.HasValue)
-       {
-          <div class="mb-3">
-         <label class="text-muted">Actual Return Date</label>
-      <p>
-                <i class="fas fa-calendar-check me-1 text-success"></i>
-      <strong>@Model.ActualReturnDate.Value.ToString("MMMM dd, yyyy hh:mm tt")</strong>
-      @if (Model.ActualReturnDate > Model.ReturnDate)
-              {
-      var lateDays = (Model.ActualReturnDate.Value - Model.ReturnDate).Days;
- <span class="badge bg-warning ms-2">@lateDays day(s) late</span>
-         }
-             </p>
-      </div>
-         }
-
-<hr />
-
-  <div class="row mb-3">
                 <div class="col-md-6">
-        <label class="text-muted">Destination</label>
-           <p><i class="fas fa-map-marker-alt me-1"></i>@Model.Destination</p>
+                    <label class="text-muted">Pick-up Date & Time</label>
+                    <p>
+                        <i class="fas fa-calendar me-1"></i>
+                        <strong>@Model.RentalDate.ToString("MMMM dd, yyyy")</strong>
+                        <br />
+                        <small class="text-muted">@Model.RentalDate.ToString("hh:mm tt")</small>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <label class="text-muted">Expected Return Date & Time</label>
+                    <p>
+                        <i class="fas fa-calendar-check me-1"></i>
+                        <strong>@Model.ReturnDate.ToString("MMMM dd, yyyy")</strong>
+                        <br />
+                        <small class="text-muted">@Model.ReturnDate.ToString("hh:mm tt")</small>
+                    </p>
+                </div>
             </div>
-           <div class="col-md-6">
-              <label class="text-muted">Payment Method</label>
- <p>
-     @if (Model.PaymentMethod == "Cash")
- {
- <span class="badge bg-success"><i class="fas fa-money-bill me-1"></i>Cash</span>
-           }
-       else if (Model.PaymentMethod == "Gcash")
-     {
-     <span class="badge bg-info"><i class="fas fa-mobile-alt me-1"></i>Gcash</span>
-            }
-     else if (Model.PaymentMethod == "Bank Transfer")
-             {
-     <span class="badge bg-primary"><i class="fas fa-university me-1"></i>Bank Transfer</span>
-    }
-       </p>
-       </div>
-      </div>
 
-   <!-- GPS Tracking Consent -->
-    <div class="mb-3">
-        <label class="text-muted">GPS Tracking Consent</label>
-           <p>
-        @if (Model.GpsTrackingConsent)
-       {
-   <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Consented</span>
-     @if (Model.GpsConsentDate.HasValue)
+            @if (Model.ActualReturnDate.HasValue)
             {
-        <br />
-     <small class="text-muted">Agreed on: @Model.GpsConsentDate.Value.ToString("MMM dd, yyyy hh:mm tt")</small>
-      }
-      }
-  else
-     {
-     <span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Not Consented</span>
-     }
-     </p>
-     </div>
+                <div class="mb-3">
+                    <label class="text-muted">Actual Return Date</label>
+                    <p>
+                        <i class="fas fa-calendar-check me-1 text-success"></i>
+                        <strong>@Model.ActualReturnDate.Value.ToString("MMMM dd, yyyy hh:mm tt")</strong>
+                        @if (Model.ActualReturnDate > Model.ReturnDate)
+                        {
+                            var lateDays = (Model.ActualReturnDate.Value - Model.ReturnDate).Days;
+                            <span class="badge bg-warning ms-2">@lateDays day(s) late</span>
+                        }
+                    </p>
+                </div>
+            }
 
-        <hr />
+            <hr />
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="text-muted">Destination</label>
+                    <p><i class="fas fa-map-marker-alt me-1"></i>@Model.Destination</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="text-muted">Payment Method</label>
+                    <p>
+                        @if (Model.PaymentMethod == "Cash")
+                        {
+                            <span class="badge bg-success"><i class="fas fa-money-bill me-1"></i>Cash</span>
+                        }
+                        else if (Model.PaymentMethod == "Gcash")
+                        {
+                            <span class="badge bg-info"><i class="fas fa-mobile-alt me-1"></i>Gcash</span>
+                        }
+                        else if (Model.PaymentMethod == "Bank Transfer")
+                        {
+                            <span class="badge bg-primary"><i class="fas fa-university me-1"></i>Bank Transfer</span>
+                        }
+                    </p>
+                </div>
+            </div>
+
+            <!-- GPS Tracking Consent -->
+            <div class="mb-3">
+                <label class="text-muted">GPS Tracking Consent</label>
+                <p>
+                    @if (Model.GpsTrackingConsent)
+                    {
+                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Consented</span>
+                        @if (Model.GpsConsentDate.HasValue)
+                        {
+                            <br />
+                            <small class="text-muted">Agreed on: @Model.GpsConsentDate.Value.ToString("MMM dd, yyyy hh:mm tt")</small>
+                        }
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Not Consented</span>
+                    }
+                </p>
+            </div>
+
+            <hr />
 
             <h6 class="mb-3"><i class="fas fa-dollar-sign me-2 text-primary"></i>Payment Details</h6>
             <div class="mb-3">
-    <label class="text-muted">Rental Amount</label>
-      <h4 class="text-success mb-0">@Html.Raw("&#8369;")@((Model.TotalAmount - (Model.LateFee ?? 0)).ToString("N2"))</h4>
-      </div>
+                <label class="text-muted">Rental Amount</label>
+                <h4 class="text-success mb-0">@Html.Raw("&#8369;")@((Model.TotalAmount - (Model.LateFee ?? 0)).ToString("N2"))</h4>
+            </div>
 
             @if (Model.LateFee.HasValue && Model.LateFee.Value > 0)
             {
- <div class="mb-3">
-   <label class="text-muted">Late Fee</label>
-     <h5 class="text-danger mb-0">@Html.Raw("&#8369;")@Model.LateFee.Value.ToString("N2")</h5>
-      </div>
-      }
+                <div class="mb-3">
+                    <label class="text-muted">Late Fee</label>
+                    <h5 class="text-danger mb-0">@Html.Raw("&#8369;")@Model.LateFee.Value.ToString("N2")</h5>
+                </div>
+            }
 
-       <div class="mb-3">
+            <div class="mb-3">
                 <label class="text-muted">Total Amount</label>
                 <h3 class="text-primary mb-0">@Html.Raw("&#8369;")@Model.TotalAmount.ToString("N2")</h3>
             </div>
 
-     @if (!string.IsNullOrEmpty(Model.Notes))
-         {
-         <hr />
-      <div class="mb-3">
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <hr />
+                <div class="mb-3">
                     <label class="text-muted">Notes</label>
-     <p>@Model.Notes</p>
-         </div>
-         }
+                    <p>@Model.Notes</p>
+                </div>
+            }
 
-         <hr />
+            <hr />
 
             <div class="row">
-        <div class="col-md-6">
-          <small class="text-muted">
-    <i class="fas fa-clock me-1"></i>Created: @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")
-           </small>
-    </div>
-  </div>
+                <div class="col-md-6">
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>Created: @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")
+                    </small>
+                </div>
+            </div>
         </div>
 
-      <!-- Documents Section -->
+        <!-- Documents Section -->
         @if (Context.Session.GetString("UserRole") == "Admin")
         {
-        <div class="dashboard-widget mt-4">
-            <h5><i class="fas fa-file-alt me-2"></i>Uploaded Documents</h5>
-    
-        <div class="row">
-          <div class="col-md-6 mb-3">
-         <label class="text-muted">Government ID</label>
-        @if (!string.IsNullOrEmpty(Model.GovernmentIdPath))
-    {
-               <div>
-           <a href="@Model.GovernmentIdPath" target="_blank" class="btn btn-sm btn-outline-primary">
-         <i class="fas fa-eye me-1"></i>View Document
-      </a>
-          <a href="@Model.GovernmentIdPath" download class="btn btn-sm btn-outline-success">
-          <i class="fas fa-download me-1"></i>Download
-      </a>
-       </div>
-             }
-  else
- {
-     <p class="text-muted"><i class="fas fa-exclamation-circle me-1"></i>No document uploaded</p>
-      }
-          </div>
+            <div class="dashboard-widget mt-4">
+                <h5><i class="fas fa-file-alt me-2"></i>Uploaded Documents</h5>
 
-    @if (Model.PaymentMethod != "Cash")
-  {
-         <div class="col-md-6 mb-3">
-                <label class="text-muted">Payment Receipt</label>
-        @if (!string.IsNullOrEmpty(Model.PaymentReceiptPath))
-      {
-       <div>
-      <a href="@Model.PaymentReceiptPath" target="_blank" class="btn btn-sm btn-outline-primary">
-     <i class="fas fa-eye me-1"></i>View Receipt
-              </a>
-      <a href="@Model.PaymentReceiptPath" download class="btn btn-sm btn-outline-success">
-         <i class="fas fa-download me-1"></i>Download
-</a>
-             </div>
-                }
- else
-      {
-     <p class="text-muted"><i class="fas fa-exclamation-circle me-1"></i>No receipt uploaded</p>
-      }
-         </div>
-    }
-    </div>
-   </div>
-  }
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">Government ID</label>
+                        @if (!string.IsNullOrEmpty(Model.GovernmentIdPath))
+                        {
+                            <div>
+                                <a href="@Model.GovernmentIdPath" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>View Document
+                                </a>
+                                <a href="@Model.GovernmentIdPath" download class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-download me-1"></i>Download
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted"><i class="fas fa-exclamation-circle me-1"></i>No document uploaded</p>
+                        }
+                    </div>
+
+                    @if (Model.PaymentMethod != "Cash")
+                    {
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted">Payment Receipt</label>
+                            @if (!string.IsNullOrEmpty(Model.PaymentReceiptPath))
+                            {
+                                <div>
+                                    <a href="@Model.PaymentReceiptPath" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>View Receipt
+                                    </a>
+                                    <a href="@Model.PaymentReceiptPath" download class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-download me-1"></i>Download
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted"><i class="fas fa-exclamation-circle me-1"></i>No receipt uploaded</p>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
 
     <div class="col-lg-4">
-      <!-- Customer Information -->
+        <!-- Customer Information -->
         <div class="dashboard-widget">
-   <h5><i class="fas fa-user me-2"></i>Customer Details</h5>
-            
+            <h5><i class="fas fa-user me-2"></i>Customer Details</h5>
+
             <div class="mb-3">
-<label class="text-muted">Name</label>
-     <p><strong>@Model.Customer.FirstName @Model.Customer.LastName</strong></p>
+                <label class="text-muted">Name</label>
+                <p><strong>@Model.Customer.FirstName @Model.Customer.LastName</strong></p>
             </div>
 
             <div class="mb-3">
-           <label class="text-muted">Email</label>
-           <p><i class="fas fa-envelope me-1"></i>@Model.Customer.Email</p>
-       </div>
+                <label class="text-muted">Email</label>
+                <p><i class="fas fa-envelope me-1"></i>@Model.Customer.Email</p>
+            </div>
 
-  <div class="mb-3">
-        <label class="text-muted">Phone Number</label>
+            <div class="mb-3">
+                <label class="text-muted">Phone Number</label>
                 <p><i class="fas fa-phone me-1"></i>@Model.Customer.PhoneNumber</p>
-     </div>
-
-    <div class="mb-3">
-<label class="text-muted">Address</label>
-          <p><i class="fas fa-map-marker-alt me-1"></i>@Model.Customer.Address</p>
-      </div>
-
-  <div class="mb-3">
-         <label class="text-muted">License Number</label>
-  <p><strong>@Model.Customer.LicenseNumber</strong></p>
-           <small class="text-muted">
-         Expires: @Model.Customer.LicenseExpiryDate.ToString("MMM dd, yyyy")
-        @if (Model.Customer.LicenseExpiryDate < DateTime.Now)
-        {
-         <span class="badge bg-danger ms-1">Expired</span>
-      }
-   else if (Model.Customer.LicenseExpiryDate < DateTime.Now.AddMonths(1))
-         {
-          <span class="badge bg-warning ms-1">Expiring Soon</span>
-     }
-            else
-   {
-    <span class="badge bg-success ms-1">Valid</span>
-            }
-  </small>
             </div>
 
-      @if (Context.Session.GetString("UserRole") == "Admin")
+            <div class="mb-3">
+                <label class="text-muted">Address</label>
+                <p><i class="fas fa-map-marker-alt me-1"></i>@Model.Customer.Address</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-muted">License Number</label>
+                <p><strong>@Model.Customer.LicenseNumber</strong></p>
+                <small class="text-muted">
+                    Expires: @Model.Customer.LicenseExpiryDate.ToString("MMM dd, yyyy")
+                    @if (Model.Customer.LicenseExpiryDate < DateTime.Now)
+                    {
+                        <span class="badge bg-danger ms-1">Expired</span>
+                    }
+                    else if (Model.Customer.LicenseExpiryDate < DateTime.Now.AddMonths(1))
+                    {
+                        <span class="badge bg-warning ms-1">Expiring Soon</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success ms-1">Valid</span>
+                    }
+                </small>
+            </div>
+
+            @if (Context.Session.GetString("UserRole") == "Admin")
             {
-       <hr />
-    <a asp-controller="Customers" asp-action="Details" asp-route-id="@Model.Customer.CustomerId" class="btn btn-sm btn-outline-primary w-100">
-           <i class="fas fa-eye me-1"></i>View Full Customer Profile
-    </a>
-    }
+                <hr />
+                <a asp-controller="Customers" asp-action="Details" asp-route-id="@Model.Customer.CustomerId" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="fas fa-eye me-1"></i>View Full Customer Profile
+                </a>
+            }
         </div>
 
         <!-- Vehicle Information -->
-    <div class="dashboard-widget mt-3">
-      <h5><i class="fas fa-car me-2"></i>Vehicle Details</h5>
+        <div class="dashboard-widget mt-3">
+            <h5><i class="fas fa-car me-2"></i>Vehicle Details</h5>
 
-          <div class="mb-3">
-     <label class="text-muted">Brand & Model</label>
-       <p><strong>@Model.Car.Brand @Model.Car.Model</strong></p>
-     </div>
+            <div class="mb-3">
+                <label class="text-muted">Brand & Model</label>
+                <p><strong>@Model.Car.Brand @Model.Car.Model</strong></p>
+            </div>
 
-      <div class="mb-3">
-         <label class="text-muted">Year</label>
-   <p>@Model.Car.Year</p>
+            <div class="mb-3">
+                <label class="text-muted">Year</label>
+                <p>@Model.Car.Year</p>
             </div>
 
             <div class="mb-3">
                 <label class="text-muted">Color</label>
-   <p>@Model.Car.Color</p>
+                <p>@Model.Car.Color</p>
             </div>
 
             <div class="mb-3">
-         <label class="text-muted">Plate Number</label>
-       <p><strong>@Model.Car.PlateNumber</strong></p>
+                <label class="text-muted">Plate Number</label>
+                <p><strong>@Model.Car.PlateNumber</strong></p>
             </div>
-
-    <div class="mb-3">
-     <label class="text-muted">Daily Rate</label>
-           <p class="text-primary"><strong>@Html.Raw("&#8369;")@Model.Car.DailyRate.ToString("N2")</strong>/day</p>
- </div>
 
             <div class="mb-3">
-        <label class="text-muted">Current Status</label>
-       <p>
-        @if (Model.Car.Status == "Available")
-       {
-                <span class="badge bg-success">Available</span>
-          }
-           else if (Model.Car.Status == "Rented")
- {
-     <span class="badge bg-warning">Rented</span>
-         }
-    else if (Model.Car.Status == "Maintenance")
-  {
-       <span class="badge bg-danger">Maintenance</span>
-  }
-          </p>
+                <label class="text-muted">Daily Rate</label>
+                <p class="text-primary"><strong>@Html.Raw("&#8369;")@Model.Car.DailyRate.ToString("N2")</strong>/day</p>
             </div>
 
-      @if (Context.Session.GetString("UserRole") == "Admin")
-        {
-         <hr />
-  <a asp-controller="Vehicle" asp-action="Details" asp-route-id="@Model.Car.CarId" class="btn btn-sm btn-outline-primary w-100">
-   <i class="fas fa-eye me-1"></i>View Full Vehicle Details
- </a>
+            <div class="mb-3">
+                <label class="text-muted">Current Status</label>
+                <p>
+                    @if (Model.Car.Status == "Available")
+                    {
+                        <span class="badge bg-success">Available</span>
+                    }
+                    else if (Model.Car.Status == "Rented")
+                    {
+                        <span class="badge bg-warning">Rented</span>
+                    }
+                    else if (Model.Car.Status == "Maintenance")
+                    {
+                        <span class="badge bg-danger">Maintenance</span>
+                    }
+                </p>
+            </div>
+
+            @if (Context.Session.GetString("UserRole") == "Admin")
+            {
+                <hr />
+                <a asp-controller="Vehicle" asp-action="Details" asp-route-id="@Model.Car.CarId" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="fas fa-eye me-1"></i>View Full Vehicle Details
+                </a>
             }
         </div>
     </div>

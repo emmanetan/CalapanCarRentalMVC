@@ -7,193 +7,193 @@
 <div class="page-header">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-       <h1><i class="fas fa-info-circle me-2"></i>Maintenance Details</h1>
+            <h1><i class="fas fa-info-circle me-2"></i>Maintenance Details</h1>
             <nav aria-label="breadcrumb">
-       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
-           <li class="breadcrumb-item"><a asp-action="Index">Maintenance</a></li>
-           <li class="breadcrumb-item active">Details</li>
-    </ol>
-  </nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Maintenance</a></li>
+                    <li class="breadcrumb-item active">Details</li>
+                </ol>
+            </nav>
         </div>
         <div>
- <a asp-action="Edit" asp-route-id="@Model.MaintenanceId" class="btn btn-warning">
-        <i class="fas fa-edit me-1"></i>Edit
-   </a>
-        <a asp-action="Index" class="btn btn-secondary">
-       <i class="fas fa-arrow-left me-1"></i>Back to List
-    </a>
+            <a asp-action="Edit" asp-route-id="@Model.MaintenanceId" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to List
+            </a>
         </div>
-  </div>
+    </div>
 </div>
 
 <div class="row">
     <div class="col-lg-8">
-   <div class="dashboard-widget">
-  <h5><i class="fas fa-tools me-2"></i>Maintenance Information</h5>
-            
-          <div class="row mb-3">
-          <div class="col-md-6">
-       <label class="text-muted">Maintenance ID</label>
-   <p><strong>#@Model.MaintenanceId</strong></p>
-</div>
-   <div class="col-md-6">
- <label class="text-muted">Status</label>
- <p>
-     @if (Model.Status == "Urgent")
-         {
-       <span class="badge bg-danger"><i class="fas fa-exclamation-circle me-1"></i>Urgent</span>
-    }
-     else if (Model.Status == "Scheduled")
-  {
-         <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>Scheduled</span>
-  }
-else if (Model.Status == "Completed")
-    {
-        <span class="badge bg-success"><i class="fas fa-check me-1"></i>Completed</span>
-     }
-    </p>
-        </div>
-  </div>
+        <div class="dashboard-widget">
+            <h5><i class="fas fa-tools me-2"></i>Maintenance Information</h5>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="text-muted">Maintenance ID</label>
+                    <p><strong>#@Model.MaintenanceId</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <label class="text-muted">Status</label>
+                    <p>
+                        @if (Model.Status == "Urgent")
+                        {
+                            <span class="badge bg-danger"><i class="fas fa-exclamation-circle me-1"></i>Urgent</span>
+                        }
+                        else if (Model.Status == "Scheduled")
+                        {
+                            <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>Scheduled</span>
+                        }
+                        else if (Model.Status == "Completed")
+                        {
+                            <span class="badge bg-success"><i class="fas fa-check me-1"></i>Completed</span>
+                        }
+                    </p>
+                </div>
+            </div>
 
             <hr />
 
-      <div class="mb-3">
-       <label class="text-muted">Vehicle</label>
-     <p><strong>@Model.Car?.Brand @Model.Car?.Model</strong></p>
-       <small class="text-muted">Plate Number: @Model.Car?.PlateNumber</small>
-</div>
+            <div class="mb-3">
+                <label class="text-muted">Vehicle</label>
+                <p><strong>@Model.Car?.Brand @Model.Car?.Model</strong></p>
+                <small class="text-muted">Plate Number: @Model.Car?.PlateNumber</small>
+            </div>
 
-   <div class="mb-3">
-    <label class="text-muted">Maintenance Type</label>
-  <p><strong>@Model.MaintenanceType</strong></p>
-      </div>
+            <div class="mb-3">
+                <label class="text-muted">Maintenance Type</label>
+                <p><strong>@Model.MaintenanceType</strong></p>
+            </div>
 
-        <div class="mb-3">
-    <label class="text-muted">Description</label>
-              <p>@Model.Description</p>
-  </div>
+            <div class="mb-3">
+                <label class="text-muted">Description</label>
+                <p>@Model.Description</p>
+            </div>
 
             <div class="row mb-3">
-    <div class="col-md-6">
-           <label class="text-muted">Date Scheduled</label>
-  <p><i class="fas fa-calendar me-1"></i>@Model.DateScheduled.ToString("MMMM dd, yyyy")</p>
+                <div class="col-md-6">
+                    <label class="text-muted">Date Scheduled</label>
+                    <p><i class="fas fa-calendar me-1"></i>@Model.DateScheduled.ToString("MMMM dd, yyyy")</p>
                 </div>
-       @if (Model.DateCompleted.HasValue)
-    {
-         <div class="col-md-6">
-      <label class="text-muted">Date Completed</label>
-         <p><i class="fas fa-check-circle me-1 text-success"></i>@Model.DateCompleted.Value.ToString("MMMM dd, yyyy")</p>
-  </div>
-           }
-   </div>
+                @if (Model.DateCompleted.HasValue)
+                {
+                    <div class="col-md-6">
+                        <label class="text-muted">Date Completed</label>
+                        <p><i class="fas fa-check-circle me-1 text-success"></i>@Model.DateCompleted.Value.ToString("MMMM dd, yyyy")</p>
+                    </div>
+                }
+            </div>
 
- <div class="mb-3">
-    <label class="text-muted">Cost</label>
-        <p><strong class="text-primary">@Html.Raw("&#8369;")@Model.Cost.ToString("N2")</strong></p>
-  </div>
+            <div class="mb-3">
+                <label class="text-muted">Cost</label>
+                <p><strong class="text-primary">@Html.Raw("&#8369;")@Model.Cost.ToString("N2")</strong></p>
+            </div>
 
-  @if (!string.IsNullOrEmpty(Model.ServiceProvider))
-   {
-<div class="mb-3">
-   <label class="text-muted">Service Provider</label>
-  <p>@Model.ServiceProvider</p>
-     </div>
-   }
+            @if (!string.IsNullOrEmpty(Model.ServiceProvider))
+            {
+                <div class="mb-3">
+                    <label class="text-muted">Service Provider</label>
+                    <p>@Model.ServiceProvider</p>
+                </div>
+            }
 
             @if (!string.IsNullOrEmpty(Model.Notes))
-         {
-    <div class="mb-3">
-     <label class="text-muted">Additional Notes</label>
-         <p>@Model.Notes</p>
-  </div>
-          }
+            {
+                <div class="mb-3">
+                    <label class="text-muted">Additional Notes</label>
+                    <p>@Model.Notes</p>
+                </div>
+            }
 
-  <hr />
+            <hr />
 
-  <div class="row">
-        <div class="col-md-6">
-     <small class="text-muted"><i class="fas fa-clock me-1"></i>Created: @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</small>
-     </div>
-          <div class="col-md-6 text-end">
-    <small class="text-muted"><i class="fas fa-edit me-1"></i>Updated: @Model.UpdatedAt.ToString("MMM dd, yyyy hh:mm tt")</small>
-    </div>
-     </div>
-   </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted"><i class="fas fa-clock me-1"></i>Created: @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</small>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small class="text-muted"><i class="fas fa-edit me-1"></i>Updated: @Model.UpdatedAt.ToString("MMM dd, yyyy hh:mm tt")</small>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="col-lg-4">
         <div class="dashboard-widget">
-  <h5><i class="fas fa-car me-2"></i>Vehicle Details</h5>
+            <h5><i class="fas fa-car me-2"></i>Vehicle Details</h5>
 
-    @if (Model.Car != null)
+            @if (Model.Car != null)
             {
-        <div class="mb-2">
-      <label class="text-muted">Brand & Model</label>
-       <p><strong>@Model.Car.Brand @Model.Car.Model</strong></p>
-   </div>
+                <div class="mb-2">
+                    <label class="text-muted">Brand & Model</label>
+                    <p><strong>@Model.Car.Brand @Model.Car.Model</strong></p>
+                </div>
 
-    <div class="mb-2">
-      <label class="text-muted">Year</label>
-   <p>@Model.Car.Year</p>
-   </div>
+                <div class="mb-2">
+                    <label class="text-muted">Year</label>
+                    <p>@Model.Car.Year</p>
+                </div>
 
-       <div class="mb-2">
-      <label class="text-muted">Color</label>
-  <p>@Model.Car.Color</p>
-    </div>
+                <div class="mb-2">
+                    <label class="text-muted">Color</label>
+                    <p>@Model.Car.Color</p>
+                </div>
 
-    <div class="mb-2">
-          <label class="text-muted">Plate Number</label>
-     <p><strong>@Model.Car.PlateNumber</strong></p>
-         </div>
+                <div class="mb-2">
+                    <label class="text-muted">Plate Number</label>
+                    <p><strong>@Model.Car.PlateNumber</strong></p>
+                </div>
 
-       <div class="mb-2">
-    <label class="text-muted">Current Status</label>
-        <p>
-      @if (Model.Car.Status == "Available")
-            {
-             <span class="badge bg-success">@Model.Car.Status</span>
-         }
-       else if (Model.Car.Status == "Rented")
-    {
-     <span class="badge bg-warning">@Model.Car.Status</span>
-   }
-        else if (Model.Car.Status == "Maintenance")
-        {
-     <span class="badge bg-danger">@Model.Car.Status</span>
-      }
-    </p>
-     </div>
+                <div class="mb-2">
+                    <label class="text-muted">Current Status</label>
+                    <p>
+                        @if (Model.Car.Status == "Available")
+                        {
+                            <span class="badge bg-success">@Model.Car.Status</span>
+                        }
+                        else if (Model.Car.Status == "Rented")
+                        {
+                            <span class="badge bg-warning">@Model.Car.Status</span>
+                        }
+                        else if (Model.Car.Status == "Maintenance")
+                        {
+                            <span class="badge bg-danger">@Model.Car.Status</span>
+                        }
+                    </p>
+                </div>
 
-   <hr />
+                <hr />
 
-       <a asp-controller="Vehicle" asp-action="Details" asp-route-id="@Model.Car.CarId" class="btn btn-sm btn-outline-primary w-100">
-          <i class="fas fa-eye me-1"></i>View Full Vehicle Details
-  </a>
-       }
+                <a asp-controller="Vehicle" asp-action="Details" asp-route-id="@Model.Car.CarId" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="fas fa-eye me-1"></i>View Full Vehicle Details
+                </a>
+            }
         </div>
 
- <div class="dashboard-widget mt-3">
-      <h5><i class="fas fa-cog me-2"></i>Actions</h5>
-  
-  <div class="d-grid gap-2">
- @if (Model.Status != "Completed")
-     {
-   <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#completeMaintenanceModal">
-    <i class="fas fa-check-circle me-1"></i>Mark as Completed
-   </button>
-    }
-      
- <a asp-action="Edit" asp-route-id="@Model.MaintenanceId" class="btn btn-warning">
-        <i class="fas fa-edit me-1"></i>Edit Maintenance
-     </a>
-            
-       
-         <a asp-action="Delete" asp-route-id="@Model.MaintenanceId" class="btn btn-danger">
-      <i class="fas fa-trash me-1"></i>Delete Maintenance
-   </a>
-      </div>
+        <div class="dashboard-widget mt-3">
+            <h5><i class="fas fa-cog me-2"></i>Actions</h5>
+
+            <div class="d-grid gap-2">
+                @if (Model.Status != "Completed")
+                {
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#completeMaintenanceModal">
+                        <i class="fas fa-check-circle me-1"></i>Mark as Completed
+                    </button>
+                }
+
+                <a asp-action="Edit" asp-route-id="@Model.MaintenanceId" class="btn btn-warning">
+                    <i class="fas fa-edit me-1"></i>Edit Maintenance
+                </a>
+
+
+                <a asp-action="Delete" asp-route-id="@Model.MaintenanceId" class="btn btn-danger">
+                    <i class="fas fa-trash me-1"></i>Delete Maintenance
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -202,59 +202,59 @@ else if (Model.Status == "Completed")
 @if (Model.Status != "Completed")
 {
     <div class="modal fade" id="completeMaintenanceModal" tabindex="-1" aria-labelledby="completeMaintenanceModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-   <div class="modal-content">
- <form asp-action="CompleteMaintenance" method="post">
-       <div class="modal-header bg-success text-white">
-       <h5 class="modal-title" id="completeMaintenanceModalLabel">
-    <i class="fas fa-check-circle me-2"></i>Complete Maintenance
-         </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-     <div class="modal-body">
-  <input type="hidden" name="id" value="@Model.MaintenanceId" />
-  @Html.AntiForgeryToken()
-    
-  <div class="mb-3">
-       <h6>Confirm Completion</h6>
-  <p class="text-muted">Are you sure you want to mark this maintenance as completed?</p>
- <p><strong>Vehicle:</strong> @Model.Car?.Brand @Model.Car?.Model</p>
-       <p><strong>Maintenance Type:</strong> @Model.MaintenanceType</p>
-   </div>
-    
-           <div class="mb-3">
-      <label for="actualCost" class="form-label">Actual Cost (Optional)</label>
-  <div class="input-group">
-   <span class="input-group-text">@Html.Raw("&#8369;")</span>
-       <input type="number" class="form-control" id="actualCost" 
-    name="actualCost" step="0.01" min="0" 
-   placeholder="@Model.Cost.ToString("N2")" />
-    </div>
-    <small class="text-muted">Current estimated cost: @Html.Raw("&#8369;")@Model.Cost.ToString("N2"). Leave empty to keep this amount.</small>
-      </div>
-          
-      <div class="mb-3">
-  <label for="completionNotes" class="form-label">Completion Notes (Optional)</label>
-     <textarea class="form-control" id="completionNotes" 
-       name="completionNotes" rows="3" 
-    placeholder="Add any notes about the completed maintenance..."></textarea>
-   </div>
-     
- <div class="alert alert-info mb-0">
-  <i class="fas fa-info-circle me-1"></i>
-      <small>This will mark the maintenance as completed and set the vehicle back to "Available" status (if no other active maintenance exists).</small>
-    </div>
-       </div>
-  <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-    <i class="fas fa-times me-1"></i>Cancel
-  </button>
-  <button type="submit" class="btn btn-success">
-<i class="fas fa-check-circle me-1"></i>Complete Maintenance
-    </button>
-  </div>
-  </form>
- </div>
-    </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="CompleteMaintenance" method="post">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="completeMaintenanceModalLabel">
+                            <i class="fas fa-check-circle me-2"></i>Complete Maintenance
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="@Model.MaintenanceId" />
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <h6>Confirm Completion</h6>
+                            <p class="text-muted">Are you sure you want to mark this maintenance as completed?</p>
+                            <p><strong>Vehicle:</strong> @Model.Car?.Brand @Model.Car?.Model</p>
+                            <p><strong>Maintenance Type:</strong> @Model.MaintenanceType</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="actualCost" class="form-label">Actual Cost (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">@Html.Raw("&#8369;")</span>
+                                <input type="number" class="form-control" id="actualCost"
+                                       name="actualCost" step="0.01" min="0"
+                                       placeholder="@Model.Cost.ToString("N2")" />
+                            </div>
+                            <small class="text-muted">Current estimated cost: @Html.Raw("&#8369;")@Model.Cost.ToString("N2"). Leave empty to keep this amount.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="completionNotes" class="form-label">Completion Notes (Optional)</label>
+                            <textarea class="form-control" id="completionNotes"
+                                  name="completionNotes" rows="3"
+                                  placeholder="Add any notes about the completed maintenance..."></textarea>
+                        </div>
+
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <small>This will mark the maintenance as completed and set the vehicle back to "Available" status (if no other active maintenance exists).</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check-circle me-1"></i>Complete Maintenance
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 }

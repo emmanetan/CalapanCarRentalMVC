@@ -10,7 +10,7 @@
             <div class="col-lg-12 text-center">
                 <h1 class="display-4 fw-bold mb-3">Welcome to Calapan Car Rental</h1>
                 <p class="lead mb-4">Rent quality vehicles at affordable prices. Your journey starts here!</p>
-                <a asp-controller="Cars" asp-action="Index" class="btn btn-danger btn-lg">
+                <a asp-controller="Vehicle" asp-action="Index" class="btn btn-danger btn-lg">
                     <i class="fas fa-car me-2"></i>Browse Our Fleet
                 </a>
             </div>
@@ -87,7 +87,7 @@
                                 </div>
                             </div>
                             <div class="card-footer bg-transparent">
-                                <a asp-controller="Cars" asp-action="Details" asp-route-id="@car.CarId" asp-route-returnUrl="@Url.Action("Index", "Home")" class="btn btn-primary w-100">
+                                <a asp-controller="Vehicle" asp-action="Details" asp-route-id="@car.CarId" asp-route-returnUrl="@Url.Action("Index", "Home")" class="btn btn-primary w-100">
                                     <i class="fas fa-info-circle me-1"></i>View Details
                                 </a>
                             </div>
@@ -103,7 +103,7 @@
             }
         </div>
         <div class="text-center mt-4">
-            <a asp-controller="Cars" asp-action="Index" class="btn btn-outline-primary btn-lg">
+            <a asp-controller="Vehicle" asp-action="Index" class="btn btn-outline-primary btn-lg">
                 View All Vehicles <i class="fas fa-arrow-right ms-2"></i>
             </a>
         </div>

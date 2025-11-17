@@ -5,153 +5,153 @@
 }
 
 <div class="page-header">
-   <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center">
         <div>
-   <h1><i class="fas fa-tachometer-alt me-2"></i>My Dashboard</h1>
-          <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item active">Dashboard</li>
-   </ol>
- </nav>
+            <h1><i class="fas fa-tachometer-alt me-2"></i>My Dashboard</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active">Dashboard</li>
+                </ol>
+            </nav>
         </div>
-      <div>
-  <span class="text-muted"><i class="fas fa-clock me-1"></i>@DateTime.Now.ToString("MMMM dd, yyyy")</span>
-   </div>
-  </div>
+        <div>
+            <span class="text-muted"><i class="fas fa-clock me-1"></i>@DateTime.Now.ToString("MMMM dd, yyyy")</span>
+        </div>
+    </div>
 </div>
 
 <!-- Statistics Cards -->
 <div class="row mb-4">
     <div class="col-md-3 mb-3">
-  <div class="stat-card">
-     <div class="d-flex justify-content-between align-items-center">
-       <div>
- <p class="text-muted mb-1">Total Rentals</p>
-     <h3>@ViewBag.TotalRentals</h3>
-   </div>
-    <i class="fas fa-file-contract"></i>
-</div>
- </div>
-    </div>
-    <div class="col-md-3 mb-3">
-     <div class="stat-card">
-   <div class="d-flex justify-content-between align-items-center">
-        <div>
-        <p class="text-muted mb-1">Active Rentals</p>
-   <h3 class="text-success">@ViewBag.ActiveRentals</h3>
-     </div>
-         <i class="fas fa-check-circle text-success"></i>
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Total Rentals</p>
+                    <h3>@ViewBag.TotalRentals</h3>
+                </div>
+                <i class="fas fa-file-contract"></i>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
-<div class="stat-card">
-    <div class="d-flex justify-content-between align-items-center">
-       <div>
-         <p class="text-muted mb-1">Completed</p>
-    <h3 class="text-primary">@ViewBag.CompletedRentals</h3>
-     </div>
-     <i class="fas fa-check-double text-primary"></i>
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Active Rentals</p>
+                    <h3 class="text-success">@ViewBag.ActiveRentals</h3>
+                </div>
+                <i class="fas fa-check-circle text-success"></i>
+            </div>
+        </div>
     </div>
-</div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Completed</p>
+                    <h3 class="text-primary">@ViewBag.CompletedRentals</h3>
+                </div>
+                <i class="fas fa-check-double text-primary"></i>
+            </div>
+        </div>
     </div>
- <div class="col-md-3 mb-3">
-  <div class="stat-card">
-   <div class="d-flex justify-content-between align-items-center">
-       <div>
-   <p class="text-muted mb-1">Total Spent</p>
-  <h3 class="text-success">@Html.Raw("&#8369;")@ViewBag.TotalSpent.ToString("N2")</h3>
-       </div>
-       <i class="fas fa-dollar-sign text-success"></i>
-      </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Total Spent</p>
+                    <h3 class="text-success">@Html.Raw("&#8369;")@ViewBag.TotalSpent.ToString("N2")</h3>
+                </div>
+                <i class="fas fa-dollar-sign text-success"></i>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Quick Actions -->
 <div class="dashboard-widget">
-<h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
-   <div class="quick-actions">
-        <a asp-controller="Cars" asp-action="Index" class="quick-action-btn text-decoration-none">
-   <i class="fas fa-car"></i>
-       <span>Browse Cars</span>
-   </a>
-  <a asp-controller="Customer" asp-action="MyRentals" class="quick-action-btn text-decoration-none">
-     <i class="fas fa-list"></i>
-     <span>View My Rentals</span>
+    <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+    <div class="quick-actions">
+        <a asp-controller="Vehicle" asp-action="Index" class="quick-action-btn text-decoration-none">
+            <i class="fas fa-car"></i>
+            <span>Browse Vehicles</span>
         </a>
-<a asp-controller="Customer" asp-action="Profile" class="quick-action-btn text-decoration-none">
+        <a asp-controller="Customer" asp-action="MyRentals" class="quick-action-btn text-decoration-none">
+            <i class="fas fa-list"></i>
+            <span>View My Rentals</span>
+        </a>
+        <a asp-controller="Customer" asp-action="Profile" class="quick-action-btn text-decoration-none">
             <i class="fas fa-user-circle"></i>
-     <span>My Profile</span>
-  </a>
-  <a asp-controller="Home" asp-action="Contact" class="quick-action-btn text-decoration-none">
+            <span>My Profile</span>
+        </a>
+        <a asp-controller="Home" asp-action="Contact" class="quick-action-btn text-decoration-none">
             <i class="fas fa-phone"></i>
-         <span>Contact Support</span>
- </a>
+            <span>Contact Support</span>
+        </a>
     </div>
 </div>
 
 <!-- Recent Rentals -->
 <div class="row">
-<div class="col-12 mb-4">
+    <div class="col-12 mb-4">
         <div class="dashboard-widget">
             <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5><i class="fas fa-history me-2"></i>My Recent Rentals</h5>
-   <a asp-controller="Customer" asp-action="MyRentals" class="btn btn-sm btn-admin-primary">
-          View All
-           </a>
-   </div>
-     @if (ViewBag.RecentRentals != null && ViewBag.RecentRentals.Count > 0)
-   {
-       <div class="table-responsive">
-           <table class="table admin-table mb-0">
-     <thead>
-   <tr>
-    <th>Rental ID</th>
-      <th>Car</th>
-    <th>Rental Date</th>
-         <th>Return Date</th>
-<th>Status</th>
-   <th>Amount</th>
-     </tr>
-                </thead>
-      <tbody>
-   @foreach (var rental in ViewBag.RecentRentals)
-    {
-                  <tr>
-        <td><strong>#@rental.RentalId</strong></td>
-            <td>@rental.Car.Brand @rental.Car.Model</td>
-     <td>@rental.RentalDate.ToString("MMM dd, yyyy")</td>
-  <td>@rental.ReturnDate.ToString("MMM dd, yyyy")</td>
-   <td>
- @if (rental.Status == "Active")
-          {
-   <span class="badge bg-success">@rental.Status</span>
-   }
-        else if (rental.Status == "Completed")
-   {
-      <span class="badge bg-primary">@rental.Status</span>
-       }
- else
-     {
-      <span class="badge bg-warning">@rental.Status</span>
-    }
- </td>
-      <td><strong>@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong></td>
-  </tr>
-       }
-            </tbody>
-             </table>
+                <h5><i class="fas fa-history me-2"></i>My Recent Rentals</h5>
+                <a asp-controller="Customer" asp-action="MyRentals" class="btn btn-sm btn-admin-primary">
+                    View All
+                </a>
             </div>
+            @if (ViewBag.RecentRentals != null && ViewBag.RecentRentals.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table admin-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Rental ID</th>
+                                <th>Vehicle</th>
+                                <th>Rental Date</th>
+                                <th>Return Date</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rental in ViewBag.RecentRentals)
+                            {
+                                <tr>
+                                    <td><strong>#@rental.RentalId</strong></td>
+                                    <td>@rental.Car.Brand @rental.Car.Model</td>
+                                    <td>@rental.RentalDate.ToString("MMM dd, yyyy")</td>
+                                    <td>@rental.ReturnDate.ToString("MMM dd, yyyy")</td>
+                                    <td>
+                                        @if (rental.Status == "Active")
+                                        {
+                                            <span class="badge bg-success">@rental.Status</span>
+                                        }
+                                        else if (rental.Status == "Completed")
+                                        {
+                                            <span class="badge bg-primary">@rental.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning">@rental.Status</span>
+                                        }
+                                    </td>
+                                    <td><strong>@Html.Raw("&#8369;")@rental.TotalAmount.ToString("N2")</strong></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             }
-      else
-    {
-     <div class="text-center py-4">
-          <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-     <p class="text-muted">You don't have any rentals yet</p>
-      <a asp-controller="Cars" asp-action="Index" class="btn btn-admin-primary">
-     <i class="fas fa-car me-1"></i>Browse Available Cars
-         </a>
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">You don't have any rentals yet</p>
+                    <a asp-controller="Vehicle" asp-action="Index" class="btn btn-admin-primary">
+                        <i class="fas fa-car me-1"></i>Browse Available Vehicles
+                    </a>
                 </div>
             }
         </div>

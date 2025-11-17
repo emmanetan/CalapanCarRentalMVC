@@ -70,8 +70,8 @@
             </nav>
         </div>
         <div>
-            <a asp-controller="Cars" asp-action="Index" class="btn btn-primary">
-                <i class="fas fa-car me-2"></i>Browse Cars
+            <a asp-controller="Vehicle" asp-action="Index" class="btn btn-primary">
+                <i class="fas fa-car me-2"></i>Browse Vehicles
             </a>
         </div>
     </div>
@@ -159,7 +159,7 @@
                     <table class="table admin-table">
                         <thead>
                             <tr>
-                                <th>Car</th>
+                                <th>Vehicle</th>
                                 <th>Pickup Date</th>
                                 <th>Return Date</th>
                                 <th>Destination</th>
@@ -253,7 +253,7 @@
                         <table class="table admin-table">
                             <thead>
                                 <tr>
-                                    <th>Car</th>
+                                    <th>Vehicle</th>
                                     <th>Pickup Date</th>
                                     <th>Return Date</th>
                                     <th>Destination</th>
@@ -317,8 +317,8 @@
                     <div class="text-center py-5">
                         <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                         <p class="text-muted">You don't have any active rentals</p>
-                        <a asp-controller="Cars" asp-action="Index" class="btn btn-primary">
-                            <i class="fas fa-car me-1"></i>Browse Available Cars
+                        <a asp-controller="Vehicle" asp-action="Index" class="btn btn-primary">
+                            <i class="fas fa-car me-1"></i>Browse Available Vehicles
                         </a>
                     </div>
                 }
@@ -332,7 +332,7 @@
                         <table class="table admin-table">
                             <thead>
                                 <tr>
-                                    <th>Car</th>
+                                    <th>Vehicle</th>
                                     <th>Rental Period</th>
                                     <th>Destination</th>
                                     <th>Payment</th>
@@ -411,7 +411,7 @@
             <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
             <h4 class="text-muted mb-3">No Rentals Yet</h4>
             <p class="text-muted mb-4">You haven't rented any cars yet. Browse our available vehicles to get started!</p>
-            <a asp-controller="Cars" asp-action="Index" class="btn btn-primary btn-lg">
+            <a asp-controller="Vehicle" asp-action="Index" class="btn btn-primary btn-lg">
                 <i class="fas fa-car me-2"></i>Browse Available Cars
             </a>
         </div>

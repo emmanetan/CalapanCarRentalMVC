@@ -98,8 +98,8 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
       </a>
       @if (Model.LicenseExpiryDate >= DateTime.Now)
          {
- <a asp-controller="Cars" asp-action="Index" class="btn btn-outline-success">
-  <i class="fas fa-car me-2"></i>Browse Cars
+ <a asp-controller="Vehicle" asp-action="Index" class="btn btn-outline-success">
+                        <i class="fas fa-car me-2"></i>Browse Vehicles
         </a>
           }
     else

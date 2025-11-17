@@ -88,7 +88,7 @@ namespace CalapanCarRentalMVC.Controllers
             if (userRole != "Customer")
             {
                 TempData["Error"] = "Only customers can rent cars.";
-                return RedirectToAction("Index", "Cars");
+                return RedirectToAction("Index", "Vehicle");
             }
 
             // Get customer ID from logged in user
@@ -150,7 +150,7 @@ namespace CalapanCarRentalMVC.Controllers
             if (customer == null)
             {
                 TempData["Error"] = "Customer not found.";
-                return RedirectToAction("Index", "Cars");
+                return RedirectToAction("Index", "Vehicle");
             }
 
             if (customer.LicenseExpiryDate < DateTime.Now)

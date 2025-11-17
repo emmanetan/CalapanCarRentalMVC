@@ -6,12 +6,12 @@ using CalapanCarRentalMVC.Filters;
 
 namespace CalapanCarRentalMVC.Controllers
 {
-    public class CarsController : Controller
+    public class VehicleController : Controller
     {
         private readonly CarRentalContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public CarsController(CarRentalContext context, IWebHostEnvironment webHostEnvironment)
+        public VehicleController(CarRentalContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;

@@ -60,7 +60,7 @@
             </div>
 
             <div class="card mt-3">
-                <div class="card-header bg-warning text-dark">
+                <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Privacy Notice</h5>
                 </div>
                 <div class="card-body">
@@ -389,6 +389,12 @@
         .custom-marker {
             background: none;
             border: none;
+        }
+
+        @* Disable card hover animation only on My Location page *@
+        body .card:hover {
+            transform: none !important;
+            box-shadow: 02px8px rgba(0,0,0,0.1) !important;
         }
     </style>
 }

@@ -85,10 +85,12 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-         let map;
-           let marker;
-             let trackingEnabled = false;
-           let watchId = null;
+            let map;
+            let marker;
+            let trackingEnabled = false;
+            let watchId = null;
+            let lastKnownLocation = null;
+            let intervalUpdater = null;
 
                 // Initialize map
               function initMap() {
@@ -100,6 +102,74 @@
              maxZoom: 19
            }).addTo(map);
                 }
+
+
+
+                        function updateLocation(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const accuracy = position.coords.accuracy;
+
+            lastKnownLocation = { lat, lng, accuracy };
+
+            // Rest of your existing updateLocation code...
+            // (map updates, markers, accuracy circle, saveLocationToServer)
+            saveLocationToServer(lat, lng, accuracy);
+        }
+
+                function startIntervalUpdates() {
+            if (intervalUpdater) clearInterval(intervalUpdater);
+
+            intervalUpdater = setInterval(() => {
+                if (trackingEnabled && lastKnownLocation) {
+                    saveLocationToServer(
+                        lastKnownLocation.lat,
+                        lastKnownLocation.lng,
+                        lastKnownLocation.accuracy
+                    );
+                }
+            }, 25000); // 25 seconds
+        }
+
+                function startTracking() {
+            if (!navigator.geolocation) {
+                document.getElementById('permissionStatus').className = 'alert alert-danger';
+                document.getElementById('permissionStatus').innerHTML =
+                    '<i class="fas fa-exclamation-triangle"></i> Geolocation not supported.';
+                return;
+            }
+
+            watchId = navigator.geolocation.watchPosition(
+                updateLocation,
+                handleLocationError,
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+
+            trackingEnabled = true;
+            updateTrackingStatus();
+
+            // Start forced updates
+            startIntervalUpdates();
+        }
+
+        // Modify stopTracking to clear interval
+        function stopTracking() {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            if (intervalUpdater) {
+                clearInterval(intervalUpdater);
+                intervalUpdater = null;
+            }
+
+            trackingEnabled = false;
+            updateTrackingStatus();
+        }
 
            // Custom marker icon
                 function getUserMarkerIcon() {
@@ -114,10 +184,10 @@
                 }
 
                 // Update location on map
-          function updateLocation(position) {
-           const lat = position.coords.latitude;
+            function updateLocation(position) {
+            const lat = position.coords.latitude;
              const lng = position.coords.longitude;
-           const accuracy = position.coords.accuracy;
+            const accuracy = position.coords.accuracy;
 
            // Update or create marker
             if (marker) {
@@ -240,7 +310,7 @@
               handleLocationError,
              {
            enableHighAccuracy: true,
-           timeout: 10000,
+           timeout: 20000,
               maximumAge: 0
                }
              );

@@ -82,7 +82,7 @@
             </div>
         </div>
     </div>
-</div>
+    
 
 @section Scripts {
     <!-- Leaflet CSS and JS -->
@@ -90,6 +90,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
             let map;
             let marker;
             let trackingEnabled = false;
@@ -97,134 +98,66 @@
             let lastKnownLocation = null;
             let intervalUpdater = null;
 
-                // Initialize map
-              function initMap() {
-           // Default center (Oriental Mindoro, Philippines)
-           map = L.map('map').setView([13.4119, 121.1794], 12);
+            function initMap() {
+                // Default center (Oriental Mindoro, Philippines)
+                map = L.map('map').setView([13.4119, 121.1794], 12);
 
-           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-             maxZoom: 19
-           }).addTo(map);
-                }
-
-
-
-                        function updateLocation(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        const accuracy = position.coords.accuracy;
-
-            lastKnownLocation = { lat, lng, accuracy };
-
-            // Rest of your existing updateLocation code...
-            // (map updates, markers, accuracy circle, saveLocationToServer)
-            saveLocationToServer(lat, lng, accuracy);
-        }
-
-                function startIntervalUpdates() {
-            if (intervalUpdater) clearInterval(intervalUpdater);
-
-            intervalUpdater = setInterval(() => {
-                if (trackingEnabled && lastKnownLocation) {
-                    saveLocationToServer(
-                        lastKnownLocation.lat,
-                        lastKnownLocation.lng,
-                        lastKnownLocation.accuracy
-                    );
-                }
-            }, 25000); // 25 seconds
-        }
-
-                function startTracking() {
-            if (!navigator.geolocation) {
-                document.getElementById('permissionStatus').className = 'alert alert-danger';
-                document.getElementById('permissionStatus').innerHTML =
-                    '<i class="fas fa-exclamation-triangle"></i> Geolocation not supported.';
-                return;
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19
+                }).addTo(map);
             }
 
-            watchId = navigator.geolocation.watchPosition(
-                updateLocation,
-                handleLocationError,
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-
-            trackingEnabled = true;
-            updateTrackingStatus();
-
-            // Start forced updates
-            startIntervalUpdates();
-        }
-
-        // Modify stopTracking to clear interval
-        function stopTracking() {
-            if (watchId !== null) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-            }
-            if (intervalUpdater) {
-                clearInterval(intervalUpdater);
-                intervalUpdater = null;
+            // Custom marker icon
+            function getUserMarkerIcon() {
+                return L.divIcon({
+                    className: 'custom-marker',
+                    html: `<div style="background-color: #28a745; width: 40px; height: 40px; border-radius: 50%; border: 4px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">
+                      <i class="fas fa-user" style="color: white; font-size: 18px;"></i>
+                    </div>`,
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20]
+                });
             }
 
-            trackingEnabled = false;
-            updateTrackingStatus();
-        }
-
-           // Custom marker icon
-                function getUserMarkerIcon() {
-                    return L.divIcon({
-               className: 'custom-marker',
-            html: `<div style="background-color: #28a745; width: 40px; height: 40px; border-radius: 50%; border: 4px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">
-              <i class="fas fa-user" style="color: white; font-size: 18px;"></i>
-            </div>`,
-           iconSize: [40, 40],
-              iconAnchor: [20, 20]
-           });
-                }
-
-                // Update location on map
             function updateLocation(position) {
-            const lat = position.coords.latitude;
-             const lng = position.coords.longitude;
-            const accuracy = position.coords.accuracy;
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const accuracy = position.coords.accuracy;
 
-           // Update or create marker
-            if (marker) {
-               marker.setLatLng([lat, lng]);
-             } else {
-              marker = L.marker([lat, lng], {
-               icon: getUserMarkerIcon()
-                  }).addTo(map);
-               marker.bindPopup('<strong>You are here</strong>').openPopup();
-            }
+                lastKnownLocation = { lat, lng, accuracy };
 
-           // Center map on user location
-           map.setView([lat, lng], 15);
-
-           // Add accuracy circle
-               L.circle([lat, lng], {
-            color: '#28a745',
-             fillColor: '#28a745',
-          fillOpacity: 0.1,
-             radius: accuracy
-           }).addTo(map);
-
-                    // Update location details
-            updateLocationDetails(lat, lng, accuracy, new Date());
-
-           // Save location to server
-                  saveLocationToServer(lat, lng, accuracy);
+                // Update or create marker
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng], {
+                        icon: getUserMarkerIcon()
+                    }).addTo(map);
+                    marker.bindPopup('<strong>You are here</strong>').openPopup();
                 }
 
-                // Update location details panel
-                function updateLocationDetails(lat, lng, accuracy, timestamp) {
-             const html = `
+                // Center map on user location
+                map.setView([lat, lng], 15);
+
+                // Add accuracy circle
+                L.circle([lat, lng], {
+                    color: '#28a745',
+                    fillColor: '#28a745',
+                    fillOpacity: 0.1,
+                    radius: accuracy
+                }).addTo(map);
+
+                // Update location details
+                updateLocationDetails(lat, lng, accuracy, new Date());
+
+                // Save location to server
+                saveLocationToServer(lat, lng, accuracy);
+            }
+
+            // Update location details panel
+            function updateLocationDetails(lat, lng, accuracy, timestamp) {
+                const html = `
            <div class="mb-2">
                <strong><i class="fas fa-map-pin"></i> Coordinates:</strong>
             <p class="mb-1 text-muted small">Latitude: ${lat.toFixed(6)}</p>
@@ -241,139 +174,137 @@
            `;
 
                 document.getElementById('locationDetails').innerHTML = html;
-           document.getElementById('lastUpdate').textContent = timestamp.toLocaleTimeString();
-         }
+                document.getElementById('lastUpdate').textContent = timestamp.toLocaleTimeString();
+            }
 
-           // Save location to server
-           async function saveLocationToServer(lat, lng, accuracy) {
-           try {
-               const response = await fetch('@Url.Action("SaveLocation", "Location")', {
-            method: 'POST',
-                 headers: {
-              'Content-Type': 'application/json',
-             'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
-           },
-               body: JSON.stringify({
-         latitude: lat,
-            longitude: lng,
-             accuracy: accuracy,
-           deviceInfo: navigator.userAgent.substring(0, 100)
-           })
-               });
+            // Save location to server
+            async function saveLocationToServer(lat, lng, accuracy) {
+                try {
+                    const response = await fetch('@Url.Action("SaveLocation", "Location")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                        },
+                        body: JSON.stringify({
+                            latitude: lat,
+                            longitude: lng,
+                            accuracy: accuracy,
+                            deviceInfo: navigator.userAgent.substring(0, 100)
+                        })
+                    });
 
-             const data = await response.json();
+                    const data = await response.json();
 
-               if (!data.success) {
-               console.error('Error saving location:', data.message);
-                 }
-                } catch (error) {
-           console.error('Error saving location:', error);
-               }
-                }
-
-                // Handle location errors
-                function handleLocationError(error) {
-           let message = '';
-
-            switch(error.code) {
-         case error.PERMISSION_DENIED:
-               message = 'Location access denied. Please enable location permissions in your browser settings.';
-                   break;
-               case error.POSITION_UNAVAILABLE:
-               message = 'Location information is unavailable.';
-                break;
-                case error.TIMEOUT:
-               message = 'Location request timed out.';
-               break;
-              default:
-                message = 'An unknown error occurred.';
+                    if (!data.success) {
+                        // Show user-friendly error if not authenticated
+                        if (data.message && data.message.includes('not authenticated')) {
+                            document.getElementById('permissionStatus').className = 'alert alert-danger';
+                            document.getElementById('permissionStatus').innerHTML =
+                                '<i class="fas fa-exclamation-triangle"></i> You must be logged in to enable location tracking.';
+                            stopTracking();
+                        } else {
+                            console.error('Error saving location:', data.message);
+                        }
                     }
+                } catch (error) {
+                    console.error('Error saving location:', error);
+                }
+            }
 
-           document.getElementById('permissionStatus').className = 'alert alert-danger';
-           document.getElementById('permissionStatus').innerHTML =
-              `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            // Handle location errors
+            function handleLocationError(error) {
+                let message = '';
 
-                    stopTracking();
-         }
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        message = 'Location access denied. Please enable location permissions in your browser settings.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        message = 'Location information is unavailable.';
+                        break;
+                    case error.TIMEOUT:
+                        message = 'Location request timed out.';
+                        break;
+                    default:
+                        message = 'An unknown error occurred.';
+                }
 
-                // Start location tracking
-            function startTracking() {
-           if (!navigator.geolocation) {
-              document.getElementById('permissionStatus').className = 'alert alert-danger';
-             document.getElementById('permissionStatus').innerHTML =
-             '<i class="fas fa-exclamation-triangle"></i> Geolocation is not supported by your browser.';
-              return;
-               }
+                document.getElementById('permissionStatus').className = 'alert alert-danger';
+                document.getElementById('permissionStatus').innerHTML =
+                    `<i class="fas fa-exclamation-triangle"></i> ${message}`;
 
-           document.getElementById('permissionStatus').className = 'alert alert-info';
+                stopTracking();
+            }
+
+            // Update tracking status UI
+            function updateTrackingStatus() {
+                const statusBadge = document.getElementById('trackingStatus');
+                const toggleBtn = document.getElementById('toggleTracking');
+
+                if (trackingEnabled) {
+                    statusBadge.className = 'badge bg-success';
+                    statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> Enabled';
+                    toggleBtn.className = 'btn btn-danger';
+                    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> Disable Location Tracking';
+
+                    document.getElementById('permissionStatus').className = 'alert alert-success';
                     document.getElementById('permissionStatus').innerHTML =
-               '<i class="fas fa-spinner fa-spin"></i> Requesting location permission...';
+                        '<i class="fas fa-check-circle"></i> Location tracking is active. Your location is being updated.';
+                } else {
+                    statusBadge.className = 'badge bg-secondary';
+                    statusBadge.textContent = 'Disabled';
+                    toggleBtn.className = 'btn btn-primary';
+                    toggleBtn.innerHTML = '<i class="fas fa-play"></i> Enable Location Tracking';
 
-           // Watch position with high accuracy
-           watchId = navigator.geolocation.watchPosition(
-            updateLocation,
-              handleLocationError,
-             {
-           enableHighAccuracy: true,
-           timeout: 20000,
-              maximumAge: 0
-               }
-             );
+                    document.getElementById('permissionStatus').className = 'alert alert-info';
+                    document.getElementById('permissionStatus').innerHTML = '<i class="fas fa-info-circle"></i> Click "Enable Location Tracking" to share your location.';
+                    document.getElementById('lastUpdate').textContent = 'Never';
+                    document.getElementById('locationDetails').innerHTML = '<p class="text-muted">Enable location tracking to see details.</p>';
+                }
+            }
 
-          trackingEnabled = true;
-           updateTrackingStatus();
+            function startTracking() {
+                if (!navigator.geolocation) {
+                    document.getElementById('permissionStatus').className = 'alert alert-danger';
+                    document.getElementById('permissionStatus').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Geolocation is not supported by your browser.';
+                    return;
                 }
 
-                // Stop location tracking
-           function stopTracking() {
-        if (watchId !== null) {
-               navigator.geolocation.clearWatch(watchId);
-             watchId = null;
-          }
+                document.getElementById('permissionStatus').className = 'alert alert-info';
+                document.getElementById('permissionStatus').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Requesting location permission...';
 
-                    trackingEnabled = false;
-           updateTrackingStatus();
+                watchId = navigator.geolocation.watchPosition(updateLocation, handleLocationError, {
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                    maximumAge: 0
+                });
 
-           document.getElementById('permissionStatus').className = 'alert alert-warning';
-           document.getElementById('permissionStatus').innerHTML =
-              '<i class="fas fa-info-circle"></i> Location tracking is disabled.';
-           }
+                trackingEnabled = true;
+                updateTrackingStatus();
+            }
 
-                // Update tracking status UI
-                function updateTrackingStatus() {
-           const statusBadge = document.getElementById('trackingStatus');
-           const toggleBtn = document.getElementById('toggleTracking');
-
-           if (trackingEnabled) {
-            statusBadge.className = 'badge bg-success';
-              statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> Enabled';
-          toggleBtn.className = 'btn btn-danger';
-            toggleBtn.innerHTML = '<i class="fas fa-stop"></i> Disable Location Tracking';
-
-                document.getElementById('permissionStatus').className = 'alert alert-success';
-        document.getElementById('permissionStatus').innerHTML =
-                   '<i class="fas fa-check-circle"></i> Location tracking is active. Your location is being updated.';
-           } else {
-             statusBadge.className = 'badge bg-secondary';
-              statusBadge.textContent = 'Disabled';
-             toggleBtn.className = 'btn btn-primary';
-              toggleBtn.innerHTML = '<i class="fas fa-play"></i> Enable Location Tracking';
-           }
+            function stopTracking() {
+                if (watchId !== null) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
                 }
+                trackingEnabled = false;
+                updateTrackingStatus();
+            }
 
-         // Toggle tracking
-                document.getElementById('toggleTracking').addEventListener('click', function() {
-           if (trackingEnabled) {
-               stopTracking();
-             } else {
-        startTracking();
-              }
-           });
+            document.getElementById('toggleTracking').addEventListener('click', function () {
+                if (trackingEnabled) {
+                    stopTracking();
+                } else {
+                    startTracking();
+                }
+            });
 
-              // Initialize on page load
-             document.addEventListener('DOMContentLoaded', function() {
-           initMap();
-           });
+            // Initialize map on page load
+            initMap();
+            updateTrackingStatus();
+        });
     </script>
 
     <style>

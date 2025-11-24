@@ -2,17 +2,22 @@
     ViewData["Title"] = "My Location";
 }
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-map-marker-alt"></i> My Location</h2>
-                <a href="@Url.Action("Dashboard", "Customer")" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </a>
-            </div>
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="fas fa-map-marker-alt me-2"></i>My Location</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Customer")">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">My Location</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <span class="text-muted"><i class="fas fa-clock me-1"></i>@DateTime.Now.ToString("MMMM dd, yyyy")</span>
         </div>
     </div>
+</div>
 
     <div class="row mb-3">
         <div class="col-12">

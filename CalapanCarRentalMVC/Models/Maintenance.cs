@@ -9,7 +9,7 @@ namespace CalapanCarRentalMVC.Models
     public int MaintenanceId { get; set; }
 
         [Required]
-        public int CarId { get; set; }
+        public int VehicleId { get; set; }
 
    [Required]
     [StringLength(100)]

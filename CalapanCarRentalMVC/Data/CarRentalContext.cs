@@ -27,7 +27,7 @@ namespace CalapanCarRentalMVC.Data
             modelBuilder.Entity<Rental>()
          .HasOne(r => r.Car)
          .WithMany(c => c.Rentals)
-    .HasForeignKey(r => r.CarId)
+    .HasForeignKey(r => r.VehicleId)
       .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Rental>()
@@ -39,7 +39,7 @@ namespace CalapanCarRentalMVC.Data
             modelBuilder.Entity<Maintenance>()
    .HasOne(m => m.Car)
                 .WithMany()
-    .HasForeignKey(m => m.CarId)
+    .HasForeignKey(m => m.VehicleId)
     .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Notification>()

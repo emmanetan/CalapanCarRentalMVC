@@ -34,17 +34,17 @@
                                         </div>
                                     </div>
                                 </div>
-                                <input type="hidden" asp-for="CarId" value="@selectedCar.VehicleId" />
+                                <input type="hidden" asp-for="VehicleId" value="@selectedCar.VehicleId" />
                             }
                         }
                         else
                         {
                             <div class="mb-3">
-                                <label asp-for="CarId" class="form-label">Select Vehicle</label>
-                                <select asp-for="CarId" class="form-select" asp-items="ViewBag.CarId">
+                                <label asp-for="VehicleId" class="form-label">Select Vehicle</label>
+                                <select asp-for="VehicleId" class="form-select" asp-items="ViewBag.CarId">
                                     <option value="">-- Select a Car --</option>
                                 </select>
-                                <span asp-validation-for="CarId" class="text-danger"></span>
+                                <span asp-validation-for="VehicleId" class="text-danger"></span>
                             </div>
                         }
 

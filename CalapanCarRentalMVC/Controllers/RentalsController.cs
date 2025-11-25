@@ -206,12 +206,12 @@ namespace CalapanCarRentalMVC.Controllers
                 if (rental.RentalDate < DateTime.Now)
                 {
                     ModelState.AddModelError("RentalDate", "Pick-up date cannot be in the past");
-                    ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.CarId);
-                    if (rental.CarId > 0)
+                    ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
+                    if (rental.VehicleId > 0)
                     {
-                        var selectedCar1 = await _context.Cars.FindAsync(rental.CarId);
+                        var selectedCar1 = await _context.Cars.FindAsync(rental.VehicleId);
                         ViewBag.SelectedCar = selectedCar1;
-                        ViewBag.SelectedCarId = rental.CarId;
+                        ViewBag.SelectedCarId = rental.VehicleId;
                     }
                     ViewBag.CustomerId = rental.CustomerId;
                     return View(rental);
@@ -220,12 +220,12 @@ namespace CalapanCarRentalMVC.Controllers
                 if (rental.ReturnDate <= rental.RentalDate)
                 {
                     ModelState.AddModelError("ReturnDate", "Return date must be after pick-up date");
-                    ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.CarId);
-                    if (rental.CarId > 0)
+                    ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
+                    if (rental.VehicleId > 0)
                     {
-                        var selectedCar2 = await _context.Cars.FindAsync(rental.CarId);
+                        var selectedCar2 = await _context.Cars.FindAsync(rental.VehicleId);
                         ViewBag.SelectedCar = selectedCar2;
-                        ViewBag.SelectedCarId = rental.CarId;
+                        ViewBag.SelectedCarId = rental.VehicleId;
                     }
                     ViewBag.CustomerId = rental.CustomerId;
                     return View(rental);
@@ -266,13 +266,13 @@ namespace CalapanCarRentalMVC.Controllers
                 }
 
                 // Calculate total amount
-                var car = await _context.Cars.FindAsync(rental.CarId);
+                var car = await _context.Cars.FindAsync(rental.VehicleId);
                 if (car != null)
                 {
                     if (car.Status != "Available")
                     {
                         ModelState.AddModelError("VehicleId", "This car is no longer available");
-                        ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.CarId);
+                        ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
                         ViewBag.CustomerId = rental.CustomerId;
                         return View(rental);
                     }
@@ -288,7 +288,7 @@ namespace CalapanCarRentalMVC.Controllers
                 else
                 {
                     ModelState.AddModelError("VehicleId", "Car not found");
-                    ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.CarId);
+                    ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
                     ViewBag.CustomerId = rental.CustomerId;
                     return View(rental);
                 }
@@ -333,12 +333,12 @@ namespace CalapanCarRentalMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.CarId);
-            if (rental.CarId > 0)
+            ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
+            if (rental.VehicleId > 0)
             {
-                var selectedCar = await _context.Cars.FindAsync(rental.CarId);
+                var selectedCar = await _context.Cars.FindAsync(rental.VehicleId);
                 ViewBag.SelectedCar = selectedCar;
-                ViewBag.SelectedCarId = rental.CarId;
+                ViewBag.SelectedCarId = rental.VehicleId;
             }
             ViewBag.CustomerId = rental.CustomerId;
             return View(rental);
@@ -359,7 +359,7 @@ namespace CalapanCarRentalMVC.Controllers
                 return NotFound();
             }
 
-            ViewData["VehicleId"] = new SelectList(_context.Cars, "VehicleId", "Brand", rental.CarId);
+            ViewData["VehicleId"] = new SelectList(_context.Cars, "VehicleId", "Brand", rental.VehicleId);
             ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "FirstName", rental.CustomerId);
             return View(rental);
         }
@@ -385,7 +385,7 @@ namespace CalapanCarRentalMVC.Controllers
                     // Update car status if rental is completed
                     if (rental.Status == "Completed")
                     {
-                        var car = await _context.Cars.FindAsync(rental.CarId);
+                        var car = await _context.Cars.FindAsync(rental.VehicleId);
                         if (car != null)
                         {
                             car.Status = "Available";
@@ -408,7 +408,7 @@ namespace CalapanCarRentalMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["VehicleId"] = new SelectList(_context.Cars, "VehicleId", "Brand", rental.CarId);
+            ViewData["VehicleId"] = new SelectList(_context.Cars, "VehicleId", "Brand", rental.VehicleId);
             ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "FirstName", rental.CustomerId);
             return View(rental);
         }

@@ -28,15 +28,15 @@
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                 <div class="mb-3">
-                    <label asp-for="CarId" class="form-label">Vehicle</label>
-                    <select asp-for="CarId" class="form-select" required>
+                    <label asp-for="VehicleId" class="form-label">Vehicle</label>
+                    <select asp-for="VehicleId" class="form-select" required>
                         <option value="">-- Select Vehicle --</option>
                         @foreach (var car in ViewBag.Cars)
                         {
                             <option value="@car.CarId">@car.Brand @car.Model - @car.PlateNumber</option>
                         }
                     </select>
-                    <span asp-validation-for="CarId" class="text-danger"></span>
+                    <span asp-validation-for="VehicleId" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">

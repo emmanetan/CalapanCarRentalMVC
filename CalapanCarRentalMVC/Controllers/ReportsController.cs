@@ -169,7 +169,7 @@ namespace CalapanCarRentalMVC.Controllers
 
             var popularCars = await _context.Rentals
               .Where(r => r.CreatedAt >= startDate)
-                   .GroupBy(r => new { r.CarId, r.Car.Brand, r.Car.Model })
+                   .GroupBy(r => new { CarId = r.VehicleId, r.Car.Brand, r.Car.Model })
                   .Select(g => new
                   {
                       car = $"{g.Key.Brand} {g.Key.Model}",
@@ -316,7 +316,7 @@ namespace CalapanCarRentalMVC.Controllers
                 var startDate = today.AddMonths(-12);
                 var popularCars = await _context.Rentals
     .Where(r => r.CreatedAt >= startDate)
-             .GroupBy(r => new { r.CarId, r.Car.Brand, r.Car.Model })
+             .GroupBy(r => new { CarId = r.VehicleId, r.Car.Brand, r.Car.Model })
             .Select(g => new
             {
                 Car = $"{g.Key.Brand} {g.Key.Model}",

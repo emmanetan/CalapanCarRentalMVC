@@ -110,7 +110,7 @@ namespace CalapanCarRentalMVC.Controllers
                 // Update car status if maintenance is urgent or scheduled
                 if (maintenance.Status == "Urgent" || maintenance.Status == "Scheduled")
                 {
-                    var car = await _context.Cars.FindAsync(maintenance.CarId);
+                    var car = await _context.Cars.FindAsync(maintenance.VehicleId);
                     if (car != null && car.Status == "Available")
                     {
                         car.Status = "Maintenance";
@@ -181,14 +181,14 @@ namespace CalapanCarRentalMVC.Controllers
                     _context.Update(maintenance);
 
                     // Update car status based on maintenance status
-                    var car = await _context.Cars.FindAsync(maintenance.CarId);
+                    var car = await _context.Cars.FindAsync(maintenance.VehicleId);
                     if (car != null)
                     {
                         if (maintenance.Status == "Completed")
                         {
                             // Check if there are other active maintenances for this car
                             var hasActiveMaintenance = await _context.Maintenances
-                           .AnyAsync(m => m.CarId == maintenance.CarId &&
+                           .AnyAsync(m => m.VehicleId == maintenance.VehicleId &&
                            (m.Status == "Urgent" || m.Status == "Scheduled") &&
                           m.MaintenanceId != maintenance.MaintenanceId);
 
@@ -265,13 +265,13 @@ namespace CalapanCarRentalMVC.Controllers
             var maintenance = await _context.Maintenances.FindAsync(id);
             if (maintenance != null)
             {
-                var carId = maintenance.CarId;
+                var carId = maintenance.VehicleId;
                 _context.Maintenances.Remove(maintenance);
                 await _context.SaveChangesAsync();
 
                 // Check if there are other active maintenances for this car
                 var hasActiveMaintenance = await _context.Maintenances
-              .AnyAsync(m => m.CarId == carId &&
+              .AnyAsync(m => m.VehicleId == carId &&
               (m.Status == "Urgent" || m.Status == "Scheduled"));
 
                 // If no active maintenance, set car back to available
@@ -336,7 +336,7 @@ namespace CalapanCarRentalMVC.Controllers
             {
                 // Check if there are other active maintenances for this car
                 var hasActiveMaintenance = await _context.Maintenances
-           .AnyAsync(m => m.CarId == maintenance.CarId &&
+           .AnyAsync(m => m.VehicleId == maintenance.VehicleId &&
                (m.Status == "Urgent" || m.Status == "Scheduled") &&
                  m.MaintenanceId != maintenance.MaintenanceId);
 

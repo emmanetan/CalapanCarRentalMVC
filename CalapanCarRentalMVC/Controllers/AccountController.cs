@@ -62,13 +62,13 @@ namespace CalapanCarRentalMVC.Controllers
             {
                 HttpContext.Session.SetString("UserId", user.UserId.ToString());
                 HttpContext.Session.SetString("Username", user.Username);
-                HttpContext.Session.SetString("UserRole", user.Role);
+                HttpContext.Session.SetString("UserRole", user.is_Admin ==0 ? "Admin" : "Customer");
 
-                if (user.Role == "Admin")
+                if (user.is_Admin ==0)
                 {
                     return RedirectToAction("Dashboard", "Admin");
                 }
-                else if (user.Role == "Customer")
+                else if (user.is_Admin ==1)
                 {
                     // Check if there's a redirect for renting a car
                     if (TempData["RedirectCarId"] != null)
@@ -154,9 +154,9 @@ namespace CalapanCarRentalMVC.Controllers
                     // User exists, log them in
                     HttpContext.Session.SetString("UserId", existingUser.UserId.ToString());
                     HttpContext.Session.SetString("Username", existingUser.Username);
-                    HttpContext.Session.SetString("UserRole", existingUser.Role);
+                    HttpContext.Session.SetString("UserRole", existingUser.is_Admin ==0 ? "Admin" : "Customer");
 
-                    if (existingUser.Role == "Admin")
+                    if (existingUser.is_Admin ==0)
                     {
                         return RedirectToAction("Dashboard", "Admin");
                     }
@@ -218,7 +218,7 @@ namespace CalapanCarRentalMVC.Controllers
                 Username = username,
                 Password = string.Empty, // No password for external login
                 Email = email,
-                Role = "Customer",
+                is_Admin =1, // Customer
                 ExternalLoginProvider = "Google",
                 ExternalLoginProviderId = providerId,
                 CreatedAt = DateTime.Now
@@ -251,7 +251,7 @@ namespace CalapanCarRentalMVC.Controllers
             // Log in the user
             HttpContext.Session.SetString("UserId", user.UserId.ToString());
             HttpContext.Session.SetString("Username", user.Username);
-            HttpContext.Session.SetString("UserRole", user.Role);
+            HttpContext.Session.SetString("UserRole", user.is_Admin ==0 ? "Admin" : "Customer");
 
             TempData["Success"] = "Account created successfully with Google! Please complete your profile.";
 
@@ -322,7 +322,7 @@ namespace CalapanCarRentalMVC.Controllers
                     Username = username,
                     Password = model.Password, // In production, hash this password
                     Email = model.Email,
-                    Role = "Customer",
+                    is_Admin =1, // Customer
                     CreatedAt = DateTime.Now
                 };
 

@@ -61,7 +61,7 @@ namespace CalapanCarRentalMVC.Data
                       UserId = 1,
                       Username = "admin",
                       Password = "admin123", // In production, use hashed passwords
-                      Role = "Admin",
+                      is_Admin = 0, //0 = Admin
                       Email = "admin@calapancarrental.com",
                       CreatedAt = DateTime.Now
                   }

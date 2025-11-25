@@ -321,7 +321,7 @@ namespace CalapanCarRentalMVC.Controllers
                 await _context.SaveChangesAsync();
 
                 // Create notification for ALL admin users
-                var adminUsers = await _context.Users.Where(u => u.Role == "Admin").ToListAsync();
+                var adminUsers = await _context.Users.Where(u => u.is_Admin ==0).ToListAsync();
                 foreach (var adminUser in adminUsers)
                 {
                     var adminNotification = new Notification

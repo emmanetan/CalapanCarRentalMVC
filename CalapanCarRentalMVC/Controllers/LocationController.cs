@@ -97,7 +97,7 @@ namespace CalapanCarRentalMVC.Controllers
                         longitude = l.Longitude,
                         accuracy = l.Accuracy,
                         timestamp = l.Timestamp,
-                        role = l.User != null ? l.User.Role : "Customer"
+                        role = l.User != null ? (l.User.is_Admin ==0 ? "Admin" : "Customer") : "Customer"
                     })
                     .ToList();
 

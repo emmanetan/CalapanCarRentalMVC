@@ -28,9 +28,9 @@ namespace CalapanCarRentalMVC.Filters
             // Check if user has required role
             if (Roles != null && Roles.Length > 0)
             {
+                // Now Roles contains "Admin" or "Customer" as string, but session UserRole is string "Admin" or "Customer" (set in AccountController)
                 if (string.IsNullOrEmpty(userRole) || !Roles.Contains(userRole))
                 {
-                    // User is authenticated but doesn't have the required role
                     context.Result = new RedirectToActionResult("AccessDenied", "Account", null);
                     return;
                 }

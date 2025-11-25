@@ -15,8 +15,8 @@ namespace CalapanCarRentalMVC.Models
         public string Password { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(50)]
-        public string Role { get; set; } = "Customer"; // Admin or Customer
+        [Display(Name = "Is Admin")]
+        public byte is_Admin { get; set; } //0 = Admin,1 = Customer
 
         [Required]
         [EmailAddress]

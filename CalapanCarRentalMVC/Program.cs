@@ -25,9 +25,10 @@ builder.Services.AddAuthentication(options =>
 .AddCookie(options =>
 {
     options.Cookie.Name = ".CalapanCarRental.Auth";
-    options.Cookie.HttpOnly = true;
+    options.Cookie.HttpOnly = false;
     options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
     options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.None;
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
@@ -42,24 +43,46 @@ builder.Services.AddAuthentication(options =>
     googleOptions.CallbackPath = "/signin-google";
     googleOptions.SaveTokens = true;
 
-    // Handle authentication failures gracefully
+    // Handle authentication failures gracefully with logging
     googleOptions.Events.OnRemoteFailure = context =>
- {
-     // Check if user cancelled the authentication
-     if (context.Failure?.Message.Contains("access_denied") == true ||
-        context.Failure?.Message.Contains("denied") == true)
-     {
-         context.Response.Redirect("/Account/Login?cancelled=true");
-     }
-     else
-     {
-         context.Response.Redirect("/Account/Login?error=true");
-     }
+    {
+        var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+            .CreateLogger("GoogleAuth");
+        logger.LogError(context.Failure, "Google authentication failed: {Message}", context.Failure?.Message);
 
-     context.HandleResponse();
-     return Task.CompletedTask;
- };
+        // Check if user cancelled the authentication
+        if (context.Failure?.Message.Contains("access_denied") == true ||
+            context.Failure?.Message.Contains("denied") == true)
+        {
+            context.Response.Redirect("/Account/Login?cancelled=true");
+        }
+        else
+        {
+            context.Response.Redirect("/Account/Login?error=true");
+        }
+
+        context.HandleResponse();
+        return Task.CompletedTask;
+    };
 });
+
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    // This lambda determines whether user consent for non-essential cookies is needed
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+    options.OnAppendCookie = cookieContext =>
+    {
+        // Force SameSite=None and Secure for Google correlation cookies
+        if (cookieContext.CookieName.StartsWith(".AspNetCore.Correlation"))
+        {
+            cookieContext.CookieOptions.SameSite = SameSiteMode.None;
+            cookieContext.CookieOptions.Secure = true;
+        }
+    };
+});
+
 
 // Add Session support
 builder.Services.AddSession(options =>
@@ -83,6 +106,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseSession();
+app.UseCookiePolicy(); //for google fix
 app.UseAuthentication();
 app.UseAuthorization();
 

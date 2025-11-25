@@ -105,6 +105,15 @@ namespace CalapanCarRentalMVC.Controllers
                 return RedirectToAction("Profile", "Customer");
             }
 
+            // Check if license number, expiry date, and driver license document are present
+            if (string.IsNullOrWhiteSpace(customer.LicenseNumber) ||
+                customer.LicenseExpiryDate == default ||
+                string.IsNullOrWhiteSpace(customer.DriverLicensePath))
+            {
+                TempData["Error"] = "You must update your profile with your Driver License Number, Expiry Date, and upload your Driver License document before renting a vehicle.";
+                return RedirectToAction("Profile", "Customer");
+            }
+
             // Check if license is expired
             if (customer.LicenseExpiryDate < DateTime.Now)
             {

@@ -169,6 +169,10 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                     <div class="profile-info-item">
                         <label class="text-muted mb-1"><i class="fas fa-id-card me-2"></i>License Number</label>
                         <p class="fw-bold">@Model.LicenseNumber</p>
+                        @if (string.IsNullOrWhiteSpace(Model.LicenseNumber))
+                        {
+                            <span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Required to rent a vehicle</span>
+                        }
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -176,45 +180,30 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                         <label class="text-muted mb-1"><i class="fas fa-calendar-check me-2"></i>License Expiry Date</label>
                         <p class="fw-bold">
                             @Model.LicenseExpiryDate.ToString("MMMM dd, yyyy")
-                            @if (Model.LicenseExpiryDate < DateTime.Now)
+                            @if (Model.LicenseExpiryDate == default(DateTime))
                             {
-                                <span class="badge bg-danger ms-2">Expired</span>
+                                <span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Required to rent a vehicle</span>
                             }
-                            else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
+                            else if (Model.LicenseExpiryDate < DateTime.Now)
                             {
-                                <span class="badge bg-warning ms-2">Expiring Soon</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-success ms-2">Valid</span>
+                                <span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Expired</span>
                             }
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-12">
+            <div class="row mb-3">
+                <div class="col-md-12">
                     <div class="profile-info-item">
                         <label class="text-muted mb-1"><i class="fas fa-file-upload me-2"></i>Driver License Document</label>
                         @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
                         {
-                            <div class="d-flex align-items-center gap-2">
-                                <p class="mb-0">
-                                    <a href="@Model.DriverLicensePath" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye me-1"></i>View Document
-                                    </a>
-                                    <a href="@Model.DriverLicensePath" download class="btn btn-sm btn-outline-success">
-                                        <i class="fas fa-download me-1"></i>Download
-                                    </a>
-                                </p>
-                            </div>
+                            <a href="@Model.DriverLicensePath" target="_blank" class="btn btn-link">View Uploaded Document</a>
                         }
                         else
                         {
-                            <p class="text-muted fw-bold">
-                                <i class="fas fa-exclamation-circle me-1"></i>No driver license uploaded
-                            </p>
+                            <span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Required to rent a vehicle</span>
                         }
                     </div>
                 </div>

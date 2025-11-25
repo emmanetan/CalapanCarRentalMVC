@@ -162,6 +162,13 @@ namespace CalapanCarRentalMVC.Controllers
                 return RedirectToAction("Index", "Vehicle");
             }
 
+            // Ensure Address and PhoneNumber are provided
+            if (string.IsNullOrWhiteSpace(customer.Address) || string.IsNullOrWhiteSpace(customer.PhoneNumber))
+            {
+                TempData["Error"] = "You need to fill up this form to rent a vehicle.";
+                return RedirectToAction("Profile", "Customer");
+            }
+
             if (customer.LicenseExpiryDate < DateTime.Now)
             {
                 TempData["Error"] = "Your driver's license has expired. Please update your license information before booking a car.";

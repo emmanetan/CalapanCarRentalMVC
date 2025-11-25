@@ -1,10 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using CalapanCarRentalMVC.Data;
 using CalapanCarRentalMVC.Models;
 using CalapanCarRentalMVC.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
 using System.Security.Claims;
 
 namespace CalapanCarRentalMVC.Controllers
@@ -13,6 +14,7 @@ namespace CalapanCarRentalMVC.Controllers
     {
         private readonly CarRentalContext _context;
         private readonly IEmailService _emailService;
+        private readonly PasswordHasher<User> _passwordHasher = new();
 
         public AccountController(CarRentalContext context, IEmailService emailService)
         {
@@ -56,9 +58,9 @@ namespace CalapanCarRentalMVC.Controllers
 
             // Try to find user by email or username
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => (u.Email == email || u.Username == email) && u.Password == password);
+                .FirstOrDefaultAsync(u => (u.Email == email || u.Username == email));
 
-            if (user != null)
+            if (user != null && _passwordHasher.VerifyHashedPassword(user, user.Password, password) == PasswordVerificationResult.Success)
             {
                 HttpContext.Session.SetString("UserId", user.UserId.ToString());
                 HttpContext.Session.SetString("Username", user.Username);
@@ -320,11 +322,12 @@ namespace CalapanCarRentalMVC.Controllers
                 var user = new User
                 {
                     Username = username,
-                    Password = model.Password, // In production, hash this password
+                    // Password will be hashed below
                     Email = model.Email,
                     is_Admin =1, // Customer
                     CreatedAt = DateTime.Now
                 };
+                user.Password = _passwordHasher.HashPassword(user, model.Password);
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
@@ -539,7 +542,7 @@ namespace CalapanCarRentalMVC.Controllers
                 }
 
                 // Update user password
-                user.Password = newPassword; // In production, hash this password!
+                user.Password = _passwordHasher.HashPassword(user, newPassword);
                 _context.Update(user);
 
                 // Mark reset code as used

@@ -1,6 +1,6 @@
 ﻿@model CalapanCarRentalMVC.Models.Rental
 @{
-    ViewData["Title"] = "Rent a Car";
+    ViewData["Title"] = "Rent a Vehicle";
 }
 
 <div class="container my-4">
@@ -8,7 +8,7 @@
         <div class="col-lg-10">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0"><i class="fas fa-car me-2"></i>Rent a Car</h3>
+                    <h3 class="mb-0"><i class="fas fa-car me-2"></i>Rent a Vehicle</h3>
                 </div>
                 <div class="card-body">
                     <form asp-action="Create" method="post" enctype="multipart/form-data">
@@ -42,7 +42,7 @@
                             <div class="mb-3">
                                 <label asp-for="VehicleId" class="form-label">Select Vehicle</label>
                                 <select asp-for="VehicleId" class="form-select" asp-items="ViewBag.CarId">
-                                    <option value="">-- Select a Car --</option>
+                                    <option value="">-- Select a Vehicle --</option>
                                 </select>
                                 <span asp-validation-for="VehicleId" class="text-danger"></span>
                             </div>

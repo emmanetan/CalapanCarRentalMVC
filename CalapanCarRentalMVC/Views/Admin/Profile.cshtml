@@ -134,7 +134,7 @@
 
                 <hr />
 
-                <div class="d-flex gap-2" id="formButtons" style="display: none !important;">
+                <div class="gap-2" id="formButtons" style="display: none;">
                     <button type="submit" class="btn btn-admin-primary">
                         <i class="fas fa-save me-1"></i>Save Changes
                     </button>
@@ -181,92 +181,81 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-                // Edit Account Button functionality
-                document.getElementById('editAccountBtn').addEventListener('click', function () {
-                    // Enable input fields
-             document.querySelector('input[name="Username"]').removeAttribute('readonly');
-            document.querySelector('input[name="Email"]').removeAttribute('readonly');
+        document.addEventListener('DOMContentLoaded', function() {
 
-                    // Show password section
-                    document.getElementById('passwordSection').style.display = 'block';
+            const editBtn = document.getElementById('editAccountBtn');
+            const cancelBtn = document.getElementById('cancelEditBtn');
+            const formButtons = document.getElementById('formButtons');
+            const passwordSection = document.getElementById('passwordSection');
+            const form = document.getElementById('profileForm');
 
-            // Show form buttons
-        document.getElementById('formButtons').style.display = 'flex';
+            // 1. Edit Account Button Click
+            editBtn.addEventListener('click', function () {
+                // Enable inputs
+                document.querySelector('input[name="Username"]').removeAttribute('readonly');
+                document.querySelector('input[name="Email"]').removeAttribute('readonly');
+
+                // Show sections
+                passwordSection.style.display = 'block';
+
+                // Set to 'flex' so the gap-2 class works correctly
+                formButtons.style.display = 'flex';
 
                 // Hide edit button
-              this.style.display = 'none';
-                });
+                this.style.display = 'none';
+            });
 
-              // Cancel Edit Button functionality
-                document.getElementById('cancelEditBtn').addEventListener('click', function () {
-              // Reset form to original values
-                 document.getElementById('profileForm').reset();
+            // 2. Cancel Button Click
+            cancelBtn.addEventListener('click', function () {
+                // Reset form data
+                form.reset();
 
-              // Disable input fields
-                 document.querySelector('input[name="Username"]').setAttribute('readonly', 'readonly');
-          document.querySelector('input[name="Email"]').setAttribute('readonly', 'readonly');
+                // Disable inputs
+                document.querySelector('input[name="Username"]').setAttribute('readonly', 'readonly');
+                document.querySelector('input[name="Email"]').setAttribute('readonly', 'readonly');
 
-          // Hide password section
-                    document.getElementById('passwordSection').style.display = 'none';
+                // Hide sections
+                passwordSection.style.display = 'none';
+                formButtons.style.display = 'none';
 
-                 // Hide form buttons
-               document.getElementById('formButtons').style.display = 'none';
+                // Show edit button again
+                editBtn.style.display = 'inline-block';
+            });
 
-                    // Show edit button
-         document.getElementById('editAccountBtn').style.display = 'inline-block';
-              });
+            // 3. Hide buttons on Submit
+            form.addEventListener('submit', function () {
+                formButtons.style.display = 'none';
+                editBtn.style.display = 'inline-block';
+            });
 
-                // Toggle password visibility for current password
-                document.getElementById('toggleCurrentPassword').addEventListener('click', function () {
-             const passwordField = document.getElementById('currentPassword');
-            const icon = this.querySelector('i');
+            // Toggle Password Visibility Logic
+            function setupPasswordToggle(toggleId, inputId) {
+                const toggle = document.getElementById(toggleId);
+                const input = document.getElementById(inputId);
 
-                    if (passwordField.type === 'password') {
-                 passwordField.type = 'text';
-               icon.classList.remove('fa-eye');
-                 icon.classList.add('fa-eye-slash');
-                    } else {
-                 passwordField.type = 'password';
-                      icon.classList.remove('fa-eye-slash');
-               icon.classList.add('fa-eye');
-              }
-                });
+                if(toggle && input) {
+                    toggle.addEventListener('click', function() {
+                        const icon = this.querySelector('i');
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            icon.classList.replace('fa-eye', 'fa-eye-slash');
+                        } else {
+                            input.type = 'password';
+                            icon.classList.replace('fa-eye-slash', 'fa-eye');
+                        }
+                    });
+                }
+            }
 
-                // Toggle password visibility for new password
-                document.getElementById('toggleNewPassword').addEventListener('click', function () {
-           const passwordField = document.getElementById('newPassword');
-                    const icon = this.querySelector('i');
+            setupPasswordToggle('toggleCurrentPassword', 'currentPassword');
+            setupPasswordToggle('toggleNewPassword', 'newPassword');
+            setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
 
-                    if (passwordField.type === 'password') {
-         passwordField.type = 'text';
-             icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-                    } else {
-               passwordField.type = 'password';
-              icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-         }
-                });
-
-          // Toggle password visibility for confirm password
-                document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
-            const passwordField = document.getElementById('confirmPassword');
-                    const icon = this.querySelector('i');
-
-                    if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                   icon.classList.remove('fa-eye');
-         icon.classList.add('fa-eye-slash');
-             } else {
-                 passwordField.type = 'password';
-             icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-          }
-                });
-
-            // Auto-hide success/error messages after 5 seconds
-                setTimeout(function() {
-            $('.alert').fadeOut('slow');
-                }, 5000);
+            // Auto-hide alerts
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => alert.style.display = 'none');
+            }, 5000);
+        });
     </script>
 }

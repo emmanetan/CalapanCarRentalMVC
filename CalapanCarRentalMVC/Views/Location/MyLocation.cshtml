@@ -280,8 +280,10 @@
                     maximumAge: 0
                 });
 
-                trackingEnabled = true;
-                updateTrackingStatus();
+                 trackingEnabled = true;
+                 localStorage.setItem('isLocationTrackingEnabled', 'true'); // Save state
+                 updateTrackingStatus();
+
             }
 
             function stopTracking() {
@@ -290,6 +292,7 @@
                     watchId = null;
                 }
                 trackingEnabled = false;
+                localStorage.setItem('isLocationTrackingEnabled', 'false'); // Update state
                 updateTrackingStatus();
             }
 
@@ -303,7 +306,13 @@
 
             // Initialize map on page load
             initMap();
-            updateTrackingStatus();
+            const savedState = localStorage.getItem('isLocationTrackingEnabled');
+            if (savedState === 'true') {
+            startTracking(); // This will enable tracking and update the UI
+            } else {
+            updateTrackingStatus(); // Just update UI to disabled state
+            }
+
         });
     </script>
 

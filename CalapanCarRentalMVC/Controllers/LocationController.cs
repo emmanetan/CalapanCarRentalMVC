@@ -151,6 +151,11 @@ namespace CalapanCarRentalMVC.Controllers
         }
     }
 
+
+
+
+
+
     // Request model for location data
     public class LocationHistoryRequest
     {
@@ -159,4 +164,9 @@ namespace CalapanCarRentalMVC.Controllers
         public double? Accuracy { get; set; }
         public string? DeviceInfo { get; set; }
     }
+
+
 }
+
+
+

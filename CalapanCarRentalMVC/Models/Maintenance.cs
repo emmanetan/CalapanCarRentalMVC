@@ -47,7 +47,7 @@ namespace CalapanCarRentalMVC.Models
    public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation property
-     [ForeignKey("CarId")]
+     [ForeignKey("VehicleId")]
       public virtual Car? Car { get; set; }
     }
 }

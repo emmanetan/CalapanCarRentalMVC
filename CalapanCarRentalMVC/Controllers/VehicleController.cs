@@ -56,7 +56,7 @@ namespace CalapanCarRentalMVC.Controllers
             }
 
             var car = await _context.Cars
-           .FirstOrDefaultAsync(m => m.CarId == id);
+           .FirstOrDefaultAsync(m => m.VehicleId == id);
             if (car == null)
             {
                 return NotFound();
@@ -78,7 +78,7 @@ namespace CalapanCarRentalMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [SessionAuthorization(Roles = new[] { "Admin" })]
-        public async Task<IActionResult> Create([Bind("CarId,Brand,Model,Year,Color,PlateNumber,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,Description")] Car car, IFormFile? imageFile)
+        public async Task<IActionResult> Create([Bind("VehicleId,Brand,Model,Year,Color,PlateNumber,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,Description")] Car car, IFormFile? imageFile)
         {
             SetLayout();
             if (ModelState.IsValid)
@@ -129,10 +129,10 @@ namespace CalapanCarRentalMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [SessionAuthorization(Roles = new[] { "Admin" })]
-        public async Task<IActionResult> Edit(int id, [Bind("CarId,Brand,Model,Year,Color,PlateNumber,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,ImageUrl,Description,CreatedAt")] Car car, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(int id, [Bind("VehicleId,Brand,Model,Year,Color,PlateNumber,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,ImageUrl,Description,CreatedAt")] Car car, IFormFile? imageFile)
         {
             SetLayout();
-            if (id != car.CarId)
+            if (id != car.VehicleId)
             {
                 return NotFound();
             }
@@ -162,7 +162,7 @@ namespace CalapanCarRentalMVC.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarExists(car.CarId))
+                    if (!CarExists(car.VehicleId))
                     {
                         return NotFound();
                     }
@@ -187,7 +187,7 @@ namespace CalapanCarRentalMVC.Controllers
             }
 
             var car = await _context.Cars
-                     .FirstOrDefaultAsync(m => m.CarId == id);
+                     .FirstOrDefaultAsync(m => m.VehicleId == id);
             if (car == null)
             {
                 return NotFound();
@@ -214,7 +214,7 @@ namespace CalapanCarRentalMVC.Controllers
 
         private bool CarExists(int id)
         {
-            return _context.Cars.Any(e => e.CarId == id);
+            return _context.Cars.Any(e => e.VehicleId == id);
         }
     }
 }

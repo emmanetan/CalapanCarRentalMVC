@@ -21,21 +21,21 @@ namespace CalapanCarRentalMVC.Migrations
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 1,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 18, 46, 48, 345, DateTimeKind.Local).AddTicks(6657));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 2,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 18, 46, 48, 345, DateTimeKind.Local).AddTicks(6750));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 3,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 18, 46, 48, 345, DateTimeKind.Local).AddTicks(6753));
@@ -57,21 +57,21 @@ namespace CalapanCarRentalMVC.Migrations
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 1,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 18, 16, 50, 913, DateTimeKind.Local).AddTicks(8301));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 2,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 18, 16, 50, 913, DateTimeKind.Local).AddTicks(8393));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 3,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 18, 16, 50, 913, DateTimeKind.Local).AddTicks(8396));

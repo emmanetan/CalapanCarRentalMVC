@@ -42,28 +42,28 @@ namespace CalapanCarRentalMVC.Migrations
                         name: "FK_Maintenances_Cars_CarId",
                         column: x => x.CarId,
                         principalTable: "Cars",
-                        principalColumn: "CarId",
+                        principalColumn: "VehicleId",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 1,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 22, 38, 58, 427, DateTimeKind.Local).AddTicks(6693));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 2,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 22, 38, 58, 427, DateTimeKind.Local).AddTicks(6845));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 3,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 22, 38, 58, 427, DateTimeKind.Local).AddTicks(6848));
@@ -78,7 +78,7 @@ namespace CalapanCarRentalMVC.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Maintenances_CarId",
                 table: "Maintenances",
-                column: "CarId");
+                column: "VehicleId");
         }
 
         /// <inheritdoc />
@@ -89,21 +89,21 @@ namespace CalapanCarRentalMVC.Migrations
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 1,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 18, 46, 48, 345, DateTimeKind.Local).AddTicks(6657));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 2,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 18, 46, 48, 345, DateTimeKind.Local).AddTicks(6750));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 3,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 18, 46, 48, 345, DateTimeKind.Local).AddTicks(6753));

@@ -107,22 +107,22 @@
                     <div class="d-flex gap-2 flex-wrap">
                         @if (Context.Session.GetString("UserRole") == "Admin")
                         {
-                            <a asp-action="Edit" asp-route-id="@Model.CarId" class="btn btn-edit">
+                            <a asp-action="Edit" asp-route-id="@Model.VehicleId" class="btn btn-edit">
                                 <i class="fas fa-edit me-2"></i>Edit
                             </a>
-                            <a asp-action="Delete" asp-route-id="@Model.CarId" class="btn btn-danger">
+                            <a asp-action="Delete" asp-route-id="@Model.VehicleId" class="btn btn-danger">
                                 <i class="fas fa-trash me-2"></i>Delete
                             </a>
                         }
                         else if (Model.Status == "Available" && Context.Session.GetString("UserRole") == "Customer")
                         {
-                            <a asp-controller="Rentals" asp-action="Create" asp-route-carId="@Model.CarId" class="btn btn-success">
+                            <a asp-controller="Rentals" asp-action="Create" asp-route-carId="@Model.VehicleId" class="btn btn-success">
                                 <i class="fas fa-key me-2"></i>Rent This Car
                             </a>
                         }
                         else if (Model.Status == "Available" && string.IsNullOrEmpty(Context.Session.GetString("UserRole")))
                         {
-                            <a asp-controller="Rentals" asp-action="Create" asp-route-carId="@Model.CarId" class="btn btn-success">
+                            <a asp-controller="Rentals" asp-action="Create" asp-route-carId="@Model.VehicleId" class="btn btn-success">
                                 <i class="fas fa-key me-2"></i>Rent This Car
                             </a>
                         }

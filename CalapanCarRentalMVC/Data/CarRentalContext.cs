@@ -71,7 +71,7 @@ namespace CalapanCarRentalMVC.Data
             modelBuilder.Entity<Car>().HasData(
         new Car
         {
-            CarId = 1,
+            VehicleId = 1,
             Brand = "Toyota",
             Model = "Vios",
             Year = 2023,
@@ -88,7 +88,7 @@ namespace CalapanCarRentalMVC.Data
         },
                 new Car
                 {
-                    CarId = 2,
+                    VehicleId = 2,
                     Brand = "Honda",
                     Model = "Civic",
                     Year = 2023,
@@ -105,7 +105,7 @@ namespace CalapanCarRentalMVC.Data
                 },
           new Car
           {
-              CarId = 3,
+              VehicleId = 3,
               Brand = "Mitsubishi",
               Model = "Montero Sport",
               Year = 2023,

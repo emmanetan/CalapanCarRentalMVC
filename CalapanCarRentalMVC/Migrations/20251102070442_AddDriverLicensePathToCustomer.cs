@@ -21,21 +21,21 @@ namespace CalapanCarRentalMVC.Migrations
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 1,
                 column: "CreatedAt",
                 value: new DateTime(2025, 11, 2, 15, 4, 41, 644, DateTimeKind.Local).AddTicks(5282));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 2,
                 column: "CreatedAt",
                 value: new DateTime(2025, 11, 2, 15, 4, 41, 644, DateTimeKind.Local).AddTicks(5917));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 3,
                 column: "CreatedAt",
                 value: new DateTime(2025, 11, 2, 15, 4, 41, 644, DateTimeKind.Local).AddTicks(5923));
@@ -57,21 +57,21 @@ namespace CalapanCarRentalMVC.Migrations
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 1,
                 column: "CreatedAt",
                 value: new DateTime(2025, 11, 1, 18, 13, 0, 559, DateTimeKind.Local).AddTicks(2154));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 2,
                 column: "CreatedAt",
                 value: new DateTime(2025, 11, 1, 18, 13, 0, 559, DateTimeKind.Local).AddTicks(2241));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 3,
                 column: "CreatedAt",
                 value: new DateTime(2025, 11, 1, 18, 13, 0, 559, DateTimeKind.Local).AddTicks(2244));

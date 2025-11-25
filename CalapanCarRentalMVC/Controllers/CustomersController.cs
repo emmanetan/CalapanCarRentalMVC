@@ -209,13 +209,18 @@ namespace CalapanCarRentalMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customers
+                .Include(c => c.Rentals)
+                .FirstOrDefaultAsync(c => c.CustomerId == id);
+
             if (customer != null)
             {
+                // Remove related rentals first
+                _context.Rentals.RemoveRange(customer.Rentals);
                 _context.Customers.Remove(customer);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

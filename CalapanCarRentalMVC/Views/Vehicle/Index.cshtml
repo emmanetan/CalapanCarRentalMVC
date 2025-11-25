@@ -100,15 +100,15 @@
 
                         <div class="card-footer bg-transparent">
                             <div class="d-flex gap-2">
-                                <a asp-action="Details" asp-route-id="@car.CarId" class="btn btn-sm btn-outline-primary flex-fill">
+                                <a asp-action="Details" asp-route-id="@car.VehicleId" class="btn btn-sm btn-outline-primary flex-fill">
                                     <i class="fas fa-info-circle"></i> Details
                                 </a>
                                 @if (Context.Session.GetString("UserRole") == "Admin")
                                 {
-                                    <a asp-action="Edit" asp-route-id="@car.CarId" class="btn btn-sm btn-edit">
+                                    <a asp-action="Edit" asp-route-id="@car.VehicleId" class="btn btn-sm btn-edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a asp-action="Delete" asp-route-id="@car.CarId" class="btn btn-sm btn-outline-danger">
+                                    <a asp-action="Delete" asp-route-id="@car.VehicleId" class="btn btn-sm btn-outline-danger">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 }

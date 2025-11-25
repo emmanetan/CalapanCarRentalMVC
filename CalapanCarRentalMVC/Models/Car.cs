@@ -6,7 +6,7 @@ namespace CalapanCarRentalMVC.Models
     public class Car
     {
         [Key]
-        public int CarId { get; set; }
+        public int VehicleId { get; set; }
 
         [Required]
         [StringLength(100)]

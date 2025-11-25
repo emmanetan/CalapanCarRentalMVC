@@ -22,21 +22,21 @@ namespace CalapanCarRentalMVC.Migrations
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 1,
                 columns: new[] { "CreatedAt", "GasType" },
                 values: new object[] { new DateTime(2025, 10, 30, 18, 16, 50, 913, DateTimeKind.Local).AddTicks(8301), "Gasoline" });
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 2,
                 columns: new[] { "CreatedAt", "GasType" },
                 values: new object[] { new DateTime(2025, 10, 30, 18, 16, 50, 913, DateTimeKind.Local).AddTicks(8393), "Gasoline" });
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 3,
                 columns: new[] { "CreatedAt", "GasType" },
                 values: new object[] { new DateTime(2025, 10, 30, 18, 16, 50, 913, DateTimeKind.Local).AddTicks(8396), "Diesel" });
@@ -58,21 +58,21 @@ namespace CalapanCarRentalMVC.Migrations
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 1,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 17, 50, 2, 485, DateTimeKind.Local).AddTicks(3055));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 2,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 17, 50, 2, 485, DateTimeKind.Local).AddTicks(3250));
 
             migrationBuilder.UpdateData(
                 table: "Cars",
-                keyColumn: "CarId",
+                keyColumn: "VehicleId",
                 keyValue: 3,
                 column: "CreatedAt",
                 value: new DateTime(2025, 10, 30, 17, 50, 2, 485, DateTimeKind.Local).AddTicks(3272));

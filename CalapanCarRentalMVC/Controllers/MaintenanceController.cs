@@ -93,7 +93,7 @@ namespace CalapanCarRentalMVC.Controllers
         // POST: Maintenance/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaintenanceId,CarId,MaintenanceType,Description,DateScheduled,Cost,Status,Notes,ServiceProvider")] Maintenance maintenance)
+        public async Task<IActionResult> Create([Bind("MaintenanceId,VehicleId,MaintenanceType,Description,DateScheduled,Cost,Status,Notes,ServiceProvider")] Maintenance maintenance)
         {
             var userRole = HttpContext.Session.GetString("UserRole");
             if (userRole != "Admin")
@@ -153,7 +153,7 @@ namespace CalapanCarRentalMVC.Controllers
         // POST: Maintenance/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaintenanceId,CarId,MaintenanceType,Description,DateScheduled,DateCompleted,Cost,Status,Notes,ServiceProvider,CreatedAt")] Maintenance maintenance)
+        public async Task<IActionResult> Edit(int id, [Bind("MaintenanceId,VehicleId,MaintenanceType,Description,DateScheduled,DateCompleted,Cost,Status,Notes,ServiceProvider,CreatedAt")] Maintenance maintenance)
         {
             var userRole = HttpContext.Session.GetString("UserRole");
             if (userRole != "Admin")

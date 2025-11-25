@@ -125,7 +125,7 @@ namespace CalapanCarRentalMVC.Migrations
                         name: "FK_Rentals_Cars_CarId",
                         column: x => x.CarId,
                         principalTable: "Cars",
-                        principalColumn: "CarId",
+                        principalColumn: "VehicleId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Rentals_Customers_CustomerId",
@@ -138,7 +138,7 @@ namespace CalapanCarRentalMVC.Migrations
 
             migrationBuilder.InsertData(
                 table: "Cars",
-                columns: new[] { "CarId", "Brand", "Color", "CreatedAt", "DailyRate", "Description", "ImageUrl", "Model", "PlateNumber", "SeatingCapacity", "Status", "TransmissionType", "Year" },
+                columns: new[] { "VehicleId", "Brand", "Color", "CreatedAt", "DailyRate", "Description", "ImageUrl", "Model", "PlateNumber", "SeatingCapacity", "Status", "TransmissionType", "Year" },
                 values: new object[,]
                 {
                     { 1, "Toyota", "White", new DateTime(2025, 10, 30, 12, 41, 7, 809, DateTimeKind.Local).AddTicks(8400), 1500.00m, "Fuel-efficient and reliable sedan perfect for city driving.", "/images/toyota-vios.jpg", "Vios", "ABC1234", 5, "Available", "Automatic", 2023 },
@@ -154,7 +154,7 @@ namespace CalapanCarRentalMVC.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Rentals_CarId",
                 table: "Rentals",
-                column: "CarId");
+                column: "VehicleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rentals_CustomerId",

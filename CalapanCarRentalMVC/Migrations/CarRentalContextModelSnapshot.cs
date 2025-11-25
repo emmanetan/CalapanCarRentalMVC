@@ -24,11 +24,11 @@ namespace CalapanCarRentalMVC.Migrations
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Car", b =>
                 {
-                    b.Property<int>("CarId")
+                    b.Property<int>("VehicleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CarId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("VehicleId"));
 
                     b.Property<string>("Brand")
                         .IsRequired()
@@ -84,7 +84,7 @@ namespace CalapanCarRentalMVC.Migrations
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
-                    b.HasKey("CarId");
+                    b.HasKey("VehicleId");
 
                     b.ToTable("Cars");
 
@@ -273,7 +273,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("MaintenanceId"));
 
-                    b.Property<int>("CarId")
+                    b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Cost")
@@ -316,7 +316,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("MaintenanceId");
 
-                    b.HasIndex("CarId");
+                    b.HasIndex("VehicleId");
 
                     b.ToTable("Maintenances");
                 });
@@ -412,7 +412,7 @@ namespace CalapanCarRentalMVC.Migrations
                     b.Property<DateTime?>("ActualReturnDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("CarId")
+                    b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -468,7 +468,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("RentalId");
 
-                    b.HasIndex("CarId");
+                    b.HasIndex("VehicleId");
 
                     b.HasIndex("CustomerId");
 
@@ -543,7 +543,7 @@ namespace CalapanCarRentalMVC.Migrations
                 {
                     b.HasOne("CalapanCarRentalMVC.Models.Car", "Car")
                         .WithMany()
-                        .HasForeignKey("CarId")
+                        .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -565,7 +565,7 @@ namespace CalapanCarRentalMVC.Migrations
                 {
                     b.HasOne("CalapanCarRentalMVC.Models.Car", "Car")
                         .WithMany("Rentals")
-                        .HasForeignKey("CarId")
+                        .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

@@ -77,28 +77,35 @@ namespace CalapanCarRentalMVC.Controllers
                 // Get the latest location for each user from the last 5 minutes
                 var fiveMinutesAgo = DateTime.Now.AddMinutes(-5);
 
-                var latestLocations = await _context.LocationHistories
-                      .Include(l => l.User)
-                     .Where(l => l.Timestamp >= fiveMinutesAgo)
-                       .GroupBy(l => l.UserId)
-                    .Select(g => g.OrderByDescending(l => l.Timestamp).FirstOrDefault())
-                     .Select(l => new
-                     {
-                         userId = l.UserId,
-                         username = l.User.Username,
-                         email = l.User.Email,
-                         latitude = l.Latitude,
-                         longitude = l.Longitude,
-                         accuracy = l.Accuracy,
-                         timestamp = l.Timestamp,
-                         role = l.User.Role
-                     })
+                // 1. Fetch raw data first (Active locations with User details)
+                var recentLocations = await _context.LocationHistories
+                    .Include(l => l.User)
+                    .Where(l => l.Timestamp >= fiveMinutesAgo)
+                    .OrderByDescending(l => l.Timestamp)
                     .ToListAsync();
+
+                // 2. Group by User in memory to ensure we get the latest one per user
+                var latestLocations = recentLocations
+                    .GroupBy(l => l.UserId)
+                    .Select(g => g.First()) // Get the top (latest) record for each group
+                    .Select(l => new
+                    {
+                        userId = l.UserId,
+                        username = l.User != null ? l.User.Username : "Unknown",
+                        email = l.User != null ? l.User.Email : "Unknown",
+                        latitude = l.Latitude,
+                        longitude = l.Longitude,
+                        accuracy = l.Accuracy,
+                        timestamp = l.Timestamp,
+                        role = l.User != null ? l.User.Role : "Customer"
+                    })
+                    .ToList();
 
                 return Json(new { success = true, locations = latestLocations });
             }
             catch (Exception ex)
             {
+                // Log the error to your console/logger here if needed
                 return Json(new { success = false, message = ex.Message });
             }
         }
@@ -150,12 +157,6 @@ namespace CalapanCarRentalMVC.Controllers
             return View();
         }
     }
-
-
-
-
-
-
     // Request model for location data
     public class LocationHistoryRequest
     {
@@ -167,6 +168,3 @@ namespace CalapanCarRentalMVC.Controllers
 
 
 }
-
-
-

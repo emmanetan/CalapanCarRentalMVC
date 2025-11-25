@@ -332,5 +332,11 @@
         .list-group-item:hover {
             background-color: #f8f9fa;
         }
+
+        @* Disable card hover animation only on My Location page *@
+        body .card:hover {
+            transform: none !important;
+            box-shadow: 02px8px rgba(0,0,0,0.1) !important;
+        }
     </style>
 }

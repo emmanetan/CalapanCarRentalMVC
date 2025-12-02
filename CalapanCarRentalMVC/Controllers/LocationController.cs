@@ -48,6 +48,7 @@ namespace CalapanCarRentalMVC.Controllers
                     Longitude = request.Longitude,
                     Accuracy = request.Accuracy,
                     DeviceInfo = request.DeviceInfo,
+                    Address = request.Address,
                     Timestamp = DateTime.Now
                 };
 
@@ -96,6 +97,7 @@ namespace CalapanCarRentalMVC.Controllers
                         latitude = l.Latitude,
                         longitude = l.Longitude,
                         accuracy = l.Accuracy,
+                        address = l.Address,
                         timestamp = l.Timestamp,
                         role = l.User != null ? (l.User.is_Admin ==0 ? "Admin" : "Customer") : "Customer"
                     })
@@ -132,6 +134,7 @@ namespace CalapanCarRentalMVC.Controllers
                 latitude = l.Latitude,
                 longitude = l.Longitude,
                 accuracy = l.Accuracy,
+                address = l.Address,
                 timestamp = l.Timestamp
             })
                       .ToListAsync();
@@ -156,6 +159,128 @@ namespace CalapanCarRentalMVC.Controllers
 
             return View();
         }
+
+        // GET: API endpoint to get all users location history with filters (admin only)
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsersLocationHistory(int hours = 24, int? userId = null, string? role = null, int page = 1, int pageSize = 50)
+        {
+            try
+            {
+                var userRole = HttpContext.Session.GetString("UserRole");
+                if (userRole != "Admin")
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+
+                var startTime = DateTime.Now.AddHours(-hours);
+
+                // Build query
+                var query = _context.LocationHistories
+                    .Include(l => l.User)
+                    .Where(l => l.Timestamp >= startTime);
+
+                // Apply user filter
+                if (userId.HasValue)
+                {
+                    query = query.Where(l => l.UserId == userId.Value);
+                }
+
+                // Apply role filter
+                if (!string.IsNullOrEmpty(role))
+                {
+                    if (role == "Admin")
+                    {
+                        query = query.Where(l => l.User.is_Admin == 0);
+                    }
+                    else if (role == "Customer")
+                    {
+                        query = query.Where(l => l.User.is_Admin == 1);
+                    }
+                }
+
+                // Get total count
+                var totalRecords = await query.CountAsync();
+
+                // Get paginated results
+                var locationHistory = await query
+                    .OrderByDescending(l => l.Timestamp)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(l => new
+                    {
+                        locationId = l.LocationId,
+                        userId = l.UserId,
+                        username = l.User != null ? l.User.Username : "Unknown",
+                        email = l.User != null ? l.User.Email : "Unknown",
+                        role = l.User != null ? (l.User.is_Admin == 0 ? "Admin" : "Customer") : "Customer",
+                        latitude = l.Latitude,
+                        longitude = l.Longitude,
+                        accuracy = l.Accuracy,
+                        address = l.Address,
+                        timestamp = l.Timestamp,
+                        deviceInfo = l.DeviceInfo
+                    })
+                    .ToListAsync();
+
+                // Calculate statistics
+                var allRecords = await query.ToListAsync();
+                var uniqueUsers = allRecords.Select(l => l.UserId).Distinct().Count();
+                var avgAccuracy = allRecords.Any() ? allRecords.Where(l => l.Accuracy.HasValue).Average(l => l.Accuracy ?? 0) : 0;
+                var dateRange = allRecords.Any() ? $"{allRecords.Min(l => l.Timestamp):MM/dd} - {allRecords.Max(l => l.Timestamp):MM/dd}" : "-";
+
+                return Json(new
+                {
+                    success = true,
+                    data = locationHistory,
+                    totalRecords = totalRecords,
+                    totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize),
+                    currentPage = page,
+                    pageSize = pageSize,
+                    statistics = new
+                    {
+                        totalRecords = totalRecords,
+                        uniqueUsers = uniqueUsers,
+                        avgAccuracy = avgAccuracy,
+                        dateRange = dateRange
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // GET: API endpoint to get list of all users for filter dropdown (admin only)
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsersForFilter()
+        {
+            try
+            {
+                var userRole = HttpContext.Session.GetString("UserRole");
+                if (userRole != "Admin")
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+
+                var users = await _context.Users
+                    .Select(u => new
+                    {
+                        userId = u.UserId,
+                        username = u.Username,
+                        email = u.Email,
+                        role = u.is_Admin == 0 ? "Admin" : "Customer"
+                    })
+                    .OrderBy(u => u.username)
+                    .ToListAsync();
+
+                return Json(new { success = true, users = users });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
     }
     // Request model for location data
     public class LocationHistoryRequest
@@ -164,6 +289,7 @@ namespace CalapanCarRentalMVC.Controllers
         public double Longitude { get; set; }
         public double? Accuracy { get; set; }
         public string? DeviceInfo { get; set; }
+        public string? Address { get; set; }
     }
 
 

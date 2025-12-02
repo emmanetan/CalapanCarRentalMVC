@@ -25,6 +25,9 @@ namespace CalapanCarRentalMVC.Models
         [StringLength(100)]
         public string? DeviceInfo { get; set; }
 
+        [StringLength(500)]
+        public string? Address { get; set; }
+
         // Navigation property
         [ForeignKey("UserId")]
         public virtual User User { get; set; } = null!;

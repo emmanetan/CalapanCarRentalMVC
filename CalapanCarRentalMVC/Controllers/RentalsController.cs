@@ -43,7 +43,18 @@ namespace CalapanCarRentalMVC.Controllers
                 }
             }
 
-            return View(await rentals.OrderByDescending(r => r.CreatedAt).ToListAsync());
+            // Get all rentals first, then sort in memory
+            var allRentals = await rentals.ToListAsync();
+
+            // Sort: Pending/Active first (oldest to newest - first book first serve)
+            // Completed/Rejected/Cancelled at bottom (newest to oldest)
+            var sortedRentals = allRentals
+                .OrderBy(r => r.Status == "Completed" || r.Status == "Rejected" || r.Status == "Cancelled" ? 1 : 0)
+                .ThenBy(r => r.Status == "Pending" || r.Status == "Active" ? r.CreatedAt : DateTime.MaxValue)
+                .ThenByDescending(r => r.Status == "Completed" || r.Status == "Rejected" || r.Status == "Cancelled" ? r.CreatedAt : DateTime.MinValue)
+                .ToList();
+
+            return View(sortedRentals);
         }
         // GET: Rentals/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -246,6 +257,45 @@ namespace CalapanCarRentalMVC.Controllers
                     ViewBag.CustomerId = rental.CustomerId;
                     return View(rental);
                 }
+
+                // Check for rental conflicts - prevent double booking
+                var hasConflict = await _context.Rentals
+                    .Where(r => r.VehicleId == rental.VehicleId &&
+                       (r.Status == "Pending" || r.Status == "Active") &&
+                      ((rental.RentalDate >= r.RentalDate && rental.RentalDate < r.ReturnDate) ||
+    (rental.ReturnDate > r.RentalDate && rental.ReturnDate <= r.ReturnDate) ||
+                       (rental.RentalDate <= r.RentalDate && rental.ReturnDate >= r.ReturnDate)))
+                    .AnyAsync();
+
+                if (hasConflict)
+                {
+                    var conflictingRental = await _context.Rentals
+                       .Include(r => r.Customer)
+                    .Where(r => r.VehicleId == rental.VehicleId &&
+    (r.Status == "Pending" || r.Status == "Active") &&
+ ((rental.RentalDate >= r.RentalDate && rental.RentalDate < r.ReturnDate) ||
+      (rental.ReturnDate > r.RentalDate && rental.ReturnDate <= r.ReturnDate) ||
+             (rental.RentalDate <= r.RentalDate && rental.ReturnDate >= r.ReturnDate)))
+        .OrderBy(r => r.CreatedAt)
+        .FirstOrDefaultAsync();
+
+        if (conflictingRental != null)
+    {
+             ModelState.AddModelError("VehicleId", 
+      $"This car is already booked from {conflictingRental.RentalDate:MMM dd, yyyy} to {conflictingRental.ReturnDate:MMM dd, yyyy}. " +
+          $"Please choose different dates or another vehicle.");
+     }
+         
+      ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
+  if (rental.VehicleId > 0)
+     {
+var selectedCarConflict = await _context.Cars.FindAsync(rental.VehicleId);
+        ViewBag.SelectedCar = selectedCarConflict;
+      ViewBag.SelectedCarId = rental.VehicleId;
+}
+        ViewBag.CustomerId = rental.CustomerId;
+ return View(rental);
+   }
 
                 // Upload Government ID
                 if (governmentIdFile != null && governmentIdFile.Length > 0)
@@ -595,38 +645,54 @@ namespace CalapanCarRentalMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Update rental status
+// Double-check for conflicts before approving
+   var hasConflict = await _context.Rentals
+.Where(r => r.VehicleId == rental.VehicleId &&
+       r.RentalId != rental.RentalId &&
+     r.Status == "Active" &&
+  ((rental.RentalDate >= r.RentalDate && rental.RentalDate < r.ReturnDate) ||
+      (rental.ReturnDate > r.RentalDate && rental.ReturnDate <= r.ReturnDate) ||
+     (rental.RentalDate <= r.RentalDate && rental.ReturnDate >= r.ReturnDate)))
+      .AnyAsync();
+
+          if (hasConflict)
+   {
+        TempData["Error"] = "Cannot approve: This car has a conflicting active rental for the requested dates.";
+         return RedirectToAction(nameof(Index));
+      }
+
+  // Update rental status
             rental.Status = "Active";
 
-            // Update car status
-            rental.Car.Status = "Rented";
+     // Update car status
+     rental.Car.Status = "Rented";
 
             _context.Update(rental);
             _context.Update(rental.Car);
 
-            // Create notification for customer
-            var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
-            if (customerUser != null)
-            {
-                var notification = new Notification
-                {
-                    UserId = customerUser.UserId,
-                    Title = "Rental Approved",
-                    Message = $"Your rental request for {rental.Car.Brand} {rental.Car.Model} has been approved! Pick-up date: {rental.RentalDate:MMM dd, yyyy}. Please bring your government ID and payment.",
-                    Type = "Success",
-                    Icon = "fa-check-circle",
-                    ActionUrl = "/Customer/MyRentals",
-                    IsRead = false,
-                    CreatedAt = DateTime.Now
-                };
+  // Create notification for customer
+ var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
+  if (customerUser != null)
+        {
+       var notification = new Notification
+           {
+              UserId = customerUser.UserId,
+        Title = "Rental Approved",
+         Message = $"Your rental request for {rental.Car.Brand} {rental.Car.Model} has been approved! Pick-up date: {rental.RentalDate:MMM dd, yyyy}. Please bring your government ID and payment.",
+   Type = "Success",
+          Icon = "fa-check-circle",
+             ActionUrl = "/Customer/MyRentals",
+             IsRead = false,
+   CreatedAt = DateTime.Now
+      };
 
-                _context.Notifications.Add(notification);
+       _context.Notifications.Add(notification);
             }
 
-            await _context.SaveChangesAsync();
+  await _context.SaveChangesAsync();
 
-            TempData["Success"] = $"Rental #{rental.RentalId} has been approved successfully!";
-            return RedirectToAction(nameof(Index));
+   TempData["Success"] = $"Rental #{rental.RentalId} has been approved successfully!";
+       return RedirectToAction(nameof(Index));
         }
 
         // POST: Rentals/Reject

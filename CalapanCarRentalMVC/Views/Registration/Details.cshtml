@@ -1,0 +1,238 @@
+@model CalapanCarRentalMVC.Models.User
+@{
+ViewData["Title"] = "Registration Details";
+    Layout = "_Layout";
+    var customer = ViewBag.Customer as CalapanCarRentalMVC.Models.Customer;
+}
+
+<div class="page-header">
+  <div class="d-flex justify-content-between align-items-center">
+        <div>
+      <h1><i class="fas fa-user-check me-2"></i>Registration Details</h1>
+            <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+      <li class="breadcrumb-item"><a asp-action="Index">Pending Registrations</a></li>
+  <li class="breadcrumb-item active">Details</li>
+              </ol>
+            </nav>
+        </div>
+    <div>
+            <a asp-action="Index" class="btn btn-secondary">
+   <i class="fas fa-arrow-left me-1"></i>Back to List
+</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- User Account Information -->
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Account Information</h5>
+     </div>
+        <div class="card-body">
+     <dl class="row mb-0">
+           <dt class="col-sm-4">Username:</dt>
+   <dd class="col-sm-8">
+   <strong>@Model.Username</strong>
+     </dd>
+
+       <dt class="col-sm-4">Email:</dt>
+ <dd class="col-sm-8">
+  <i class="fas fa-envelope me-1"></i>@Model.Email
+      </dd>
+
+        <dt class="col-sm-4">Account Type:</dt>
+               <dd class="col-sm-8">
+   <span class="badge bg-info">
+             @(Model.is_Admin == 0 ? "Admin" : "Customer")
+        </span>
+ </dd>
+
+    <dt class="col-sm-4">Login Method:</dt>
+           <dd class="col-sm-8">
+            @if (!string.IsNullOrEmpty(Model.ExternalLoginProvider))
+         {
+    <span class="badge bg-info">
+        <i class="fab fa-@Model.ExternalLoginProvider.ToLower() me-1"></i>@Model.ExternalLoginProvider
+             </span>
+      }
+           else
+           {
+          <span class="badge bg-secondary">
+    <i class="fas fa-envelope me-1"></i>Email/Password
+     </span>
+       }
+       </dd>
+
+        <dt class="col-sm-4">Registered:</dt>
+   <dd class="col-sm-8">
+         @Model.CreatedAt.ToString("MMMM dd, yyyy HH:mm")
+        <br />
+          <small class="text-muted">
+ (@((DateTime.Now - Model.CreatedAt).Days) days ago)
+                  </small>
+         </dd>
+
+         <dt class="col-sm-4">Verification Status:</dt>
+ <dd class="col-sm-8">
+           @if (Model.IsVerifiedByAdmin)
+    {
+  <span class="badge bg-success">
+      <i class="fas fa-check-circle me-1"></i>Verified
+      </span>
+  @if (Model.VerifiedDate.HasValue)
+   {
+          <br />
+     <small class="text-muted">@Model.VerifiedDate.Value.ToString("MMM dd, yyyy HH:mm")</small>
+       }
+              }
+     else
+         {
+     <span class="badge bg-warning">
+    <i class="fas fa-clock me-1"></i>Pending Approval
+   </span>
+                }
+      </dd>
+
+   <dt class="col-sm-4">Location Tracking:</dt>
+      <dd class="col-sm-8">
+         @if (Model.LocationTrackingEnabled)
+              {
+           <span class="badge bg-success">
+          <i class="fas fa-map-marker-alt me-1"></i>Enabled
+      </span>
+      }
+        else
+          {
+                   <span class="badge bg-secondary">
+ <i class="fas fa-map-marker-alt me-1"></i>Disabled
+          </span>
+   }
+         </dd>
+                </dl>
+       </div>
+   </div>
+    </div>
+
+    <!-- Customer Profile Information -->
+    <div class="col-md-6">
+        @if (customer != null)
+        {
+     <div class="card shadow-sm mb-4">
+   <div class="card-header bg-info text-white">
+       <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>Customer Profile</h5>
+    </div>
+    <div class="card-body">
+                    <dl class="row mb-0">
+          <dt class="col-sm-4">Full Name:</dt>
+       <dd class="col-sm-8">
+           <strong>@customer.FirstName @customer.LastName</strong>
+          </dd>
+
+       <dt class="col-sm-4">Phone Number:</dt>
+       <dd class="col-sm-8">
+       @if (!string.IsNullOrEmpty(customer.PhoneNumber))
+          {
+  <i class="fas fa-phone me-1"></i>@customer.PhoneNumber
+           }
+   else
+        {
+                  <em class="text-muted">Not provided</em>
+       }
+        </dd>
+
+            <dt class="col-sm-4">Address:</dt>
+      <dd class="col-sm-8">
+             @if (!string.IsNullOrEmpty(customer.Address))
+      {
+      <i class="fas fa-map-marker-alt me-1"></i>@customer.Address
+            }
+           else
+                  {
+         <em class="text-muted">Not provided</em>
+      }
+   </dd>
+
+            <dt class="col-sm-4">License Number:</dt>
+   <dd class="col-sm-8">
+      @if (!string.IsNullOrEmpty(customer.LicenseNumber))
+      {
+              <strong>@customer.LicenseNumber</strong>
+     }
+                else
+        {
+ <em class="text-muted">Not provided</em>
+          }
+</dd>
+
+  <dt class="col-sm-4">License Expiry:</dt>
+           <dd class="col-sm-8">
+          @customer.LicenseExpiryDate.ToString("MMMM dd, yyyy")
+            @if (customer.LicenseExpiryDate < DateTime.Now)
+   {
+   <br /><span class="badge bg-danger">Expired</span>
+   }
+         else if (customer.LicenseExpiryDate < DateTime.Now.AddMonths(1))
+        {
+   <br /><span class="badge bg-warning">Expiring Soon</span>
+      }
+  </dd>
+
+     @if (!string.IsNullOrEmpty(customer.DriverLicensePath))
+             {
+        <dt class="col-sm-4">License Document:</dt>
+          <dd class="col-sm-8">
+            <a href="~/@customer.DriverLicensePath" target="_blank" class="btn btn-sm btn-outline-primary">
+         <i class="fas fa-file-image me-1"></i>View Document
+            </a>
+     </dd>
+   }
+            </dl>
+          </div>
+            </div>
+      }
+        else
+      {
+  <div class="alert alert-warning">
+     <i class="fas fa-exclamation-triangle me-2"></i>
+             No customer profile found for this user.
+        </div>
+        }
+    </div>
+</div>
+
+<!-- Action Buttons -->
+@if (!Model.IsVerifiedByAdmin)
+{
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="mb-3"><i class="fas fa-tasks me-2"></i>Admin Actions</h5>
+            <div class="d-flex gap-2">
+  <form asp-action="Approve" method="post" class="flex-fill" onsubmit="return confirm('Are you sure you want to approve this registration? The user will be able to log in to the system.');">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.UserId" />
+           <button type="submit" class="btn btn-success w-100">
+          <i class="fas fa-check-circle me-2"></i>Approve Registration
+       </button>
+    </form>
+      <form asp-action="Reject" method="post" class="flex-fill" onsubmit="return confirm('Are you sure you want to reject this registration? This will permanently delete the user account and all associated data.');">
+          @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.UserId" />
+             <button type="submit" class="btn btn-danger w-100">
+          <i class="fas fa-times-circle me-2"></i>Reject Registration
+    </button>
+                </form>
+            </div>
+ </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle me-2"></i>
+        This user has already been verified and can access the system.
+    </div>
+}

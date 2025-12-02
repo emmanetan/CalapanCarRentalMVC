@@ -72,6 +72,13 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
+                            <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Registration" ? "active" : "")"
+                               asp-controller="Registration" asp-action="Index" data-title="Manage Registration">
+                                <i class="fas fa-user-check"></i>
+                                <span>Manage Registration</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
                             <a class="sidebar-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customers" ? "active" : "")"
                                asp-controller="Customers" asp-action="Index" data-title="Manage Customers">
                                 <i class="fas fa-users"></i>

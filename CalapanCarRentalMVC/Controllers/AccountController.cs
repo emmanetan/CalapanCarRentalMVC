@@ -62,6 +62,15 @@ namespace CalapanCarRentalMVC.Controllers
 
             if (user != null && _passwordHasher.VerifyHashedPassword(user, user.Password, password) == PasswordVerificationResult.Success)
             {
+                // Check if customer account is verified by admin
+                if (user.is_Admin == 1 && !user.IsVerifiedByAdmin)
+                {
+                    ViewBag.PendingApproval = true;
+                    ViewBag.UserEmail = user.Email;
+                    ViewBag.Error = "Your account is pending admin verification. Please wait for approval before logging in. You will receive an email notification once your account is approved.";
+                    return View();
+                }
+
                 HttpContext.Session.SetString("UserId", user.UserId.ToString());
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("UserRole", user.is_Admin ==0 ? "Admin" : "Customer");
@@ -153,6 +162,13 @@ namespace CalapanCarRentalMVC.Controllers
 
                 if (existingUser != null)
                 {
+                    // Check if customer account is verified by admin
+                    if (existingUser.is_Admin == 1 && !existingUser.IsVerifiedByAdmin)
+                    {
+                        TempData["Error"] = "Your account is pending admin verification. Please wait for approval before logging in.";
+                        return RedirectToAction("Login");
+                    }
+
                     // User exists, log them in
                     HttpContext.Session.SetString("UserId", existingUser.UserId.ToString());
                     HttpContext.Session.SetString("Username", existingUser.Username);
@@ -250,26 +266,21 @@ namespace CalapanCarRentalMVC.Controllers
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            // Log in the user
-            HttpContext.Session.SetString("UserId", user.UserId.ToString());
-            HttpContext.Session.SetString("Username", user.Username);
-            HttpContext.Session.SetString("UserRole", user.is_Admin ==0 ? "Admin" : "Customer");
-
-            TempData["Success"] = "Account created successfully with Google! Please complete your profile.";
-
-            // Check for car rental redirect
-            if (TempData["RedirectCarId"] != null)
+            // Send pending approval email notification
+            try
             {
-                var carIdValue = TempData["RedirectCarId"];
-                if (carIdValue is int carId)
-                {
-                    TempData.Remove("RedirectCarId");
-                    TempData.Remove("RedirectMessage");
-                    return RedirectToAction("Create", "Rentals", new { carId = carId });
-                }
+                await _emailService.SendRegistrationPendingAsync(email, username);
+            }
+            catch (Exception)
+            {
+                // Log error but don't fail registration
+                // Email failure shouldn't stop the registration process
             }
 
-            return RedirectToAction("Dashboard", "Customer");
+            // Don't log in the user - they need admin approval first
+            TempData["RegistrationPending"] = "Account created successfully with Google! Your account is pending admin approval. You will receive an email notification once approved.";
+
+            return RedirectToAction(nameof(Login));
         }
 
         // GET: Account/Register
@@ -348,7 +359,18 @@ namespace CalapanCarRentalMVC.Controllers
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
 
-                TempData["Success"] = "Registration successful! Please login with your credentials.";
+                // Send pending approval email notification
+                try
+                {
+                    await _emailService.SendRegistrationPendingAsync(model.Email, username);
+                }
+                catch (Exception)
+                {
+                    // Log error but don't fail registration
+                    // Email failure shouldn't stop the registration process
+                }
+
+                TempData["RegistrationPending"] = "Registration successful! Your account is pending admin approval. You will receive an email notification once approved.";
                 return RedirectToAction(nameof(Login));
             }
 

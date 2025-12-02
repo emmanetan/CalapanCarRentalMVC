@@ -1,0 +1,173 @@
+@model IEnumerable<CalapanCarRentalMVC.Models.User>
+@{
+    ViewData["Title"] = "Manage Registration";
+    Layout = "_Layout";
+}
+
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="fas fa-user-check me-2"></i>Manage Registration</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Pending Registrations</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a asp-action="VerifiedUsers" class="btn btn-success">
+                <i class="fas fa-check-circle me-1"></i>View Verified Users
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Pending Registrations</h6>
+                        <h2 class="mb-0 text-warning">@Model.Count()</h2>
+                    </div>
+                    <div class="text-warning">
+                        <i class="fas fa-clock fa-3x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm border-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Action Required</h6>
+                        <h2 class="mb-0 text-info">@Model.Count(u => u.CreatedAt >= DateTime.Now.AddDays(-7))</h2>
+                        <small class="text-muted">New in last 7 days</small>
+                    </div>
+                    <div class="text-info">
+                        <i class="fas fa-exclamation-circle fa-3x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Registrations Table -->
+<div class="dashboard-widget">
+    <h5><i class="fas fa-list me-2"></i>Pending Customer Registrations</h5>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table admin-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Registration Type</th>
+                        <th>Registration Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@user.Username</strong>
+                            </td>
+                            <td>
+                                <i class="fas fa-envelope me-1"></i>@user.Email
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(user.ExternalLoginProvider))
+                                {
+                                    <span class="badge bg-info">
+                                        <i class="fab fa-@user.ExternalLoginProvider.ToLower() me-1"></i>@user.ExternalLoginProvider
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-envelope me-1"></i>Email/Password
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @user.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                                <br />
+                                <small class="text-muted">
+                                    @{
+                                        var daysSince = (DateTime.Now - user.CreatedAt).Days;
+                                        if (daysSince == 0)
+                                        {
+                                            <span class="badge bg-success">Today</span>
+                                        }
+                                        else if (daysSince == 1)
+                                        {
+                                            <span>1 day ago</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@daysSince days ago</span>
+                                        }
+                                    }
+                                </small>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-clock me-1"></i>Pending Approval
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@user.UserId"
+                                       class="btn btn-sm btn-info" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <form asp-action="Approve" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to approve this registration?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@user.UserId" />
+                                        <button type="submit" class="btn btn-sm btn-success" title="Approve">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                    <form asp-action="Reject" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to reject this registration? This will delete the user account.');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@user.UserId" />
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Reject">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            No pending registrations at the moment. All customer accounts have been verified.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+          // Auto-refresh every 30 seconds to check for new registrations
+        setTimeout(function() {
+              location.reload();
+          }, 30000);
+    </script>
+}

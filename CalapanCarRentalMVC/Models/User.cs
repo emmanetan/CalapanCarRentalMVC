@@ -32,6 +32,11 @@ namespace CalapanCarRentalMVC.Models
 
         public DateTime? LocationTrackingEnabledDate { get; set; }
 
+        [Display(Name = "Verified By Admin")]
+        public bool IsVerifiedByAdmin { get; set; } = false;
+
+        public DateTime? VerifiedDate { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

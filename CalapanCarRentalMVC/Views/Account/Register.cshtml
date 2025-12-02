@@ -57,8 +57,25 @@
 
                         <div class="mb-3">
                             <label asp-for="Email" class="form-label fw-semibold"></label>
-                            <input asp-for="Email" type="email" class="form-control bg-light border-0" placeholder="Ex: juan.delacruz@example.com" />
+                            <div class="input-group">
+                                <input asp-for="Email" type="email" class="form-control bg-light border-0" placeholder="Ex: juan.delacruz@example.com" id="emailInput" />
+                                <button type="button" class="btn btn-outline-primary" id="sendCodeBtn">
+                                    <i class="fas fa-paper-plane me-1"></i>Send Code
+                                </button>
+                            </div>
                             <span asp-validation-for="Email" class="text-danger"></span>
+                            <div id="emailVerificationMessage" class="mt-1"></div>
+
+                            <!-- Verification Code Field (Hidden initially) -->
+                            <div id="verificationCodeContainer" style="display: none; overflow: hidden; max-height: 0; transition: max-height 0.3s ease-out;">
+                                <div class="input-group mt-2">
+                                    <input type="text" class="form-control bg-light border-0" id="verificationCodeInput" placeholder="Enter 6-digit code" maxlength="6" />
+                                    <button type="button" class="btn btn-outline-success" id="verifyCodeBtn">
+                                        <i class="fas fa-check me-1"></i>Verify
+                                    </button>
+                                </div>
+                                <div id="verificationCodeMessage" class="mt-1"></div>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -77,7 +94,7 @@
                             <label asp-for="Password" class="form-label fw-semibold"></label>
                             <input asp-for="Password" type="password" class="form-control bg-light border-0" placeholder="Ex: Password123" id="passwordInput" />
                             <span asp-validation-for="Password" class="text-danger"></span>
-                            
+
                             <!-- Password Strength Meter -->
                             <div class="password-strength-meter mt-2" id="passwordStrengthMeter" style="display: none;">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
@@ -107,7 +124,7 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-danger fw-bold py-2">
+                            <button type="submit" class="btn btn-danger fw-bold py-2" id="registerBtn">
                                 <i class="fas fa-user-plus me-2"></i>Register
                             </button>
                         </div>
@@ -135,86 +152,250 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-  $(document).ready(function() {
-     // Password Strength Meter
-        $('#passwordInput').on('input', function() {
+                 $(document).ready(function() {
+               var emailVerified = false;
+
+               // Password Strength Meter
+                       $('#passwordInput').on('input', function() {
                var password = $(this).val();
-             var strengthMeter = $('#passwordStrengthMeter');
-        var strengthBar = $('#strengthBar');
+                   var strengthMeter = $('#passwordStrengthMeter');
+                var strengthBar = $('#strengthBar');
          var strengthText = $('#strengthText');
-    
-       if (password.length === 0) {
-      strengthMeter.hide();
-                   return;
-            }
-        
+
+                  if (password.length === 0) {
+         strengthMeter.hide();
+            return;
+          }
+
            strengthMeter.show();
-       
-         // Calculate password strength
-               var strength = 0;
-           var strengthLevel = '';
-      var barColor = '';
-    var barWidth = 0;
-               
-        // Length check
-  if (password.length >= 8) strength += 25;
-        if (password.length >= 12) strength += 15;
-               
-       // Lowercase letters
-     if (/[a-z]/.test(password)) strength += 15;
-    
-               // Uppercase letters
-    if (/[A-Z]/.test(password)) strength += 15;
-   
-         // Numbers
-        if (/[0-9]/.test(password)) strength += 15;
-       
+
+                    // Calculate password strength
+             var strength = 0;
+                        var strengthLevel = '';
+                     var barColor = '';
+                   var barWidth = 0;
+
+               // Length check
+                 if (password.length >= 8) strength += 25;
+                  if (password.length >= 12) strength += 15;
+
+           // Lowercase letters
+            if (/[a-z]/.test(password)) strength += 15;
+
+                    // Uppercase letters
+              if (/[A-Z]/.test(password)) strength += 15;
+
+           // Numbers
+                   if (/[0-9]/.test(password)) strength += 15;
+
            // Special characters
-       if (/[^a-zA-Z0-9]/.test(password)) strength += 15;
-   
-            // Determine strength level
-               if (strength <= 35) {
-          strengthLevel = 'Low';
-               barColor = 'bg-danger';
-              barWidth = 33;
-   } else if (strength <= 70) {
-     strengthLevel = 'Medium';
- barColor = 'bg-warning';
-     barWidth = 66;
-        } else {
-      strengthLevel = 'High';
-          barColor = 'bg-success';
-           barWidth = 100;
-            }
-               
-           // Update UI
-               strengthBar.removeClass('bg-danger bg-warning bg-success').addClass(barColor);
-   strengthBar.css('width', barWidth + '%');
-               strengthBar.attr('aria-valuenow', barWidth);
-       strengthText.text(strengthLevel).removeClass('text-danger text-warning text-success').addClass('text-' + (strengthLevel === 'Low' ? 'danger' : strengthLevel === 'Medium' ? 'warning' : 'success'));
-           });
-           
-   $('#registerForm').on('submit', function(e) {
-      var agreeCheckbox = $('#agreeToTermsCheckbox');
-     var errorSpan = $('#agreeToTermsError');
+           if (/[^a-zA-Z0-9]/.test(password)) strength += 15;
 
-         if (!agreeCheckbox.is(':checked')) {
-       e.preventDefault();
-              errorSpan.text('You must agree to the Terms of Service and Privacy Policy');
-            agreeCheckbox.focus();
-        return false;
-        } else {
- errorSpan.text('');
+                      // Determine strength level
+                  if (strength <= 35) {
+            strengthLevel = 'Low';
+                         barColor = 'bg-danger';
+           barWidth = 33;
+                  } else if (strength <= 70) {
+                strengthLevel = 'Medium';
+                barColor = 'bg-warning';
+           barWidth = 66;
+                       } else {
+                     strengthLevel = 'High';
+              barColor = 'bg-success';
+            barWidth = 100;
+                    }
+
+                 // Update UI
+                strengthBar.removeClass('bg-danger bg-warning bg-success').addClass(barColor);
+                  strengthBar.css('width', barWidth + '%');
+             strengthBar.attr('aria-valuenow', barWidth);
+                      strengthText.text(strengthLevel).removeClass('text-danger text-warning text-success').addClass('text-' + (strengthLevel === 'Low' ? 'danger' : strengthLevel === 'Medium' ? 'warning' : 'success'));
+                  });
+
+                // Send Verification Code
+                    $('#sendCodeBtn').on('click', function() {
+            var email = $('#emailInput').val();
+             var btn = $(this);
+
+               if (!email || !isValidEmail(email)) {
+           showEmailMessage('Please enter a valid email address', 'danger');
+          return;
            }
-         });
 
-          $('#agreeToTermsCheckbox').on('change', function() {
-      var errorSpan = $('#agreeToTermsError');
-             if ($(this).is(':checked')) {
-    errorSpan.text('');
- }
-        });
-  });
+                 // Disable button and show loading
+              btn.prop('disabled', true);
+             btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Sending...');
+
+              $.ajax({
+              url: '@Url.Action("SendVerificationCode", "Account")',
+            type: 'POST',
+             data: {
+             email: email,
+              __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                 },
+            success: function(response) {
+            console.log('Send code response:', response);
+              if (response.success) {
+            showEmailMessage(response.message, 'success');
+          // Slide out verification code container
+               $('#verificationCodeContainer').show();
+               $('#verificationCodeContainer').css('max-height', '100px');
+                  $('#verificationCodeInput').focus();
+
+              // Change button to "Resend Code"
+         btn.html('<i class="fas fa-redo me-1"></i>Resend Code');
+         } else {
+          showEmailMessage(response.message, 'danger');
+          }
+            },
+               error: function(xhr, status, error) {
+                    console.error('Send code error:', xhr, status, error);
+               console.error('Response text:', xhr.responseText);
+                showEmailMessage('Error sending verification code. Please try again.', 'danger');
+                    },
+              complete: function() {
+           btn.prop('disabled', false);
+          }
+          });
+           });
+
+                  // Verify Code
+            $('#verifyCodeBtn').on('click', function() {
+                var email = $('#emailInput').val();
+         var code = $('#verificationCodeInput').val();
+              var btn = $(this);
+
+              if (!code || code.length !== 6) {
+           showVerificationMessage('Please enter a valid 6-digit code', 'danger');
+                   return;
+               }
+
+              // Disable button and show loading
+              btn.prop('disabled', true);
+        btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying...');
+
+                  $.ajax({
+                url: '@Url.Action("VerifyCode", "Account")',
+              type: 'POST',
+               data: {
+            email: email,
+        code: code,
+                   __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                 },
+             success: function(response) {
+                   console.log('Verify code response:', response);
+         if (response.success) {
+          showVerificationMessage(response.message, 'success');
+        emailVerified = true;
+
+          // Disable inputs and change button appearance
+          $('#emailInput').prop('readonly', true);
+                  $('#verificationCodeInput').prop('readonly', true);
+           $('#sendCodeBtn').prop('disabled', true).html('<i class="fas fa-check me-1"></i>Verified');
+            btn.prop('disabled', true).html('<i class="fas fa-check-circle me-1"></i>Verified');
+
+             // Add verified badge
+              $('#emailInput').addClass('border-success');
+              $('#verificationCodeInput').addClass('border-success');
+                } else {
+              showVerificationMessage(response.message, 'danger');
+           emailVerified = false;
+              }
+           },
+        error: function(xhr, status, error) {
+                console.error('Verify code error:', xhr, status, error);
+                   console.error('Response text:', xhr.responseText);
+                 showVerificationMessage('Error verifying code. Please try again.', 'danger');
+                emailVerified = false;
+          },
+         complete: function() {
+          if (!emailVerified) {
+             btn.prop('disabled', false);
+           btn.html('<i class="fas fa-check me-1"></i>Verify');
+            }
+            }
+          });
+          });
+               // Helper function to validate email
+        function isValidEmail(email) {
+              var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+          return emailRegex.test(email);
+             }
+
+             // Helper function to show email messages
+                    function showEmailMessage(message, type) {
+                   var alertClass = 'alert-' + type;
+               $('#emailVerificationMessage').html('<small class="' + alertClass + ' d-block p-2 rounded">' + message + '</small>');
+
+                      // Auto-hide success messages after 5 seconds
+             if (type === 'success') {
+              setTimeout(function() {
+              $('#emailVerificationMessage').fadeOut(function() {
+               $(this).html('').show();
+                     });
+            }, 5000);
+            }
+              }
+
+                 // Helper function to show verification code messages
+               function showVerificationMessage(message, type) {
+              var alertClass = 'alert-' + type;
+             $('#verificationCodeMessage').html('<small class="' + alertClass + ' d-block p-2 rounded">' + message + '</small>');
+
+        // Auto-hide success messages after 5 seconds
+                   if (type === 'success') {
+                      setTimeout(function() {
+               $('#verificationCodeMessage').fadeOut(function() {
+                $(this).html('').show();
+              });
+                 }, 5000);
+               }
+              }
+
+                    // Reset email verification when email changes
+             $('#emailInput').on('input', function() {
+            if (emailVerified) {
+                 emailVerified = false;
+              $('#emailInput').prop('readonly', false).removeClass('border-success');
+          $('#verificationCodeContainer').hide().css('max-height', '0');
+                $('#verificationCodeInput').val('').prop('readonly', false).removeClass('border-success');
+                   $('#sendCodeBtn').prop('disabled', false).html('<i class="fas fa-paper-plane me-1"></i>Send Code');
+                    $('#verifyCodeBtn').prop('disabled', false).html('<i class="fas fa-check me-1"></i>Verify');
+        $('#emailVerificationMessage').html('');
+                 $('#verificationCodeMessage').html('');
+                  }
+                    });
+
+                  $('#registerForm').on('submit', function(e) {
+           var agreeCheckbox = $('#agreeToTermsCheckbox');
+                    var errorSpan = $('#agreeToTermsError');
+
+                 if (!agreeCheckbox.is(':checked')) {
+            e.preventDefault();
+              errorSpan.text('You must agree to the Terms of Service and Privacy Policy');
+             agreeCheckbox.focus();
+         return false;
+           } else {
+                errorSpan.text('');
+                 }
+
+                // Check if email is verified
+           if (!emailVerified) {
+                  e.preventDefault();
+              showEmailMessage('Please verify your email address before registering', 'danger');
+                $('#emailInput').focus();
+         return false;
+          }
+              });
+
+             $('#agreeToTermsCheckbox').on('change', function() {
+                     var errorSpan = $('#agreeToTermsError');
+                 if ($(this).is(':checked')) {
+                   errorSpan.text('');
+                }
+                       });
+                 });
     </script>
 }
 

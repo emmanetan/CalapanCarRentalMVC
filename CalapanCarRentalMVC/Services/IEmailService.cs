@@ -6,5 +6,8 @@
         Task SendVerificationCodeAsync(string toEmail, string verificationCode);
         Task SendPasswordResetCodeAsync(string toEmail, string resetCode);
         Task SendContactMessageAsync(string name, string email, string phone, string message);
+        Task SendRegistrationApprovedAsync(string toEmail, string username);
+        Task SendRegistrationRejectedAsync(string toEmail, string username);
+        Task SendRegistrationPendingAsync(string toEmail, string username);
     }
 }

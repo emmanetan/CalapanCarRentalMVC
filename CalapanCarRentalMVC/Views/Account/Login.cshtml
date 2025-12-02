@@ -28,6 +28,15 @@
                         </div>
                     }
 
+                    @if (TempData["RegistrationPending"] != null)
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="fas fa-clock me-2"></i>
+                            <strong>Registration Pending!</strong> @TempData["RegistrationPending"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
                     @{
                         var successMessage = TempData["Success"] as string;
                     }
@@ -43,7 +52,37 @@
 
                     @if (ViewBag.Error != null)
                     {
-                        <div class="alert alert-danger">@ViewBag.Error</div>
+                        @if (ViewBag.PendingApproval == true)
+                        {
+                            <div class="alert alert-warning border-warning" role="alert">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-clock fa-2x text-warning me-3 mt-1"></i>
+                                    <div>
+                                        <h6 class="alert-heading fw-bold mb-2">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>Account Pending Approval
+                                        </h6>
+                                        <p class="mb-2">@ViewBag.Error</p>
+                                        <hr class="my-2">
+                                        <div class="small">
+                                            <p class="mb-1"><strong>What's happening:</strong></p>
+                                            <ul class="mb-2">
+                                                <li>Your registration is being reviewed by our admin team</li>
+                                                <li>You'll receive an email at <strong>@ViewBag.UserEmail</strong> once approved</li>
+                                                <li>This usually takes 24-48 hours</li>
+                                            </ul>
+                                            <p class="mb-0">
+                                                <i class="fas fa-envelope me-1"></i>
+                                                <strong>Need help?</strong> Contact us at carrentalcalapan@gmail.com
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger">@ViewBag.Error</div>
+                        }
                     }
 
                     @if (TempData["Error"] != null)
@@ -93,3 +132,57 @@
         </div>
     </div>
 </div>
+
+<!-- Registration Pending Modal -->
+@if (TempData["RegistrationPending"] != null)
+{
+    <div class="modal fade show" id="registrationPendingModal" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-warning text-white border-0">
+                    <h5 class="modal-title">
+                        <i class="fas fa-clock me-2"></i>Registration Pending Approval
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="closeModal()"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-hourglass-half text-warning" style="font-size: 4rem;"></i>
+                    </div>
+                    <h6 class="fw-bold mb-3">Thank you for registering!</h6>
+                    <p class="text-muted mb-3">@TempData["RegistrationPending"]</p>
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>What's Next?</strong>
+                        <ul class="mb-0 mt-2 ps-3">
+                            <li>Our admin team will review your registration</li>
+                            <li>You'll receive an email once approved</li>
+                            <li>This typically takes 24-48 hours</li>
+                        </ul>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-envelope me-1"></i>
+                        Check your email (<strong>@(ViewContext.HttpContext.Request.Query["email"])</strong>) for confirmation.
+                    </p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-warning fw-bold" onclick="closeModal()">Got It!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+                function closeModal() {
+                    document.getElementById('registrationPendingModal').style.display = 'none';
+              }
+
+                // Close modal when clicking outside
+                    window.onclick = function(event) {
+                    var modal = document.getElementById('registrationPendingModal');
+                    if (event.target == modal) {
+                        modal.style.display = 'none';
+                    }
+                }
+    </script>
+}

@@ -27,6 +27,11 @@ namespace CalapanCarRentalMVC.Models
         public string? ExternalLoginProvider { get; set; } // "Google", "Facebook", etc.
         public string? ExternalLoginProviderId { get; set; } // Unique ID from provider
 
+        [Display(Name = "Location Tracking Enabled")]
+        public bool LocationTrackingEnabled { get; set; } = false;
+
+        public DateTime? LocationTrackingEnabledDate { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

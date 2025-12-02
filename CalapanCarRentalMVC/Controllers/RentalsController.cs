@@ -363,6 +363,15 @@ var selectedCarConflict = await _context.Cars.FindAsync(rental.VehicleId);
                 if (rental.GpsTrackingConsent)
                 {
                     rental.GpsConsentDate = DateTime.Now;
+                    
+                    // Enable permanent location tracking for the user
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == customer.Email);
+                    if (user != null && !user.LocationTrackingEnabled)
+                    {
+                        user.LocationTrackingEnabled = true;
+                        user.LocationTrackingEnabledDate = DateTime.Now;
+                        _context.Update(user);
+                    }
                 }
 
                 rental.Status = "Pending"; // Changed from Active to Pending for approval workflow

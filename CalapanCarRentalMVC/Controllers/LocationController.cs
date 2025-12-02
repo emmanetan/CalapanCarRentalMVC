@@ -160,6 +160,39 @@ namespace CalapanCarRentalMVC.Controllers
             return View();
         }
 
+        // GET: API endpoint to check if location tracking is enabled
+        [HttpGet]
+        public async Task<IActionResult> CheckTrackingStatus()
+        {
+            try
+            {
+                var userIdString = HttpContext.Session.GetString("UserId");
+                if (string.IsNullOrEmpty(userIdString))
+                {
+                    return Json(new { success = false, message = "User not authenticated" });
+                }
+
+                int userId = int.Parse(userIdString);
+                var user = await _context.Users.FindAsync(userId);
+
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "User not found" });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    trackingEnabled = user.LocationTrackingEnabled,
+                    enabledDate = user.LocationTrackingEnabledDate
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         // GET: API endpoint to get all users location history with filters (admin only)
         [HttpGet]
         public async Task<IActionResult> GetAllUsersLocationHistory(int hours = 24, int? userId = null, string? role = null, int page = 1, int pageSize = 50)

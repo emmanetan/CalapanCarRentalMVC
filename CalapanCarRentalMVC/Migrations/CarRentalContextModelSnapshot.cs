@@ -24,16 +24,21 @@ namespace CalapanCarRentalMVC.Migrations
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Car", b =>
                 {
-                    b.Property<int>("CarId")
+                    b.Property<int>("VehicleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CarId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("VehicleId"));
 
                     b.Property<string>("Brand")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Coding")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -84,17 +89,18 @@ namespace CalapanCarRentalMVC.Migrations
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
-                    b.HasKey("CarId");
+                    b.HasKey("VehicleId");
 
-                    b.ToTable("Cars", (string)null);
+                    b.ToTable("Cars");
 
                     b.HasData(
                         new
                         {
-                            CarId = 1,
+                            VehicleId = 1,
                             Brand = "Toyota",
+                            Coding = "Monday",
                             Color = "White",
-                            CreatedAt = new DateTime(2025, 11, 17, 17, 30, 22, 121, DateTimeKind.Local).AddTicks(5558),
+                            CreatedAt = new DateTime(2025, 12, 3, 2, 24, 6, 790, DateTimeKind.Local).AddTicks(5422),
                             DailyRate = 1500.00m,
                             Description = "Fuel-efficient and reliable sedan perfect for city driving.",
                             GasType = "Gasoline",
@@ -108,10 +114,11 @@ namespace CalapanCarRentalMVC.Migrations
                         },
                         new
                         {
-                            CarId = 2,
+                            VehicleId = 2,
                             Brand = "Honda",
+                            Coding = "Thursday",
                             Color = "Black",
-                            CreatedAt = new DateTime(2025, 11, 17, 17, 30, 22, 121, DateTimeKind.Local).AddTicks(5648),
+                            CreatedAt = new DateTime(2025, 12, 3, 2, 24, 6, 790, DateTimeKind.Local).AddTicks(5510),
                             DailyRate = 2000.00m,
                             Description = "Sporty sedan with advanced features and comfort.",
                             GasType = "Gasoline",
@@ -125,10 +132,11 @@ namespace CalapanCarRentalMVC.Migrations
                         },
                         new
                         {
-                            CarId = 3,
+                            VehicleId = 3,
                             Brand = "Mitsubishi",
+                            Coding = "Monday",
                             Color = "Silver",
-                            CreatedAt = new DateTime(2025, 11, 17, 17, 30, 22, 121, DateTimeKind.Local).AddTicks(5650),
+                            CreatedAt = new DateTime(2025, 12, 3, 2, 24, 6, 790, DateTimeKind.Local).AddTicks(5513),
                             DailyRate = 3000.00m,
                             Description = "Spacious SUV perfect for family trips and adventures.",
                             GasType = "Diesel",
@@ -196,7 +204,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("CustomerId");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.EmailVerification", b =>
@@ -228,7 +236,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("VerificationId");
 
-                    b.ToTable("EmailVerifications", (string)null);
+                    b.ToTable("EmailVerifications");
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.LocationHistory", b =>
@@ -241,6 +249,10 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.Property<double?>("Accuracy")
                         .HasColumnType("double");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("DeviceInfo")
                         .HasMaxLength(100)
@@ -262,7 +274,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("LocationHistories", (string)null);
+                    b.ToTable("LocationHistories");
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Maintenance", b =>
@@ -272,9 +284,6 @@ namespace CalapanCarRentalMVC.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("MaintenanceId"));
-
-                    b.Property<int>("CarId")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(10,2)");
@@ -314,11 +323,14 @@ namespace CalapanCarRentalMVC.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
                     b.HasKey("MaintenanceId");
 
-                    b.HasIndex("CarId");
+                    b.HasIndex("VehicleId");
 
-                    b.ToTable("Maintenances", (string)null);
+                    b.ToTable("Maintenances");
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Notification", b =>
@@ -366,7 +378,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.PasswordReset", b =>
@@ -398,7 +410,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("ResetId");
 
-                    b.ToTable("PasswordResets", (string)null);
+                    b.ToTable("PasswordResets");
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Rental", b =>
@@ -411,9 +423,6 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.Property<DateTime?>("ActualReturnDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("CarId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -466,13 +475,16 @@ namespace CalapanCarRentalMVC.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(10,2)");
 
-                    b.HasKey("RentalId");
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("CarId");
+                    b.HasKey("RentalId");
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Rentals", (string)null);
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("Rentals");
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.User", b =>
@@ -497,34 +509,39 @@ namespace CalapanCarRentalMVC.Migrations
                     b.Property<string>("ExternalLoginProviderId")
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("LocationTrackingEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LocationTrackingEnabledDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<byte>("is_Admin")
+                        .HasColumnType("tinyint unsigned");
+
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
                             UserId = 1,
-                            CreatedAt = new DateTime(2025, 11, 17, 17, 30, 22, 120, DateTimeKind.Local).AddTicks(9695),
+                            CreatedAt = new DateTime(2025, 12, 3, 2, 24, 6, 789, DateTimeKind.Local).AddTicks(9077),
                             Email = "admin@calapancarrental.com",
+                            LocationTrackingEnabled = false,
                             Password = "admin123",
-                            Role = "Admin",
-                            Username = "admin"
+                            Username = "admin",
+                            is_Admin = (byte)0
                         });
                 });
 
@@ -543,7 +560,7 @@ namespace CalapanCarRentalMVC.Migrations
                 {
                     b.HasOne("CalapanCarRentalMVC.Models.Car", "Car")
                         .WithMany()
-                        .HasForeignKey("CarId")
+                        .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -563,15 +580,15 @@ namespace CalapanCarRentalMVC.Migrations
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Rental", b =>
                 {
-                    b.HasOne("CalapanCarRentalMVC.Models.Car", "Car")
-                        .WithMany("Rentals")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("CalapanCarRentalMVC.Models.Customer", "Customer")
                         .WithMany("Rentals")
                         .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CalapanCarRentalMVC.Models.Car", "Car")
+                        .WithMany("Rentals")
+                        .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

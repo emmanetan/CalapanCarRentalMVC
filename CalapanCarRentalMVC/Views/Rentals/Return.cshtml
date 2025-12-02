@@ -20,6 +20,7 @@
                             <li>Calculate late fees if the car is returned late</li>
                             <li>Mark the rental as completed</li>
                             <li>Set the car status back to "Available"</li>
+                            <li><strong>Process the ?2,000 security deposit (refund or forfeit based on vehicle condition)</strong></li>
                         </ul>
                     </div>
 
@@ -102,6 +103,44 @@
                     <form asp-action="Return" method="post">
                         <input type="hidden" asp-for="RentalId" />
                         @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Security Deposit Status</label>
+                            <div class="card border-warning">
+                                <div class="card-body">
+                                    <p class="mb-2">
+                                        <i class="fas fa-shield-alt me-1 text-warning"></i>
+                                        Security Deposit Amount: <strong>?@Model.SecurityDeposit.ToString("N2")</strong>
+                                    </p>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="depositStatus" id="depositRefund"
+                                            value="Refunded" checked>
+                                        <label class="form-check-label" for="depositRefund">
+                                            <i class="fas fa-check-circle text-success me-1"></i>
+                                            <strong>Refund Deposit</strong> - Vehicle returned without damages
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="depositStatus" id="depositForfeit"
+                                            value="Forfeited">
+                                        <label class="form-check-label" for="depositForfeit">
+                                            <i class="fas fa-times-circle text-danger me-1"></i>
+                                            <strong>Forfeit Deposit</strong> - Damages found on vehicle
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        The deposit will be refunded to the customer if no damages are found. Otherwise, it will be forfeited to cover repair costs.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="returnNotes" class="form-label">Return Notes (Optional)</label>
+                            <textarea name="returnNotes" id="returnNotes" class="form-control" rows="3"
+                                placeholder="Add any notes about the vehicle condition, damages, or other remarks..."></textarea>
+                        </div>
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-success">

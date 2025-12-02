@@ -9,5 +9,6 @@
         Task SendRegistrationApprovedAsync(string toEmail, string username);
         Task SendRegistrationRejectedAsync(string toEmail, string username);
         Task SendRegistrationPendingAsync(string toEmail, string username);
+        Task SendRentalApprovedAsync(string toEmail, string customerName, string carDetails, DateTime pickupDate, DateTime returnDate, decimal totalAmount, decimal rentalCost, decimal securityDeposit);
     }
 }

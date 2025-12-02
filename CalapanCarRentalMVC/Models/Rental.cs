@@ -32,6 +32,17 @@ namespace CalapanCarRentalMVC.Models
         public decimal? LateFee { get; set; }
 
         [Required]
+        [Column(TypeName = "decimal(10,2)")]
+        [Display(Name = "Security Deposit")]
+        public decimal SecurityDeposit { get; set; } = 2000;
+
+        [Display(Name = "Deposit Status")]
+        [StringLength(50)]
+        public string? DepositStatus { get; set; } // null = Not Returned, "Refunded" = Returned, "Forfeited" = Kept due to damage
+
+        public DateTime? DepositReturnDate { get; set; }
+
+        [Required]
         [StringLength(50)]
         public string Status { get; set; } = "Pending"; // Pending, Active, Completed, Cancelled
 

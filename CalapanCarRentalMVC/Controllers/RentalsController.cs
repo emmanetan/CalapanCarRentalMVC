@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using CalapanCarRentalMVC.Data;
 using CalapanCarRentalMVC.Models;
 using CalapanCarRentalMVC.Filters;
+using CalapanCarRentalMVC.Services;
 
 namespace CalapanCarRentalMVC.Controllers
 {
@@ -11,10 +12,12 @@ namespace CalapanCarRentalMVC.Controllers
     public class RentalsController : Controller
     {
         private readonly CarRentalContext _context;
+        private readonly IEmailService _emailService;
 
-        public RentalsController(CarRentalContext context)
+        public RentalsController(CarRentalContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         // GET: Rentals
@@ -241,6 +244,11 @@ namespace CalapanCarRentalMVC.Controllers
             ModelState.Remove("Customer");
             // Remove GpsConsentDate from ModelState since we set it
             ModelState.Remove("GpsConsentDate");
+            // Remove SecurityDeposit from ModelState since we set it
+            ModelState.Remove("SecurityDeposit");
+            // Remove DepositStatus from ModelState since it's set after completion
+            ModelState.Remove("DepositStatus");
+            ModelState.Remove("DepositReturnDate");
 
             if (ModelState.IsValid)
             {
@@ -420,31 +428,35 @@ var selectedCarConflict = await _context.Cars.FindAsync(rental.VehicleId);
 
                 // Calculate total amount
                 var car = await _context.Cars.FindAsync(rental.VehicleId);
-                if (car != null)
-                {
-                    if (car.Status != "Available")
-                    {
-                        ModelState.AddModelError("VehicleId", "This car is no longer available");
-                        ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
-                        ViewBag.CustomerId = rental.CustomerId;
-                        return View(rental);
-                    }
+         if (car != null)
+  {
+      if (car.Status != "Available")
+           {
+              ModelState.AddModelError("VehicleId", "This car is no longer available");
+            ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
+        ViewBag.CustomerId = rental.CustomerId;
+  return View(rental);
+         }
 
-                    var hours = (rental.ReturnDate - rental.RentalDate).TotalHours;
-                    var days = (int)Math.Ceiling(hours / 24);
-                    if (days < 1) days = 1;
-                    rental.TotalAmount = car.DailyRate * days;
+         var hours = (rental.ReturnDate - rental.RentalDate).TotalHours;
+         var days = (int)Math.Ceiling(hours / 24);
+       if (days < 1) days = 1;
+        
+      // Calculate rental cost
+        var rentalCost = car.DailyRate * days;
+          
+           // Set security deposit
+             rental.SecurityDeposit = 2000;
+            
+      // Total amount includes rental cost + security deposit
+     rental.TotalAmount = rentalCost + rental.SecurityDeposit;
+         
+     // Initialize deposit status as not yet returned
+        rental.DepositStatus = null;
 
-                    // Car remains available until rental is approved
-                    // DON'T update car status yet - wait for admin approval
-                }
-                else
-                {
-                    ModelState.AddModelError("VehicleId", "Car not found");
-                    ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
-                    ViewBag.CustomerId = rental.CustomerId;
-                    return View(rental);
-                }
+        // Car remains available until rental is approved
+   // DON'T update car status yet - wait for admin approval
+       }
 
                 // Set GPS consent timestamp
                 if (rental.GpsTrackingConsent)
@@ -474,7 +486,7 @@ var selectedCarConflict = await _context.Cars.FindAsync(rental.VehicleId);
                     {
                         UserId = adminUser.UserId,
                         Title = "New Rental Request",
-                        Message = $"{customer.FirstName} {customer.LastName} requested to rent {car.Brand} {car.Model}. Pick-up: {rental.RentalDate:MMM dd, yyyy}. Total: ₱{rental.TotalAmount:N2}. Please review and approve.",
+                        Message = $"{customer.FirstName} {customer.LastName} requested to rent {car.Brand} {car.Model}. Pick-up: {rental.RentalDate:MMM dd, yyyy}. Rental: ₱{(rental.TotalAmount - rental.SecurityDeposit):N2} + ₱{rental.SecurityDeposit:N2} deposit = Total: ₱{rental.TotalAmount:N2}. Please review and approve.",
                         Type = "Info",
                         Icon = "fa-car",
                         ActionUrl = "/Rentals/Index?filterStatus=Pending",
@@ -646,48 +658,75 @@ var selectedCarConflict = await _context.Cars.FindAsync(rental.VehicleId);
         [HttpPost]
         [ValidateAntiForgeryToken]
         [SessionAuthorization(Roles = new[] { "Admin" })]
-        public async Task<IActionResult> Return(int id, DateTime actualReturnDate, decimal? additionalCharges, string? returnNotes)
+        public async Task<IActionResult> Return(int id, string depositStatus, string? returnNotes)
         {
-            var rental = await _context.Rentals
-                .Include(r => r.Car)
-                .Include(r => r.Customer)
-                .FirstOrDefaultAsync(r => r.RentalId == id);
+var rental = await _context.Rentals
+       .Include(r => r.Car)
+        .Include(r => r.Customer)
+     .FirstOrDefaultAsync(r => r.RentalId == id);
 
-            if (rental == null)
-            {
-                return NotFound();
-            }
+  if (rental == null)
+     {
+    return NotFound();
+     }
 
-            rental.ActualReturnDate = DateTime.Now;
-            rental.Status = "Completed";
+      rental.ActualReturnDate = DateTime.Now;
+ rental.Status = "Completed";
 
-            // Calculate late fee if returned late
-            string notificationMessage;
-            string notificationType;
+     // Handle security deposit
+    rental.DepositStatus = depositStatus;
+   rental.DepositReturnDate = DateTime.Now;
 
-            if (rental.ActualReturnDate > rental.ReturnDate)
-            {
-                var lateDays = (rental.ActualReturnDate.Value - rental.ReturnDate).Days;
-                rental.LateFee = lateDays * (rental.Car.DailyRate * 0.2m); // 20% of daily rate as late fee
-                rental.TotalAmount += rental.LateFee.Value;
-                TempData["Warning"] = $"Late return fee of ₱{rental.LateFee.Value:N2} has been added for {lateDays} day(s) late.";
+    // Calculate late fee if returned late
+       string notificationMessage;
+        string notificationType;
+    string depositMessage = "";
 
-                notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been returned {lateDays} day(s) late. A late fee of ₱{rental.LateFee.Value:N2} has been applied. Total amount: ₱{rental.TotalAmount:N2}";
-                notificationType = "Warning";
-            }
-            else
-            {
-                TempData["Success"] = "Car returned successfully with no late fees!";
+      if (depositStatus == "Refunded")
+     {
+    depositMessage = $" Your ₱{rental.SecurityDeposit:N2} security deposit will be refunded as no damages were found.";
+      }
+   else if (depositStatus == "Forfeited")
+  {
+      depositMessage = $" Your ₱{rental.SecurityDeposit:N2} security deposit has been forfeited due to vehicle damages.";
+ }
 
-                notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been successfully returned on time. Total amount: ₱{rental.TotalAmount:N2}. Thank you for your business!";
-                notificationType = "Success";
-            }
+   if (rental.ActualReturnDate > rental.ReturnDate)
+    {
+     var lateDays = (rental.ActualReturnDate.Value - rental.ReturnDate).Days;
+        rental.LateFee = lateDays * (rental.Car.DailyRate * 0.2m); // 20% of daily rate as late fee
+      rental.TotalAmount += rental.LateFee.Value;
+   
+       // Add return notes if provided
+          if (!string.IsNullOrEmpty(returnNotes))
+  {
+      rental.Notes = (rental.Notes ?? "") + $"\n[Return Notes - {DateTime.Now:MMM dd, yyyy}]: {returnNotes}";
+         }
 
-            // Update car status to available
-            rental.Car.Status = "Available";
+     TempData["Warning"] = $"Late return fee of ₱{rental.LateFee.Value:N2} has been added for {lateDays} day(s) late.";
 
-            _context.Update(rental);
-            _context.Update(rental.Car);
+    notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been returned {lateDays} day(s) late. A late fee of ₱{rental.LateFee.Value:N2} has been applied. Total amount: ₱{rental.TotalAmount:N2}.{depositMessage}";
+        notificationType = "Warning";
+    }
+       else
+   {
+   // Add return notes if provided
+ if (!string.IsNullOrEmpty(returnNotes))
+   {
+   rental.Notes = (rental.Notes ?? "") + $"\n[Return Notes - {DateTime.Now:MMM dd, yyyy}]: {returnNotes}";
+    }
+
+   TempData["Success"] = $"Car returned successfully! {(depositStatus == "Refunded" ? "Security deposit will be refunded." : "Security deposit forfeited due to damages.")}";
+
+    notificationMessage = $"Your rental for {rental.Car.Brand} {rental.Car.Model} has been successfully returned on time. Total amount: ₱{rental.TotalAmount:N2}.{depositMessage} Thank you for your business!";
+  notificationType = "Success";
+     }
+
+     // Update car status to available
+      rental.Car.Status = "Available";
+
+       _context.Update(rental);
+  _context.Update(rental.Car);
 
             // Create notification for customer
             var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
@@ -766,29 +805,53 @@ var selectedCarConflict = await _context.Cars.FindAsync(rental.VehicleId);
             _context.Update(rental);
             _context.Update(rental.Car);
 
-  // Create notification for customer
- var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
+    // Create notification for customer
+var customerUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == rental.Customer.Email);
   if (customerUser != null)
-        {
-       var notification = new Notification
-           {
-              UserId = customerUser.UserId,
-        Title = "Rental Approved",
-         Message = $"Your rental request for {rental.Car.Brand} {rental.Car.Model} has been approved! Pick-up date: {rental.RentalDate:MMM dd, yyyy}. Please bring your government ID and payment.",
-   Type = "Success",
-          Icon = "fa-check-circle",
-             ActionUrl = "/Customer/MyRentals",
-             IsRead = false,
-   CreatedAt = DateTime.Now
-      };
+   {
+        var notification = new Notification
+  {
+         UserId = customerUser.UserId,
+      Title = "Rental Approved",
+      Message = $"Your rental request for {rental.Car.Brand} {rental.Car.Model} has been approved! Pick-up date: {rental.RentalDate:MMM dd, yyyy}. Please bring your government ID and payment.",
+     Type = "Success",
+        Icon = "fa-check-circle",
+      ActionUrl = "/Customer/MyRentals",
+         IsRead = false,
+CreatedAt = DateTime.Now
+   };
 
-       _context.Notifications.Add(notification);
-            }
+    _context.Notifications.Add(notification);
+  
+  // Send email notification to customer
+  try
+  {
+      var carDetails = $"{rental.Car.Brand} {rental.Car.Model} ({rental.Car.Year})";
+   var rentalCost = rental.TotalAmount - rental.SecurityDeposit;
+    
+   await _emailService.SendRentalApprovedAsync(
+        rental.Customer.Email,
+       $"{rental.Customer.FirstName} {rental.Customer.LastName}",
+  carDetails,
+      rental.RentalDate,
+      rental.ReturnDate,
+         rental.TotalAmount,
+      rentalCost,
+  rental.SecurityDeposit
+   );
+        }
+       catch (Exception ex)
+ {
+  // Log the error but don't fail the approval process
+    // The in-app notification will still work
+   Console.WriteLine($"Failed to send approval email: {ex.Message}");
+      }
+  }
 
-  await _context.SaveChangesAsync();
+      await _context.SaveChangesAsync();
 
-   TempData["Success"] = $"Rental #{rental.RentalId} has been approved successfully!";
-       return RedirectToAction(nameof(Index));
+ TempData["Success"] = $"Rental #{rental.RentalId} has been approved successfully! Email notification sent to customer.";
+  return RedirectToAction(nameof(Index));
         }
 
         // POST: Rentals/Reject

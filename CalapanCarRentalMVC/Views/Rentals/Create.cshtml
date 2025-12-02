@@ -140,11 +140,27 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Estimated Total</label>
+                            <label class="form-label">Estimated Cost Breakdown</label>
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h4 class="text-primary mb-0" id="estimatedTotal">@Html.Raw("&#8369;")0.00</h4>
-                                    <small class="text-muted" id="rentalDays">Please select rental dates</small>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Rental Cost:</span>
+                                        <span id="rentalCost" class="fw-bold">@Html.Raw("&#8369;")0.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Security Deposit:</span>
+                                        <span class="fw-bold text-warning">@Html.Raw("&#8369;")2,000.00</span>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="fw-bold">Total Amount:</span>
+                                        <h4 class="text-primary mb-0" id="estimatedTotal">@Html.Raw("&#8369;")2,000.00</h4>
+                                    </div>
+                                    <small class="text-muted d-block mt-2" id="rentalDays">Please select rental dates</small>
+                                    <small class="text-info d-block mt-1">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        The ₱2,000 security deposit will be refunded if the vehicle is returned without damages.
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -205,34 +221,39 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-                   $(document).ready(function() {
-                  var dailyRate = @(ViewBag.SelectedCar != null ? ((CalapanCarRentalMVC.Models.Car)ViewBag.SelectedCar).DailyRate : 0);
+$(document).ready(function() {
+       var dailyRate = @(ViewBag.SelectedCar != null ? ((CalapanCarRentalMVC.Models.Car)ViewBag.SelectedCar).DailyRate : 0);
+   var securityDeposit = 2000;
 
-                      function calculateTotal() {
-                  var rentalDate = $('#rentalDate').val();
-                    var returnDate = $('#returnDate').val();
+     function calculateTotal() {
+   var rentalDate = $('#rentalDate').val();
+      var returnDate = $('#returnDate').val();
 
-               if (rentalDate && returnDate && dailyRate > 0) {
-                    var start = new Date(rentalDate);
-                var end = new Date(returnDate);
-                     var hours = (end - start) / (1000 * 60 * 60);
-                  var days = Math.ceil(hours / 24);
+  if (rentalDate && returnDate && dailyRate > 0) {
+  var start = new Date(rentalDate);
+ var end = new Date(returnDate);
+     var hours = (end - start) / (1000 * 60 * 60);
+         var days = Math.ceil(hours / 24);
 
-                 if (days > 0) {
-                    var total = days * dailyRate;
+      if (days > 0) {
+var rentalCost = days * dailyRate;
+         var total = rentalCost + securityDeposit;
+        $('#rentalCost').text('\u20B1' + rentalCost.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
         $('#estimatedTotal').text('\u20B1' + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
         $('#rentalDays').text(days + ' day' + (days > 1 ? 's' : '') + ' rental');
-                 } else {
-                  $('#estimatedTotal').text('\u20B10.00');
+     } else {
+      $('#rentalCost').text('\u20B10.00');
+        $('#estimatedTotal').text('\u20B1' + securityDeposit.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
         $('#rentalDays').text('Return date must be after rental date');
-                 }
-                     } else {
-                $('#estimatedTotal').text('\u20B10.00');
-                $('#rentalDays').text('Please select rental dates');
-                   }
-                   }
+   }
+         } else {
+    $('#rentalCost').text('\u20B10.00');
+$('#estimatedTotal').text('\u20B1' + securityDeposit.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+      $('#rentalDays').text('Please select rental dates');
+  }
+            }
 
-                    $('#rentalDate, #returnDate').on('change', calculateTotal);
+ $('#rentalDate, #returnDate').on('change', calculateTotal);
 
                   // Set minimum return date based on rental date
                   $('#rentalDate').on('change', function() {

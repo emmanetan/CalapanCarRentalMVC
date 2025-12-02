@@ -165,7 +165,41 @@
             <h6 class="mb-3"><i class="fas fa-dollar-sign me-2 text-primary"></i>Payment Details</h6>
             <div class="mb-3">
                 <label class="text-muted">Rental Amount</label>
-                <h4 class="text-success mb-0">@Html.Raw("&#8369;")@((Model.TotalAmount - (Model.LateFee ?? 0)).ToString("N2"))</h4>
+                <h4 class="text-success mb-0">@Html.Raw("&#8369;")@((Model.TotalAmount - Model.SecurityDeposit - (Model.LateFee ?? 0)).ToString("N2"))</h4>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-muted">Security Deposit</label>
+                <h4 class="text-warning mb-0">@Html.Raw("&#8369;")@Model.SecurityDeposit.ToString("N2")</h4>
+                @if (!string.IsNullOrEmpty(Model.DepositStatus))
+                {
+                    <p class="mt-1 mb-0">
+                    @if (Model.DepositStatus == "Refunded")
+                        {
+                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Refunded</span>
+                         if (Model.DepositReturnDate.HasValue)
+                         {
+                            <br />
+                           <small class="text-muted">Returned on: @Model.DepositReturnDate.Value.ToString("MMM dd, yyyy")</small>
+                                    }
+                                     }
+                 else if (Model.DepositStatus == "Forfeited")
+                        {
+                        <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Forfeited (Damage Found)</span>
+                       if (Model.DepositReturnDate.HasValue)
+                         {
+                      <br />
+                       <small class="text-muted">Forfeited on: @Model.DepositReturnDate.Value.ToString("MMM dd, yyyy")</small>
+}
+                           }
+                    </p>
+                }
+                else if (Model.Status == "Completed")
+                {
+                   <p class="mt-1 mb-0">
+                <span class="badge bg-info"><i class="fas fa-clock me-1"></i>Pending Return</span>
+                   </p>
+                }
             </div>
 
             @if (Model.LateFee.HasValue && Model.LateFee.Value > 0)
@@ -177,7 +211,7 @@
             }
 
             <div class="mb-3">
-                <label class="text-muted">Total Amount</label>
+                <label class="text-muted">Total Amount Paid</label>
                 <h3 class="text-primary mb-0">@Html.Raw("&#8369;")@Model.TotalAmount.ToString("N2")</h3>
             </div>
 

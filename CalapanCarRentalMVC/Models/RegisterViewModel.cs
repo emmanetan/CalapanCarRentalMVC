@@ -21,8 +21,8 @@ namespace CalapanCarRentalMVC.Models
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Contact number is required")]
-        [Phone(ErrorMessage = "Invalid phone number")]
-        [StringLength(20)]
+        [RegularExpression(@"^9\d{9}$", ErrorMessage = "Contact number must be 10 digits starting with 9 (e.g., 9123456789)")]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "Contact number must be exactly 10 digits")]
         [Display(Name = "Contact Number")]
         public string PhoneNumber { get; set; } = string.Empty;
 

@@ -329,6 +329,9 @@ namespace CalapanCarRentalMVC.Controllers
                     return View(model);
                 }
 
+                // Format phone number with +63 prefix
+                string formattedPhoneNumber = "+63" + model.PhoneNumber;
+
                 // Create User account
                 var user = new User
                 {
@@ -349,7 +352,7 @@ namespace CalapanCarRentalMVC.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email,
-                    PhoneNumber = model.PhoneNumber,
+                    PhoneNumber = formattedPhoneNumber,
                     Address = model.Address,
                     LicenseNumber = "", // To be filled in profile
                     LicenseExpiryDate = DateTime.Now.AddYears(1), // Default value

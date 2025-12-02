@@ -238,7 +238,7 @@ namespace CalapanCarRentalMVC.Services
                     </div>
      
                     <div style='text-align: center; margin: 30px 0;'>
-                        <a href='https://localhost:7194/Account/Login' 
+                        <a href='https://localhost:7277/Account/Login' 
                            style='display: inline-block; background-color: #dc3545; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold;'>
                             Login to Your Account
                         </a>

@@ -14,6 +14,14 @@
                     <form asp-action="Create" method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
+                        @if (TempData["Warning"] != null)
+                        {
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Warning"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+
                         @if (ViewBag.SelectedCarId != null)
                         {
                             var selectedCar = ViewBag.SelectedCar as CalapanCarRentalMVC.Models.Car;
@@ -80,7 +88,24 @@
 
                         <div class="mb-3">
                             <label asp-for="Destination" class="form-label">Destination (within Oriental Mindoro)</label>
-                            <input asp-for="Destination" class="form-control" placeholder="Enter your destination in Oriental Mindoro" />
+                            <select asp-for="Destination" class="form-select">
+                                <option value="">-- Select Destination --</option>
+                                <option value="Calapan City">Calapan City</option>
+                                <option value="Baco">Baco</option>
+                                <option value="Bansud">Bansud</option>
+                                <option value="Bongabong">Bongabong</option>
+                                <option value="Bulalacao">Bulalacao</option>
+                                <option value="Gloria">Gloria</option>
+                                <option value="Mansalay">Mansalay</option>
+                                <option value="Naujan">Naujan</option>
+                                <option value="Pinamalayan">Pinamalayan</option>
+                                <option value="Pola">Pola</option>
+                                <option value="Puerto Galera">Puerto Galera</option>
+                                <option value="Roxas">Roxas</option>
+                                <option value="San Teodoro">San Teodoro</option>
+                                <option value="Socorro">Socorro</option>
+                                <option value="Victoria">Victoria</option>
+                            </select>
                             <span asp-validation-for="Destination" class="text-danger"></span>
                         </div>
 

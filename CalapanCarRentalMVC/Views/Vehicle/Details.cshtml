@@ -2,12 +2,25 @@
 @{
     ViewData["Title"] = "Car Details";
     var returnUrl = ViewData["ReturnUrl"] as string;
+
+    // Check if today is the coding day
+    bool isCodingDay = false;
+    string codingMessage = "";
+    if (!string.IsNullOrEmpty(Model.Coding))
+    {
+        var currentDay = DateTime.Now.DayOfWeek.ToString();
+        isCodingDay = Model.Coding.Equals(currentDay, StringComparison.OrdinalIgnoreCase);
+        if (isCodingDay)
+        {
+            codingMessage = $"This vehicle cannot be rented today ({currentDay}) due to coding restrictions.";
+        }
+    }
 }
 
-<div class="container my-4">
+<div class="container-fluid my-4">
     <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="card shadow">
+        <div class="col-lg-8 col-xl-7 mx-auto">
+            <div class="card shadow-lg">
                 <div class="card-header bg-primary text-white">
                     <h3 class="mb-0"><i class="fas fa-car me-2"></i>@Model.Brand @Model.Model</h3>
                 </div>
@@ -16,6 +29,38 @@
                     {
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @* Warning for customers without driver's license *@
+                    @if (Model.Status == "Available" && Context.Session.GetString("UserRole") == "Customer")
+                    {
+                        var userId = Context.Session.GetString("UserId");
+                        if (!string.IsNullOrEmpty(userId))
+                        {
+                            var customer = ViewBag.CurrentCustomer as CalapanCarRentalMVC.Models.Customer;
+                            if (customer != null && (string.IsNullOrWhiteSpace(customer.LicenseNumber) ||
+                            string.IsNullOrWhiteSpace(customer.LicenseCode) ||
+                            customer.LicenseExpiryDate == default ||
+                            string.IsNullOrWhiteSpace(customer.DriverLicensePath)))
+                            {
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-id-card me-2"></i>
+                                    <strong>Required Driver's License!</strong> You must complete your driver's license information (License Number, License Code, Expiry Date, and upload your Driver's License document) before proceeding to rent this car.
+                                    <a asp-controller="Customer" asp-action="Profile" class="alert-link">Update your profile now</a>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
+                        }
+                    }
+
+                    @* Warning for coding day *@
+                    @if (isCodingDay)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-ban me-2"></i>
+                            <strong>Coding Day Restriction!</strong> @codingMessage
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     }
@@ -131,15 +176,33 @@
                         }
                         else if (Model.Status == "Available" && Context.Session.GetString("UserRole") == "Customer")
                         {
-                            <a asp-controller="Rentals" asp-action="Create" asp-route-carId="@Model.VehicleId" class="btn btn-success">
-                                <i class="fas fa-key me-2"></i>Rent This Car
-                            </a>
+                            @if (isCodingDay)
+                            {
+                                <button class="btn btn-success" disabled>
+                                    <i class="fas fa-ban me-2"></i>Rent This Car (Coding Day)
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Rentals" asp-action="Create" asp-route-carId="@Model.VehicleId" class="btn btn-success">
+                                    <i class="fas fa-key me-2"></i>Rent This Car
+                                </a>
+                            }
                         }
                         else if (Model.Status == "Available" && string.IsNullOrEmpty(Context.Session.GetString("UserRole")))
                         {
-                            <a asp-controller="Rentals" asp-action="Create" asp-route-carId="@Model.VehicleId" class="btn btn-success">
-                                <i class="fas fa-key me-2"></i>Rent This Car
-                            </a>
+                            @if (isCodingDay)
+                            {
+                                <button class="btn btn-success" disabled>
+                                    <i class="fas fa-ban me-2"></i>Rent This Car (Coding Day)
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Rentals" asp-action="Create" asp-route-carId="@Model.VehicleId" class="btn btn-success">
+                                    <i class="fas fa-key me-2"></i>Rent This Car
+                                </a>
+                            }
                         }
 
                         @if (!string.IsNullOrEmpty(returnUrl))
@@ -155,9 +218,15 @@
                             </a>
                         }
                     </div>
+
+                    @if (isCodingDay)
+                    {
+                        <div class="alert alert-info mt-3" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>@codingMessage
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
-

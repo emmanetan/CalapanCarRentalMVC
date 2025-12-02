@@ -102,6 +102,21 @@ namespace CalapanCarRentalMVC.Controllers
                 return RedirectToAction("Index", "Vehicle");
             }
 
+            // Check if the car is available and if today is a coding day
+            if (carId.HasValue)
+            {
+                var selectedCar = await _context.Cars.FindAsync(carId.Value);
+                if (selectedCar != null && !string.IsNullOrEmpty(selectedCar.Coding))
+                {
+                    var currentDay = DateTime.Now.DayOfWeek.ToString();
+                    if (selectedCar.Coding.Equals(currentDay, StringComparison.OrdinalIgnoreCase))
+                    {
+                        TempData["Warning"] = $"Note: This vehicle has coding restrictions on {currentDay}. You can still book for 7 days or more, or choose a future pick-up date.";
+                        // Allow them to proceed to the form instead of redirecting
+                    }
+                }
+            }
+
             // Get customer ID from logged in user
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId.ToString() == userId);
             if (user == null)
@@ -256,6 +271,78 @@ namespace CalapanCarRentalMVC.Controllers
                     }
                     ViewBag.CustomerId = rental.CustomerId;
                     return View(rental);
+                }
+
+                // Check for same-day booking restriction
+                var today = DateTime.Now.Date;
+                var rentalDateOnly = rental.RentalDate.Date;
+                var rentalDuration = (rental.ReturnDate - rental.RentalDate).TotalDays;
+
+                if (rentalDateOnly == today && rentalDuration < 7)
+                {
+                    // Get the car to check if today is a coding day
+                    var carForSameDay = await _context.Cars.FindAsync(rental.VehicleId);
+                    var todayDayOfWeek = DateTime.Now.DayOfWeek.ToString();
+                    string errorMessage;
+                         
+                    if (carForSameDay != null && !string.IsNullOrEmpty(carForSameDay.Coding) && 
+     carForSameDay.Coding.Equals(todayDayOfWeek, StringComparison.OrdinalIgnoreCase))
+                            {
+          errorMessage = $"Same-day bookings are not allowed because today ({todayDayOfWeek}) is a coding day for this vehicle. Please choose a later pick-up date or extend your rental period to at least 7 days to proceed.";
+        }
+    else
+         {
+             errorMessage = "Same-day bookings are not allowed unless the rental duration is at least one week (7 days or more). Please choose a later pick-up date or extend your rental period to at least 7 days.";
+         }
+             
+    ModelState.AddModelError("RentalDate", errorMessage);
+       ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
+               if (rental.VehicleId > 0)
+         {
+                var selectedCarSameDay = await _context.Cars.FindAsync(rental.VehicleId);
+         ViewBag.SelectedCar = selectedCarSameDay;
+          ViewBag.SelectedCarId = rental.VehicleId;
+            }
+      ViewBag.CustomerId = rental.CustomerId;
+     return View(rental);
+              }
+
+                // Check if rental dates fall on coding day
+                var rentalCar = await _context.Cars.FindAsync(rental.VehicleId);
+                if (rentalCar != null && !string.IsNullOrEmpty(rentalCar.Coding))
+                {
+                    // Skip coding restrictions for weekly or longer rentals (7+ days)
+                    var rentalDurationDays = (rental.ReturnDate - rental.RentalDate).TotalDays;
+
+                    if (rentalDurationDays < 7)
+                    {
+                        // Check if rental date is on coding day
+                        var rentalDay = rental.RentalDate.DayOfWeek.ToString();
+                        if (rentalCar.Coding.Equals(rentalDay, StringComparison.OrdinalIgnoreCase))
+                        {
+                            ModelState.AddModelError("RentalDate", $"This vehicle cannot be rented on {rentalDay} due to coding restrictions. Please choose a different pick-up date or extend your rental to at least 7 days.");
+                            ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
+                            ViewBag.SelectedCar = rentalCar;
+                            ViewBag.SelectedCarId = rental.VehicleId;
+                            ViewBag.CustomerId = rental.CustomerId;
+                            return View(rental);
+                        }
+
+                        // Also check if any day in the rental period falls on a coding day
+                        for (var date = rental.RentalDate.Date; date <= rental.ReturnDate.Date; date = date.AddDays(1))
+                        {
+                            var dayOfWeek = date.DayOfWeek.ToString();
+                            if (rentalCar.Coding.Equals(dayOfWeek, StringComparison.OrdinalIgnoreCase))
+                            {
+                                ModelState.AddModelError("RentalDate", $"This vehicle has coding restrictions on {rentalCar.Coding}. The selected rental period includes {date:MMM dd, yyyy} which falls on a coding day. Please choose different dates or extend your rental to at least 7 days.");
+                                ViewData["VehicleId"] = new SelectList(_context.Cars.Where(c => c.Status == "Available"), "VehicleId", "Brand", rental.VehicleId);
+                                ViewBag.SelectedCar = rentalCar;
+                                ViewBag.SelectedCarId = rental.VehicleId;
+                                ViewBag.CustomerId = rental.CustomerId;
+                                return View(rental);
+                            }
+                        }
+                    }
                 }
 
                 // Check for rental conflicts - prevent double booking

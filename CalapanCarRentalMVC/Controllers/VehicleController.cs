@@ -62,6 +62,23 @@ namespace CalapanCarRentalMVC.Controllers
                 return NotFound();
             }
 
+            // Get current customer info if logged in as customer
+            var userRole = HttpContext.Session.GetString("UserRole");
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (userRole == "Customer" && !string.IsNullOrEmpty(userId))
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId.ToString() == userId);
+                if (user != null)
+                {
+                    var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == user.Email);
+                    if (customer != null)
+                    {
+                        ViewBag.CurrentCustomer = customer;
+                    }
+                }
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
             return View(car);
         }

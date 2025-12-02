@@ -177,6 +177,19 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                 </div>
                 <div class="col-md-6">
                     <div class="profile-info-item">
+                        <label class="text-muted mb-1"><i class="fas fa-tags me-2"></i>License Code</label>
+                        <p class="fw-bold">@(string.IsNullOrWhiteSpace(Model.LicenseCode) ? "Not specified" : Model.LicenseCode)</p>
+                        @if (string.IsNullOrWhiteSpace(Model.LicenseCode))
+                        {
+                            <span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Required to rent a vehicle</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="profile-info-item">
                         <label class="text-muted mb-1"><i class="fas fa-calendar-check me-2"></i>License Expiry Date</label>
                         <p class="fw-bold">
                             @Model.LicenseExpiryDate.ToString("MMMM dd, yyyy")
@@ -358,10 +371,31 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LicenseCode" class="form-label">
+                                License Code (DL code) <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="LicenseCode" class="form-select" required>
+                                <option value="">Select License Code</option>
+                                <option value="A">A: Motorcycle</option>
+                                <option value="A1">A1: Tricycle</option>
+                                <option value="B">B: Passenger Car</option>
+                                <option value="B1">B1: Passenger Van or Jeepney</option>
+                                <option value="B2">B2: Light Commercial Vehicle</option>
+                                <option value="C">C: Heavy Commercial Vehicle</option>
+                                <option value="D">D: Passenger Bus</option>
+                                <option value="BE">BE: Light Articulated Vehicle</option>
+                                <option value="CE">CE: Heavy Articulated Vehicle</option>
+                            </select>
+                            <span asp-validation-for="LicenseCode" class="text-danger"></span>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">
                             <i class="fas fa-file-upload me-2"></i>Driver License Document
-                            <small class="text-muted">(Optional - PDF, PNG, JPG - Max 5MB)</small>
+                            <small class="text-muted">(Optional - PDF, PNG, JPG - Max5MB)</small>
                         </label>
                         @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
                         {
@@ -372,7 +406,7 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                         }
                         <input type="file" name="driverLicenseFile" id="driverLicenseFile" class="form-control" accept=".pdf,.png,.jpg,.jpeg" />
                         <small class="text-muted d-block mt-1">
-                            <i class="fas fa-info-circle me-1"></i>Accepted formats: PDF, PNG, JPG (Maximum size: 5MB)
+                            <i class="fas fa-info-circle me-1"></i>Accepted formats: PDF, PNG, JPG (Maximum size:5MB)
                             @if (!string.IsNullOrEmpty(Model.DriverLicensePath))
                             {
                                 <span class="text-warning">

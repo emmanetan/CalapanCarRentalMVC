@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using CalapanCarRentalMVC.Data;
 using CalapanCarRentalMVC.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,22 @@ builder.Services.AddDbContext<CarRentalContext>(options =>
 
 // Register Email Service
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Bind Traccar options and register HttpClient
+var traccarSection = builder.Configuration.GetSection("Traccar");
+var traccarOptions = traccarSection.Get<TraccarOptions>() ?? new TraccarOptions();
+builder.Services.AddSingleton(traccarOptions);
+builder.Services.AddHttpClient<ITraccarService, TraccarService>(client =>
+{
+    if (!string.IsNullOrWhiteSpace(traccarOptions.BaseUrl))
+    {
+        client.BaseAddress = new Uri(traccarOptions.BaseUrl.TrimEnd('/') + "/");
+    }
+    if (!string.IsNullOrWhiteSpace(traccarOptions.ApiKey))
+    {
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", traccarOptions.ApiKey);
+    }
+});
 
 // Configure Authentication with Cookie and Google
 builder.Services.AddAuthentication(options =>

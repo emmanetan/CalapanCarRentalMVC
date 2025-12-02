@@ -33,6 +33,11 @@ namespace CalapanCarRentalMVC.Models
         [StringLength(50)]
         public string LicenseNumber { get; set; } = string.Empty;
 
+        [Required]
+        [StringLength(10)]
+        [Display(Name = "License Code")]
+        public string LicenseCode { get; set; } = string.Empty;
+
         public DateTime LicenseExpiryDate { get; set; }
 
         [StringLength(500)]

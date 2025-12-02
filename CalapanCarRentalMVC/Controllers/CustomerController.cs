@@ -138,7 +138,7 @@ namespace CalapanCarRentalMVC.Controllers
         // POST: Customer/UpdateProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile([Bind("CustomerId,FirstName,LastName,Email,PhoneNumber,Address,LicenseNumber,LicenseExpiryDate,CreatedAt")] Models.Customer customer, IFormFile? driverLicenseFile, string? croppedImage)
+        public async Task<IActionResult> UpdateProfile([Bind("CustomerId,FirstName,LastName,Email,PhoneNumber,Address,LicenseNumber,LicenseExpiryDate,LicenseCode,CreatedAt")] Models.Customer customer, IFormFile? driverLicenseFile, string? croppedImage)
    {
    var userRole = HttpContext.Session.GetString("UserRole");
    var userId = HttpContext.Session.GetString("UserId");
@@ -270,6 +270,7 @@ await driverLicenseFile.CopyToAsync(fileStream);
       existingCustomer.Address = customer.Address;
  existingCustomer.LicenseNumber = customer.LicenseNumber;
     existingCustomer.LicenseExpiryDate = customer.LicenseExpiryDate;
+ existingCustomer.LicenseCode = customer.LicenseCode;
 
           _context.Update(existingCustomer);
    await _context.SaveChangesAsync();

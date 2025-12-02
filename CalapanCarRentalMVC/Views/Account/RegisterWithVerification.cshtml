@@ -95,8 +95,19 @@
                                 <div class="mb-3">
                                     <label asp-for="Password" class="form-label fw-semibold">Password</label>
                                     <input asp-for="Password" type="password" class="form-control bg-light border-0"
-                                           placeholder="Ex: Password123" />
+                                           placeholder="Ex: Password123" id="passwordInputVerification" />
                                     <span asp-validation-for="Password" class="text-danger"></span>
+
+                                    <!-- Password Strength Meter -->
+                                    <div class="password-strength-meter mt-2" id="passwordStrengthMeterVerification" style="display: none;">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-muted">Password Strength:</small>
+                                            <small id="strengthTextVerification" class="fw-bold"></small>
+                                        </div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div id="strengthBarVerification" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="mb-3">
@@ -139,104 +150,178 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-                $(document).ready(function() {
-               let emailVerified = false;
+        $(document).ready(function() {
+            let emailVerified = false;
 
-                 // Send Verification Code
-                    $('#sendCodeBtn').click(function() {
-               const email = $('#emailInput').val();
+            // Password Strength Meter
+            $('#passwordInputVerification').on('input', function() {
+                var password = $(this).val();
+                var strengthMeter = $('#passwordStrengthMeterVerification');
+                var strengthBar = $('#strengthBarVerification');
+                var strengthText = $('#strengthTextVerification');
 
-          if (!email || !email.match(/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/)) {
-                 showMessage('Please enter a valid email address', 'danger');
-            return;
-             }
+                if (password.length === 0) {
+                    strengthMeter.hide();
+                    return;
+                }
 
-            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Sending...');
+                strengthMeter.show();
 
-              $.ajax({
-                   url: '@Url.Action("SendVerificationCode", "Account")',
-                     type: 'POST',
-                  data: {
-                       email: email,
-            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-          },
-           success: function(response) {
-             if (response.success) {
-                 showMessage(response.message + '. Check your inbox!', 'success');
-           $('#codeSection').slideDown();
-                  $('#verifyBtn').slideDown();
-                 $('#emailInput').prop('readonly', true);
-                    $('#sendCodeBtn').html('<i class="fas fa-check me-1"></i>Sent').removeClass('btn-primary').addClass('btn-success');
-                    } else {
-             showMessage(response.message, 'danger');
-                  $('#sendCodeBtn').prop('disabled', false).html('<i class="fas fa-paper-plane me-1"></i>Send Code');
-         }
-           },
-                error: function() {
-                 showMessage('Error sending verification code. Please try again.', 'danger');
-               $('#sendCodeBtn').prop('disabled', false).html('<i class="fas fa-paper-plane me-1"></i>Send Code');
-                  }
-                });
-          });
+                // Calculate password strength
+                var strength = 0;
+                var strengthLevel = '';
+                var barColor = '';
+                var barWidth = 0;
 
-                    // Verify Code
-                    $('#verifyBtn').click(function() {
-          const email = $('#emailInput').val();
-             const code = $('#codeInput').val();
+                // Length check
+                if (password.length >= 8) strength += 25;
+                if (password.length >= 12) strength += 15;
 
-             if (!code || code.length !== 6) {
-                   showMessage('Please enter the 6-digit verification code', 'warning');
-           return;
-         }
+                // Lowercase letters
+                if (/[a-z]/.test(password)) strength += 15;
 
-               $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying...');
+                // Uppercase letters
+                if (/[A-Z]/.test(password)) strength += 15;
 
-            $.ajax({
-               url: '@Url.Action("VerifyCode", "Account")',
-               type: 'POST',
-                   data: {
-                      email: email,
-                       code: code,
-                     __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-          },
-              success: function(response) {
-                 if (response.success) {
-               emailVerified = true;
-            showMessage(response.message, 'success');
-           $('#step1').slideUp();
-            $('#step2').slideDown();
-                    } else {
-          showMessage(response.message, 'danger');
-                    $('#verifyBtn').prop('disabled', false).html('<i class="fas fa-check me-1"></i>Verify Code');
-               }
-                   },
-                  error: function() {
-         showMessage('Error verifying code. Please try again.', 'danger');
-                  $('#verifyBtn').prop('disabled', false).html('<i class="fas fa-check me-1"></i>Verify Code');
-        }
+                // Numbers
+                if (/[0-9]/.test(password)) strength += 15;
+
+                // Special characters
+                if (/[^a-zA-Z0-9]/.test(password)) strength += 15;
+
+                // Determine strength level
+                if (strength <= 35) {
+                    strengthLevel = 'Low';
+                    barColor = 'bg-danger';
+                    barWidth = 33;
+                } else if (strength <= 70) {
+                    strengthLevel = 'Medium';
+                    barColor = 'bg-warning';
+                    barWidth = 66;
+                } else {
+                    strengthLevel = 'High';
+                    barColor = 'bg-success';
+                    barWidth = 100;
+                }
+
+                // Update UI
+                strengthBar.removeClass('bg-danger bg-warning bg-success').addClass(barColor);
+                strengthBar.css('width', barWidth + '%');
+                strengthBar.attr('aria-valuenow', barWidth);
+                strengthText.text(strengthLevel).removeClass('text-danger text-warning text-success').addClass('text-' + (strengthLevel === 'Low' ? 'danger' : strengthLevel === 'Medium' ? 'warning' : 'success'));
             });
-                    });
 
-             // Form Submission
-                    $('#regForm').submit(function(e) {
-                        if (!emailVerified) {
-           e.preventDefault();
-                      showMessage('Please verify your email first', 'warning');
-                return false;
-           }
-                    });
+            // Send Verification Code
+            $('#sendCodeBtn').click(function() {
+                const email = $('#emailInput').val();
 
-           function showMessage(message, type) {
-               var alertHtml = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
-                message +
-                  '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
-           '</div>';
-               $('#verificationMessage').html(alertHtml);
+                if (!email || !email.match(/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/)) {
+                    showMessage('Please enter a valid email address', 'danger');
+                    return;
+                }
 
-           setTimeout(function() {
-                   $('#verificationMessage .alert').fadeOut();
-                   }, 5000);
+                $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Sending...');
+
+                $.ajax({
+                    url: '@Url.Action("SendVerificationCode", "Account")',
+                    type: 'POST',
+                    data: {
+                        email: email,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showMessage(response.message + '. Check your inbox!', 'success');
+                            $('#codeSection').slideDown();
+                            $('#verifyBtn').slideDown();
+                            $('#emailInput').prop('readonly', true);
+                            $('#sendCodeBtn').html('<i class="fas fa-check me-1"></i>Sent').removeClass('btn-primary').addClass('btn-success');
+                        } else {
+                            showMessage(response.message, 'danger');
+                            $('#sendCodeBtn').prop('disabled', false).html('<i class="fas fa-paper-plane me-1"></i>Send Code');
+                        }
+                    },
+                    error: function() {
+                        showMessage('Error sending verification code. Please try again.', 'danger');
+                        $('#sendCodeBtn').prop('disabled', false).html('<i class="fas fa-paper-plane me-1"></i>Send Code');
                     }
+                });
             });
+
+            // Verify Code
+            $('#verifyBtn').click(function() {
+                const email = $('#emailInput').val();
+                const code = $('#codeInput').val();
+
+                if (!code || code.length !== 6) {
+                    showMessage('Please enter the 6-digit verification code', 'warning');
+                    return;
+                }
+
+                $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying...');
+
+                $.ajax({
+                    url: '@Url.Action("VerifyCode", "Account")',
+                    type: 'POST',
+                    data: {
+                        email: email,
+                        code: code,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            emailVerified = true;
+                            showMessage(response.message, 'success');
+                            $('#step1').slideUp();
+                            $('#step2').slideDown();
+                        } else {
+                            showMessage(response.message, 'danger');
+                            $('#verifyBtn').prop('disabled', false).html('<i class="fas fa-check me-1"></i>Verify Code');
+                        }
+                    },
+                    error: function() {
+                        showMessage('Error verifying code. Please try again.', 'danger');
+                        $('#verifyBtn').prop('disabled', false).html('<i class="fas fa-check me-1"></i>Verify Code');
+                    }
+                });
+            });
+
+            // Send code on Enter key press
+            $('#emailInput').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    $('#sendCodeBtn').click();
+                }
+            });
+
+            // Verify code on Enter key press
+            $('#codeInput').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    $('#verifyBtn').click();
+                }
+            });
+
+            // Form Submission
+            $('#regForm').submit(function(e) {
+                if (!emailVerified) {
+                    e.preventDefault();
+                    showMessage('Please verify your email first', 'warning');
+                    return false;
+                }
+            });
+
+            function showMessage(message, type) {
+                var alertHtml = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
+                    message +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+                    '</div>';
+                $('#verificationMessage').html(alertHtml);
+
+                setTimeout(function() {
+                    $('#verificationMessage .alert').fadeOut();
+                }, 5000);
+            }
+        });
     </script>
 }

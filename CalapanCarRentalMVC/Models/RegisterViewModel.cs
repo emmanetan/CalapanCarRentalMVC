@@ -4,10 +4,15 @@ namespace CalapanCarRentalMVC.Models
 {
     public class RegisterViewModel
     {
-        [Required(ErrorMessage = "Full name is required")]
-        [StringLength(200, ErrorMessage = "Full name cannot exceed 200 characters")]
-        [Display(Name = "Full Name")]
-        public string FullName { get; set; } = string.Empty;
+        [Required(ErrorMessage = "First name is required")]
+        [StringLength(100, ErrorMessage = "First name cannot exceed 100 characters")]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Last name is required")]
+        [StringLength(100, ErrorMessage = "Last name cannot exceed 100 characters")]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]

@@ -44,8 +44,17 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label asp-for="PlateNumber" class="form-label"></label>
-                                <input asp-for="PlateNumber" class="form-control" />
+                                <input asp-for="PlateNumber" class="form-control" id="plateNumberInput" />
                                 <span asp-validation-for="PlateNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="Coding" class="form-label"></label>
+                                <input asp-for="Coding" class="form-control bg-light" id="codingInput" style="cursor: not-allowed;" />
+                                <span asp-validation-for="Coding" class="text-danger"></span>
+                                <small class="form-text text-muted">Automatically set based on plate number ending digit</small>
                             </div>
                         </div>
 
@@ -138,5 +147,56 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    
+    <script>
+        $(document).ready(function() {
+  // Function to calculate coding day based on plate number
+   function updateCoding() {
+      var plateNumber = $('#plateNumberInput').val().trim();
+    
+    if (plateNumber.length > 0) {
+ // Get the last character of the plate number
+   var lastChar = plateNumber.charAt(plateNumber.length - 1);
+  var coding = '';
+          
+  // Determine coding day based on last digit
+    switch(lastChar) {
+  case '1':
+   case '2':
+    coding = 'Monday';
+ break;
+     case '3':
+   case '4':
+coding = 'Tuesday';
+       break;
+case '5':
+     case '6':
+     coding = 'Wednesday';
+break;
+   case '7':
+      case '8':
+       coding = 'Thursday';
+        break;
+case '9':
+      case '0':
+      coding = 'Friday';
+    break;
+default:
+     coding = '';
+    }
+      
+     $('#codingInput').val(coding);
+   } else {
+    $('#codingInput').val('');
+         }
+        }
+    
+  // Update coding when plate number changes
+    $('#plateNumberInput').on('input', updateCoding);
+          
+        // Update coding on page load if plate number is already filled
+       updateCoding();
+       });
+    </script>
 }
 

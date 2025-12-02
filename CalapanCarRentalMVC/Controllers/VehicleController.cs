@@ -78,7 +78,7 @@ namespace CalapanCarRentalMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [SessionAuthorization(Roles = new[] { "Admin" })]
-        public async Task<IActionResult> Create([Bind("VehicleId,Brand,Model,Year,Color,PlateNumber,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,Description")] Car car, IFormFile? imageFile)
+        public async Task<IActionResult> Create([Bind("VehicleId,Brand,Model,Year,Color,PlateNumber,Coding,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,Description")] Car car, IFormFile? imageFile)
         {
             SetLayout();
             if (ModelState.IsValid)
@@ -129,7 +129,7 @@ namespace CalapanCarRentalMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [SessionAuthorization(Roles = new[] { "Admin" })]
-        public async Task<IActionResult> Edit(int id, [Bind("VehicleId,Brand,Model,Year,Color,PlateNumber,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,ImageUrl,Description,CreatedAt")] Car car, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(int id, [Bind("VehicleId,Brand,Model,Year,Color,PlateNumber,Coding,TransmissionType,SeatingCapacity,GasType,DailyRate,Status,ImageUrl,Description,CreatedAt")] Car car, IFormFile? imageFile)
         {
             SetLayout();
             if (id != car.VehicleId)
@@ -193,6 +193,12 @@ namespace CalapanCarRentalMVC.Controllers
                 return NotFound();
             }
 
+            // Pass error message to the view if present
+            if (TempData["ErrorMessage"] != null)
+            {
+                ViewBag.ErrorMessage = TempData["ErrorMessage"];
+            }
+
             return View(car);
         }
 
@@ -202,13 +208,20 @@ namespace CalapanCarRentalMVC.Controllers
         [SessionAuthorization(Roles = new[] { "Admin" })]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Check for active or pending rentals
+            bool hasActiveRental = await _context.Rentals.AnyAsync(r => r.VehicleId == id && (r.Status == "Pending" || r.Status == "Active"));
+            if (hasActiveRental)
+            {
+                TempData["ErrorMessage"] = "Cannot delete this vehicle because it is currently in use for an active or pending rental.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             var car = await _context.Cars.FindAsync(id);
             if (car != null)
             {
                 _context.Cars.Remove(car);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

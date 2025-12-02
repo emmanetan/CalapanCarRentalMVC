@@ -77,6 +77,7 @@ namespace CalapanCarRentalMVC.Data
             Year = 2023,
             Color = "White",
             PlateNumber = "ABC1234",
+            Coding = "Monday", // ends in 4
             TransmissionType = "Automatic",
             SeatingCapacity = 5,
             GasType = "Gasoline",
@@ -94,6 +95,7 @@ namespace CalapanCarRentalMVC.Data
                     Year = 2023,
                     Color = "Black",
                     PlateNumber = "DEF5678",
+                    Coding = "Thursday", // ends in 8
                     TransmissionType = "Automatic",
                     SeatingCapacity = 5,
                     GasType = "Gasoline",
@@ -111,6 +113,7 @@ namespace CalapanCarRentalMVC.Data
               Year = 2023,
               Color = "Silver",
               PlateNumber = "GHI9012",
+              Coding = "Monday", // ends in 2
               TransmissionType = "Automatic",
               SeatingCapacity = 7,
               GasType = "Diesel",

@@ -42,39 +42,46 @@
                     <form asp-action="Register" method="post" id="registerForm">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        <div class="mb-3">
-                            <label asp-for="FullName" class="form-label fw-semibold"></label>
-                            <input asp-for="FullName" class="form-control bg-light border-0" placeholder="Enter your full name" />
-                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label fw-semibold"></label>
+                                <input asp-for="FirstName" class="form-control bg-light border-0" placeholder="Ex: Juan" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label fw-semibold"></label>
+                                <input asp-for="LastName" class="form-control bg-light border-0" placeholder="Ex: Dela Cruz" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Email" class="form-label fw-semibold"></label>
-                            <input asp-for="Email" type="email" class="form-control bg-light border-0" placeholder="your.email@example.com" />
+                            <input asp-for="Email" type="email" class="form-control bg-light border-0" placeholder="Ex: juan.delacruz@example.com" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
-                            <input asp-for="PhoneNumber" class="form-control bg-light border-0" placeholder="09XXXXXXXXX" />
+                            <input asp-for="PhoneNumber" class="form-control bg-light border-0" placeholder="Ex: 09123456789" />
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Address" class="form-label fw-semibold"></label>
-                            <textarea asp-for="Address" class="form-control bg-light border-0" rows="2" placeholder="Enter your complete address"></textarea>
+                            <textarea asp-for="Address" class="form-control bg-light border-0" rows="2" placeholder="Ex: 123 Main Street, Calapan City, Oriental Mindoro"></textarea>
                             <span asp-validation-for="Address" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Password" class="form-label fw-semibold"></label>
-                            <input asp-for="Password" type="password" class="form-control bg-light border-0" placeholder="At least 6 characters" />
+                            <input asp-for="Password" type="password" class="form-control bg-light border-0" placeholder="Ex: Password123" />
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="ConfirmPassword" class="form-label fw-semibold"></label>
-                            <input asp-for="ConfirmPassword" type="password" class="form-control bg-light border-0" placeholder="Re-enter your password" />
+                            <input asp-for="ConfirmPassword" type="password" class="form-control bg-light border-0" placeholder="Ex: Password123" />
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
 

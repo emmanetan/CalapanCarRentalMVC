@@ -35,7 +35,7 @@
                         <option value="">-- Select Vehicle --</option>
                         @foreach (var car in ViewBag.Cars)
                         {
-                            <option value="@car.CarId" selected="@(car.CarId == Model.VehicleId)">@car.Brand @car.Model - @car.PlateNumber</option>
+                            <option value="@car.VehicleId" selected="@(car.VehicleId == Model.VehicleId)">@car.Brand @car.Model - @car.PlateNumber</option>
                         }
                     </select>
                     <span asp-validation-for="VehicleId" class="text-danger"></span>
@@ -43,7 +43,7 @@
 
                 <div class="mb-3">
                     <label asp-for="MaintenanceType" class="form-label">Maintenance Type</label>
-                    <select asp-for="MaintenanceType" class="form-select" required>
+                    <select asp-for="MaintenanceType" class="form-select" id="maintenanceTypeSelect" required>
                         <option value="">-- Select Type --</option>
                         <option value="Oil Change">Oil Change</option>
                         <option value="Tire Rotation">Tire Rotation</option>
@@ -59,6 +59,14 @@
                     <span asp-validation-for="MaintenanceType" class="text-danger"></span>
                 </div>
 
+                <div class="mb-3" id="otherMaintenanceTypeField" style="display: none;">
+                    <label for="otherMaintenanceType" class="form-label">Specify Maintenance Type</label>
+                    <input type="text" id="otherMaintenanceType" class="form-control" placeholder="Ex: Windshield Replacement" />
+                    <small class="form-text text-muted">
+                        <i class="fas fa-info-circle"></i> This will replace "Other" as the maintenance type
+                    </small>
+                </div>
+
                 <div class="mb-3">
                     <label asp-for="Description" class="form-label">Description</label>
                     <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
@@ -68,13 +76,16 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label asp-for="DateScheduled" class="form-label">Date Scheduled</label>
-                        <input asp-for="DateScheduled" type="date" class="form-control" required />
+                        <input asp-for="DateScheduled" type="date" class="form-control" id="dateScheduled" required />
                         <span asp-validation-for="DateScheduled" class="text-danger"></span>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-info-circle"></i> Cannot select a past date
+                        </small>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="DateCompleted" class="form-label">Date Completed (Optional)</label>
-                        <input asp-for="DateCompleted" type="date" class="form-control" />
+                        <input asp-for="DateCompleted" type="date" class="form-control" id="dateCompleted" />
                         <span asp-validation-for="DateCompleted" class="text-danger"></span>
                     </div>
                 </div>
@@ -126,4 +137,86 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(document).ready(function() {
+            // Set minimum date to today for DateScheduled
+            var today = new Date().toISOString().split('T')[0];
+            $('#dateScheduled').attr('min', today);
+
+            // Validate date on change
+            $('#dateScheduled').on('change', function() {
+                var selectedDate = $(this).val();
+                if (selectedDate < today) {
+                    alert('Cannot schedule maintenance for a past date. Please select today or a future date.');
+                    $(this).val('');
+                }
+            });
+
+            // Date completed can be any date (including past)
+            // No restriction on dateCompleted
+
+            var predefinedTypes = [
+                'Oil Change', 'Tire Rotation', 'Brake Service', 'Engine Repair',
+                'Transmission Service', 'Air Conditioning Service', 'Battery Replacement',
+                'General Inspection', 'Body Work', 'Other'
+            ];
+            
+            var currentType = '@Model.MaintenanceType';
+            var isCustomType = !predefinedTypes.includes(currentType);
+
+            // If current type is custom, add it as an option and show the field
+            if (isCustomType && currentType !== '') {
+                $('#maintenanceTypeSelect').append('<option value="' + currentType + '" selected>' + currentType + '</option>');
+                $('#maintenanceTypeSelect').val(currentType);
+                $('#otherMaintenanceTypeField').show();
+                $('#otherMaintenanceType').val(currentType);
+            }
+
+            // Handle maintenance type dropdown change
+            $('#maintenanceTypeSelect').on('change', function() {
+                var selectedValue = $(this).val();
+                        
+                if (selectedValue === 'Other') {
+                    $('#otherMaintenanceTypeField').slideDown();
+                    $('#otherMaintenanceType').attr('required', true);
+                } else if (predefinedTypes.includes(selectedValue)) {
+                    $('#otherMaintenanceTypeField').slideUp();
+                    $('#otherMaintenanceType').attr('required', false);
+                    $('#otherMaintenanceType').val('');
+                }
+            });
+
+            // Before form submission, update MaintenanceType if Other is selected
+            $('form').on('submit', function(e) {
+                var selectedType = $('#maintenanceTypeSelect').val();
+                 
+                // Validate scheduled date
+                var scheduledDate = $('#dateScheduled').val();
+                if (scheduledDate < today) {
+                    e.preventDefault();
+                    alert('Cannot schedule maintenance for a past date. Please select today or a future date.');
+                    $('#dateScheduled').focus();
+                    return false;
+                }
+                
+                if (selectedType === 'Other') {
+                  var otherType = $('#otherMaintenanceType').val().trim();
+
+                   if (otherType === '') {
+                     e.preventDefault();
+ alert('Please specify the maintenance type.');
+                     $('#otherMaintenanceType').focus();
+                 return false;
+             }
+                    
+  // Update the MaintenanceType value with the custom type
+var existingOption = $('#maintenanceTypeSelect option[value="' + otherType + '"]');
+ if (existingOption.length === 0) {
+                 $('#maintenanceTypeSelect').append('<option value="' + otherType + '" selected>' + otherType + '</option>');
+  }
+  $('#maintenanceTypeSelect').val(otherType);
+           }
+       });
+     });
+    </script>
 }

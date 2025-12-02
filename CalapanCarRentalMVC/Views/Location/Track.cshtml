@@ -28,7 +28,7 @@
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="autoRefreshToggle" checked>
                             <label class="form-check-label" for="autoRefreshToggle">
-                                Auto-refresh (30s)
+                                Auto-refresh (5s)
                             </label>
                         </div>
                     </div>
@@ -300,12 +300,12 @@
           const toggle = document.getElementById('autoRefreshToggle');
 
                 if (toggle.checked) {
-         autoRefreshInterval = setInterval(fetchLocations, 30000); // 30 seconds
+         autoRefreshInterval = setInterval(fetchLocations, 5000); // 5 seconds
               }
 
                     toggle.addEventListener('change', function() {
               if (this.checked) {
-           autoRefreshInterval = setInterval(fetchLocations, 30000);
+           autoRefreshInterval = setInterval(fetchLocations, 5000);
                } else {
                 clearInterval(autoRefreshInterval);
              }

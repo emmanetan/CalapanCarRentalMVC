@@ -27,6 +27,10 @@ namespace CalapanCarRentalMVC.Models
         [StringLength(20)]
         public string PlateNumber { get; set; } = string.Empty;
 
+        [StringLength(20)]
+        [Display(Name = "Coding Day")]
+        public string Coding { get; set; } = string.Empty; // Monday, Tuesday, Wednesday, Thursday, Friday
+
         [Required]
         [StringLength(50)]
         public string TransmissionType { get; set; } = string.Empty; // Manual or Automatic

@@ -24,11 +24,11 @@ namespace CalapanCarRentalMVC.Migrations
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Car", b =>
                 {
-                    b.Property<int>("VehicleId")
+                    b.Property<int>("CarId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("VehicleId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CarId"));
 
                     b.Property<string>("Brand")
                         .IsRequired()
@@ -84,9 +84,9 @@ namespace CalapanCarRentalMVC.Migrations
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
-                    b.HasKey("VehicleId");
+                    b.HasKey("CarId");
 
-                    b.ToTable("Cars");
+                    b.ToTable("Cars", (string)null);
 
                     b.HasData(
                         new
@@ -196,7 +196,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("CustomerId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.EmailVerification", b =>
@@ -228,7 +228,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("VerificationId");
 
-                    b.ToTable("EmailVerifications");
+                    b.ToTable("EmailVerifications", (string)null);
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.LocationHistory", b =>
@@ -262,7 +262,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("LocationHistories");
+                    b.ToTable("LocationHistories", (string)null);
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Maintenance", b =>
@@ -273,7 +273,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("MaintenanceId"));
 
-                    b.Property<int>("VehicleId")
+                    b.Property<int>("CarId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Cost")
@@ -316,9 +316,9 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("MaintenanceId");
 
-                    b.HasIndex("VehicleId");
+                    b.HasIndex("CarId");
 
-                    b.ToTable("Maintenances");
+                    b.ToTable("Maintenances", (string)null);
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Notification", b =>
@@ -366,7 +366,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.PasswordReset", b =>
@@ -398,7 +398,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("ResetId");
 
-                    b.ToTable("PasswordResets");
+                    b.ToTable("PasswordResets", (string)null);
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.Rental", b =>
@@ -412,7 +412,7 @@ namespace CalapanCarRentalMVC.Migrations
                     b.Property<DateTime?>("ActualReturnDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("VehicleId")
+                    b.Property<int>("CarId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -468,11 +468,11 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("RentalId");
 
-                    b.HasIndex("VehicleId");
+                    b.HasIndex("CarId");
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Rentals");
+                    b.ToTable("Rentals", (string)null);
                 });
 
             modelBuilder.Entity("CalapanCarRentalMVC.Models.User", b =>
@@ -514,7 +514,7 @@ namespace CalapanCarRentalMVC.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
@@ -543,7 +543,7 @@ namespace CalapanCarRentalMVC.Migrations
                 {
                     b.HasOne("CalapanCarRentalMVC.Models.Car", "Car")
                         .WithMany()
-                        .HasForeignKey("VehicleId")
+                        .HasForeignKey("CarId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -565,7 +565,7 @@ namespace CalapanCarRentalMVC.Migrations
                 {
                     b.HasOne("CalapanCarRentalMVC.Models.Car", "Car")
                         .WithMany("Rentals")
-                        .HasForeignKey("VehicleId")
+                        .HasForeignKey("CarId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

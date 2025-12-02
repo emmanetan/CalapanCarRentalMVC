@@ -60,6 +60,21 @@
                                     </tr>
                                 }
                                 <tr>
+                                    <th><i class="fas fa-ban me-2 text-danger"></i>Coding Day:</th>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(Model.Coding))
+                                        {
+                                            <span class="badge bg-danger">@Model.Coding</span>
+                                            <br />
+                                            <small class="text-muted">This vehicle cannot be rented on @Model.Coding</small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Not set</span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th><i class="fas fa-cog me-2 text-primary"></i>Transmission:</th>
                                     <td>@Model.TransmissionType</td>
                                 </tr>

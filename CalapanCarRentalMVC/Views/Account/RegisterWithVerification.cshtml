@@ -34,7 +34,7 @@
                                     <label asp-for="Email" class="form-label fw-semibold">Email Address</label>
                                     <div class="input-group">
                                         <input asp-for="Email" type="email" class="form-control bg-light border-0"
-                                               placeholder="Enter your email" required id="emailInput" />
+                                               placeholder="Ex: juan.delacruz@example.com" required id="emailInput" />
                                         <button type="button" class="btn btn-primary" id="sendCodeBtn">
                                             <i class="fas fa-paper-plane me-1"></i>Send Code
                                         </button>
@@ -45,7 +45,7 @@
                                 <div class="mb-3" id="codeSection" style="display: none;">
                                     <label class="form-label fw-semibold">Verification Code</label>
                                     <input type="text" class="form-control bg-light border-0" maxlength="6"
-                                           placeholder="Enter 6-digit code" id="codeInput" />
+                                           placeholder="Ex: 123456" id="codeInput" />
                                     <small class="text-muted">Code expires in 10 minutes</small>
                                 </div>
 
@@ -63,38 +63,46 @@
                                 </h5>
                                 <h5 class="mb-3"><i class="fas fa-user me-2"></i>Step 2: Complete Registration</h5>
 
-                                <div class="mb-3">
-                                    <label asp-for="FullName" class="form-label fw-semibold">Full Name</label>
-                                    <input asp-for="FullName" class="form-control bg-light border-0"
-                                           placeholder="Enter your full name" />
-                                    <span asp-validation-for="FullName" class="text-danger"></span>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="FirstName" class="form-label fw-semibold">First Name</label>
+                                        <input asp-for="FirstName" class="form-control bg-light border-0"
+                                               placeholder="Ex: Juan" />
+                                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="LastName" class="form-label fw-semibold">Last Name</label>
+                                        <input asp-for="LastName" class="form-control bg-light border-0"
+                                               placeholder="Ex: Dela Cruz" />
+                                        <span asp-validation-for="LastName" class="text-danger"></span>
+                                    </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label asp-for="PhoneNumber" class="form-label fw-semibold">Phone Number</label>
                                     <input asp-for="PhoneNumber" class="form-control bg-light border-0"
-                                           placeholder="09XXXXXXXXX" />
+                                           placeholder="Ex: 09123456789" />
                                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                                 </div>
 
                                 <div class="mb-3">
                                     <label asp-for="Address" class="form-label fw-semibold">Address</label>
                                     <textarea asp-for="Address" class="form-control bg-light border-0" rows="2"
-                                              placeholder="Enter your address"></textarea>
+                                              placeholder="Ex: 123 Main Street, Calapan City, Oriental Mindoro"></textarea>
                                     <span asp-validation-for="Address" class="text-danger"></span>
                                 </div>
 
                                 <div class="mb-3">
                                     <label asp-for="Password" class="form-label fw-semibold">Password</label>
                                     <input asp-for="Password" type="password" class="form-control bg-light border-0"
-                                           placeholder="Enter password (min 6 characters)" />
+                                           placeholder="Ex: Password123" />
                                     <span asp-validation-for="Password" class="text-danger"></span>
                                 </div>
 
                                 <div class="mb-3">
                                     <label asp-for="ConfirmPassword" class="form-label fw-semibold">Confirm Password</label>
                                     <input asp-for="ConfirmPassword" type="password" class="form-control bg-light border-0"
-                                           placeholder="Confirm your password" />
+                                           placeholder="Ex: Password123" />
                                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                                 </div>
 

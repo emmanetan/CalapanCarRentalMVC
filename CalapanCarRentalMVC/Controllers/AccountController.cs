@@ -332,16 +332,11 @@ namespace CalapanCarRentalMVC.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                // Split full name into first and last name
-                var nameParts = model.FullName.Trim().Split(' ', 2);
-                string firstName = nameParts[0];
-                string lastName = nameParts.Length > 1 ? nameParts[1] : "";
-
                 // Create Customer profile with minimal info
                 var customer = new Customer
                 {
-                    FirstName = firstName,
-                    LastName = lastName,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
                     Address = model.Address,

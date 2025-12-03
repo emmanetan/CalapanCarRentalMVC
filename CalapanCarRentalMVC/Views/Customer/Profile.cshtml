@@ -180,14 +180,27 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                 </div>
                 <div class="col-md-6">
                     <div class="profile-info-item">
-                        <label class="text-muted mb-1"><i class="fas fa-tags me-2"></i>License Code</label>
-                        <p class="fw-bold">@(string.IsNullOrWhiteSpace(Model.LicenseCode) ? "Not specified" : Model.LicenseCode)</p>
-                        @if (string.IsNullOrWhiteSpace(Model.LicenseCode))
+                        <label class="text-muted mb-1"><i class="fas fa-tags me-2"></i>License Code(s)</label>
+                        <p class="fw-bold">
+                          @if (string.IsNullOrWhiteSpace(Model.LicenseCode))
                         {
-                            <span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Required to rent a vehicle</span>
+                        <span>Not specified</span>
+                                 }
+                         else
+                                 {
+                         var codes = Model.LicenseCode.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                                  foreach (var code in codes)
+                        {
+                       <span class="badge bg-primary me-1">@code.Trim()</span>
                         }
-                    </div>
-                </div>
+                      }
+                                      </p>
+                                @if (string.IsNullOrWhiteSpace(Model.LicenseCode))
+                                 {
+                              <span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Required to rent a vehicle</span>
+                             }
+                                 </div>
+                           </div>
             </div>
 
             <div class="row">
@@ -375,25 +388,94 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="LicenseCode" class="form-label">
-                                License Code (DL code) <span class="text-danger">*</span>
-                            </label>
-                            <select asp-for="LicenseCode" class="form-select" required>
-                                <option value="">Select License Code</option>
-                                <option value="A">A: Motorcycle</option>
-                                <option value="A1">A1: Tricycle</option>
-                                <option value="B">B: Passenger Car</option>
-                                <option value="B1">B1: Passenger Van or Jeepney</option>
-                                <option value="B2">B2: Light Commercial Vehicle</option>
-                                <option value="C">C: Heavy Commercial Vehicle</option>
-                                <option value="D">D: Passenger Bus</option>
-                                <option value="BE">BE: Light Articulated Vehicle</option>
-                                <option value="CE">CE: Heavy Articulated Vehicle</option>
-                            </select>
-                            <span asp-validation-for="LicenseCode" class="text-danger"></span>
-                        </div>
-                    </div>
+                        <div class="col-md-12 mb-3">
+ <label class="form-label">
+     License Code (DL code) <span class="text-danger">*</span>
+     </label>
+    <small class="text-muted d-block mb-2">Select all license codes that apply to you</small>
+   
+        @{
+   var selectedCodes = string.IsNullOrWhiteSpace(Model.LicenseCode) 
+     ? new string[] { } 
+            : Model.LicenseCode.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray();
+           }
+           
+        <input type="hidden" name="LicenseCode" id="LicenseCodeHidden" value="@Model.LicenseCode" />
+     
+            <div class="row">
+             <div class="col-md-6">
+       <div class="form-check mb-2">
+         <input class="form-check-input license-checkbox" type="checkbox" value="A" id="licenseA" 
+         @(selectedCodes.Contains("A") ? "checked" : "")>
+      <label class="form-check-label" for="licenseA">
+  A: Motorcycle
+            </label>
+         </div>
+        <div class="form-check mb-2">
+             <input class="form-check-input license-checkbox" type="checkbox" value="A1" id="licenseA1"
+    @(selectedCodes.Contains("A1") ? "checked" : "")>
+            <label class="form-check-label" for="licenseA1">
+A1: Tricycle
+     </label>
+  </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input license-checkbox" type="checkbox" value="B" id="licenseB"
+      @(selectedCodes.Contains("B") ? "checked" : "")>
+          <label class="form-check-label" for="licenseB">
+                 B: Passenger Car
+ </label>
+       </div>
+        <div class="form-check mb-2">
+         <input class="form-check-input license-checkbox" type="checkbox" value="B1" id="licenseB1"
+        @(selectedCodes.Contains("B1") ? "checked" : "")>
+   <label class="form-check-label" for="licenseB1">
+    B1: Passenger Van or Jeepney
+       </label>
+          </div>
+           <div class="form-check mb-2">
+              <input class="form-check-input license-checkbox" type="checkbox" value="B2" id="licenseB2"
+       @(selectedCodes.Contains("B2") ? "checked" : "")>
+          <label class="form-check-label" for="licenseB2">
+         B2: Light Commercial Vehicle
+            </label>
+      </div>
+  </div>
+      <div class="col-md-6">
+      <div class="form-check mb-2">
+   <input class="form-check-input license-checkbox" type="checkbox" value="C" id="licenseC"
+      @(selectedCodes.Contains("C") ? "checked" : "")>
+   <label class="form-check-label" for="licenseC">
+            C: Heavy Commercial Vehicle
+              </label>
+       </div>
+             <div class="form-check mb-2">
+          <input class="form-check-input license-checkbox" type="checkbox" value="D" id="licenseD"
+   @(selectedCodes.Contains("D") ? "checked" : "")>
+       <label class="form-check-label" for="licenseD">
+          D: Passenger Bus
+      </label>
+           </div>
+       <div class="form-check mb-2">
+        <input class="form-check-input license-checkbox" type="checkbox" value="BE" id="licenseBE"
+                  @(selectedCodes.Contains("BE") ? "checked" : "")>
+         <label class="form-check-label" for="licenseBE">
+    BE: Light Articulated Vehicle
+         </label>
+        </div>
+  <div class="form-check mb-2">
+         <input class="form-check-input license-checkbox" type="checkbox" value="CE" id="licenseCE"
+ @(selectedCodes.Contains("CE") ? "checked" : "")>
+            <label class="form-check-label" for="licenseCE">
+   CE: Heavy Articulated Vehicle
+      </label>
+  </div>
+         </div>
+     </div>
+                   <span id="licenseCodeValidation" class="text-danger" style="display:none;">
+               <i class="fas fa-exclamation-triangle me-1"></i>Please select at least one license code
+</span>
+    </div>
+       </div>
 
                     <div class="mb-3">
                         <label class="form-label">
@@ -685,5 +767,47 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
            document.body.appendChild(form);
                 form.submit();
                 }
+
+     // Handle License Code checkboxes
+  document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.license-checkbox');
+          const hiddenInput = document.getElementById('LicenseCodeHidden');
+            const validationMessage = document.getElementById('licenseCodeValidation');
+            
+ function updateLicenseCode() {
+    const selectedCodes = [];
+  checkboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+     selectedCodes.push(checkbox.value);
+      }
+     });
+        hiddenInput.value = selectedCodes.join(', ');
+            
+ // Show/hide validation message
+        if (selectedCodes.length === 0) {
+   validationMessage.style.display = 'block';
+                } else {
+      validationMessage.style.display = 'none';
+      }
+    }
+            
+checkboxes.forEach(function(checkbox) {
+       checkbox.addEventListener('change', updateLicenseCode);
+            });
+            
+         // Validate on form submit
+  const editProfileForm = document.querySelector('#editProfileModal form');
+   if (editProfileForm) {
+      editProfileForm.addEventListener('submit', function(e) {
+     updateLicenseCode();
+              if (hiddenInput.value === '') {
+               e.preventDefault();
+                validationMessage.style.display = 'block';
+  alert('Please select at least one license code.');
+            return false;
+          }
+      });
+    }
+        });
     </script>
 }

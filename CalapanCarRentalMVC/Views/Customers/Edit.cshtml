@@ -126,8 +126,8 @@
 
                     @{
                         var selectedCodes = string.IsNullOrWhiteSpace(Model.LicenseCode)
-                            ? new string[] { }
-                            : Model.LicenseCode.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray();
+                        ? new string[] { }
+                        : Model.LicenseCode.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray();
                     }
 
                     <input type="hidden" name="LicenseCode" id="LicenseCodeHidden" value="@Model.LicenseCode" />
@@ -227,46 +227,46 @@
     }
 
     <script>
-        // Handle License Code checkboxes
-        document.addEventListener('DOMContentLoaded', function() {
-        const checkboxes = document.querySelectorAll('.license-checkbox');
-     const hiddenInput = document.getElementById('LicenseCodeHidden');
-      const validationMessage = document.getElementById('licenseCodeValidation');
-        const form = document.querySelector('form');
- 
-        function updateLicenseCode() {
-      const selectedCodes = [];
-  checkboxes.forEach(function(checkbox) {
- if (checkbox.checked) {
-        selectedCodes.push(checkbox.value);
-        }
-    });
-        hiddenInput.value = selectedCodes.join(', ');
-        
-  // Show/hide validation message
-                if (selectedCodes.length === 0) {
-    validationMessage.style.display = 'block';
-                } else {
-     validationMessage.style.display = 'none';
-        }
-        }
-  
- checkboxes.forEach(function(checkbox) {
-    checkbox.addEventListener('change', updateLicenseCode);
-            });
-  
-            // Validate on form submit
-  if (form) {
-      form.addEventListener('submit', function(e) {
-        updateLicenseCode();
-        if (hiddenInput.value === '') {
-              e.preventDefault();
-                  validationMessage.style.display = 'block';
- alert('Please select at least one license code.');
-    return false;
-       }
-  });
-            }
-      });
+               // Handle License Code checkboxes
+               document.addEventListener('DOMContentLoaded', function() {
+               const checkboxes = document.querySelectorAll('.license-checkbox');
+            const hiddenInput = document.getElementById('LicenseCodeHidden');
+             const validationMessage = document.getElementById('licenseCodeValidation');
+               const form = document.querySelector('form');
+
+               function updateLicenseCode() {
+             const selectedCodes = [];
+         checkboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+               selectedCodes.push(checkbox.value);
+               }
+           });
+               hiddenInput.value = selectedCodes.join(', ');
+
+         // Show/hide validation message
+                       if (selectedCodes.length === 0) {
+           validationMessage.style.display = 'block';
+                       } else {
+            validationMessage.style.display = 'none';
+               }
+               }
+
+        checkboxes.forEach(function(checkbox) {
+           checkbox.addEventListener('change', updateLicenseCode);
+                   });
+
+                   // Validate on form submit
+         if (form) {
+             form.addEventListener('submit', function(e) {
+               updateLicenseCode();
+               if (hiddenInput.value === '') {
+                     e.preventDefault();
+                         validationMessage.style.display = 'block';
+        alert('Please select at least one license code.');
+           return false;
+              }
+         });
+                   }
+             });
     </script>
 }

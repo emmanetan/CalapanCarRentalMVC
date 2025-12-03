@@ -113,24 +113,24 @@
                         {
                             var codes = Model.LicenseCode.Split(',', StringSplitOptions.RemoveEmptyEntries);
                             var licenseDescriptions = new Dictionary<string, string>
-                            {
-                                {"A", "A: Motorcycle"},
-                                {"A1", "A1: Tricycle"},
-                                {"B", "B: Passenger Car"},
-                                {"B1", "B1: Passenger Van or Jeepney"},
-                                {"B2", "B2: Light Commercial Vehicle"},
-                                {"C", "C: Heavy Commercial Vehicle"},
-                                {"D", "D: Passenger Bus"},
-                                {"BE", "BE: Light Articulated Vehicle"},
-                                {"CE", "CE: Heavy Articulated Vehicle"}
-                            };
+                                                {
+                                                {"A", "A: Motorcycle"},
+                                                {"A1", "A1: Tricycle"},
+                                                {"B", "B: Passenger Car"},
+                                                {"B1", "B1: Passenger Van or Jeepney"},
+                                                {"B2", "B2: Light Commercial Vehicle"},
+                                                {"C", "C: Heavy Commercial Vehicle"},
+                                                {"D", "D: Passenger Bus"},
+                                                {"BE", "BE: Light Articulated Vehicle"},
+                                                {"CE", "CE: Heavy Articulated Vehicle"}
+                                                };
 
                             foreach (var code in codes)
                             {
                                 var trimmedCode = code.Trim();
                                 var description = licenseDescriptions.ContainsKey(trimmedCode)
-                                    ? licenseDescriptions[trimmedCode]
-                                    : trimmedCode;
+                                ? licenseDescriptions[trimmedCode]
+                                : trimmedCode;
                                 <span class="badge bg-primary me-1 mb-1" title="@description">@trimmedCode</span>
                             }
                         }
@@ -198,7 +198,7 @@
                 <a asp-action="Edit" asp-route-id="@Model.CustomerId" class="btn btn-warning">
                     <i class="fas fa-edit me-1"></i>Edit Customer
                 </a>
-                
+
                 <a asp-action="Delete" asp-route-id="@Model.CustomerId" class="btn btn-danger">
                     <i class="fas fa-trash me-1"></i>Delete Customer
                 </a>

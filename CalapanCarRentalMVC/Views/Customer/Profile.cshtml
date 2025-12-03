@@ -89,7 +89,7 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                 </div>
             </div>
 
-  
+
         </div>
 
         <!-- Quick Actions -->
@@ -182,25 +182,25 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
                     <div class="profile-info-item">
                         <label class="text-muted mb-1"><i class="fas fa-tags me-2"></i>License Code(s)</label>
                         <p class="fw-bold">
-                          @if (string.IsNullOrWhiteSpace(Model.LicenseCode))
+                            @if (string.IsNullOrWhiteSpace(Model.LicenseCode))
+                            {
+                                <span>Not specified</span>
+                            }
+                            else
+                            {
+                                var codes = Model.LicenseCode.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                                foreach (var code in codes)
+                                {
+                                    <span class="badge bg-primary me-1">@code.Trim()</span>
+                                }
+                            }
+                        </p>
+                        @if (string.IsNullOrWhiteSpace(Model.LicenseCode))
                         {
-                        <span>Not specified</span>
-                                 }
-                         else
-                                 {
-                         var codes = Model.LicenseCode.Split(',', StringSplitOptions.RemoveEmptyEntries);
-                                  foreach (var code in codes)
-                        {
-                       <span class="badge bg-primary me-1">@code.Trim()</span>
+                            <span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Required to rent a vehicle</span>
                         }
-                      }
-                                      </p>
-                                @if (string.IsNullOrWhiteSpace(Model.LicenseCode))
-                                 {
-                              <span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Required to rent a vehicle</span>
-                             }
-                                 </div>
-                           </div>
+                    </div>
+                </div>
             </div>
 
             <div class="row">
@@ -389,93 +389,93 @@ else if (Model.LicenseExpiryDate < DateTime.Now.AddMonths(1))
 
                     <div class="row">
                         <div class="col-md-12 mb-3">
- <label class="form-label">
-     License Code (DL code) <span class="text-danger">*</span>
-     </label>
-    <small class="text-muted d-block mb-2">Select all license codes that apply to you</small>
-   
-        @{
-   var selectedCodes = string.IsNullOrWhiteSpace(Model.LicenseCode) 
-     ? new string[] { } 
-            : Model.LicenseCode.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray();
-           }
-           
-        <input type="hidden" name="LicenseCode" id="LicenseCodeHidden" value="@Model.LicenseCode" />
-     
-            <div class="row">
-             <div class="col-md-6">
-       <div class="form-check mb-2">
-         <input class="form-check-input license-checkbox" type="checkbox" value="A" id="licenseA" 
-         @(selectedCodes.Contains("A") ? "checked" : "")>
-      <label class="form-check-label" for="licenseA">
-  A: Motorcycle
-            </label>
-         </div>
-        <div class="form-check mb-2">
-             <input class="form-check-input license-checkbox" type="checkbox" value="A1" id="licenseA1"
-    @(selectedCodes.Contains("A1") ? "checked" : "")>
-            <label class="form-check-label" for="licenseA1">
-A1: Tricycle
-     </label>
-  </div>
-          <div class="form-check mb-2">
-            <input class="form-check-input license-checkbox" type="checkbox" value="B" id="licenseB"
-      @(selectedCodes.Contains("B") ? "checked" : "")>
-          <label class="form-check-label" for="licenseB">
-                 B: Passenger Car
- </label>
-       </div>
-        <div class="form-check mb-2">
-         <input class="form-check-input license-checkbox" type="checkbox" value="B1" id="licenseB1"
-        @(selectedCodes.Contains("B1") ? "checked" : "")>
-   <label class="form-check-label" for="licenseB1">
-    B1: Passenger Van or Jeepney
-       </label>
-          </div>
-           <div class="form-check mb-2">
-              <input class="form-check-input license-checkbox" type="checkbox" value="B2" id="licenseB2"
-       @(selectedCodes.Contains("B2") ? "checked" : "")>
-          <label class="form-check-label" for="licenseB2">
-         B2: Light Commercial Vehicle
-            </label>
-      </div>
-  </div>
-      <div class="col-md-6">
-      <div class="form-check mb-2">
-   <input class="form-check-input license-checkbox" type="checkbox" value="C" id="licenseC"
-      @(selectedCodes.Contains("C") ? "checked" : "")>
-   <label class="form-check-label" for="licenseC">
-            C: Heavy Commercial Vehicle
-              </label>
-       </div>
-             <div class="form-check mb-2">
-          <input class="form-check-input license-checkbox" type="checkbox" value="D" id="licenseD"
-   @(selectedCodes.Contains("D") ? "checked" : "")>
-       <label class="form-check-label" for="licenseD">
-          D: Passenger Bus
-      </label>
-           </div>
-       <div class="form-check mb-2">
-        <input class="form-check-input license-checkbox" type="checkbox" value="BE" id="licenseBE"
-                  @(selectedCodes.Contains("BE") ? "checked" : "")>
-         <label class="form-check-label" for="licenseBE">
-    BE: Light Articulated Vehicle
-         </label>
-        </div>
-  <div class="form-check mb-2">
-         <input class="form-check-input license-checkbox" type="checkbox" value="CE" id="licenseCE"
- @(selectedCodes.Contains("CE") ? "checked" : "")>
-            <label class="form-check-label" for="licenseCE">
-   CE: Heavy Articulated Vehicle
-      </label>
-  </div>
-         </div>
-     </div>
-                   <span id="licenseCodeValidation" class="text-danger" style="display:none;">
-               <i class="fas fa-exclamation-triangle me-1"></i>Please select at least one license code
-</span>
-    </div>
-       </div>
+                            <label class="form-label">
+                                License Code (DL code) <span class="text-danger">*</span>
+                            </label>
+                            <small class="text-muted d-block mb-2">Select all license codes that apply to you</small>
+
+                            @{
+                                var selectedCodes = string.IsNullOrWhiteSpace(Model.LicenseCode)
+                                ? new string[] { }
+                                : Model.LicenseCode.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray();
+                            }
+
+                            <input type="hidden" name="LicenseCode" id="LicenseCodeHidden" value="@Model.LicenseCode" />
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input license-checkbox" type="checkbox" value="A" id="licenseA"
+                                               @(selectedCodes.Contains("A") ? "checked" : "")>
+                                        <label class="form-check-label" for="licenseA">
+                                            A: Motorcycle
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input license-checkbox" type="checkbox" value="A1" id="licenseA1"
+                                               @(selectedCodes.Contains("A1") ? "checked" : "")>
+                                        <label class="form-check-label" for="licenseA1">
+                                            A1: Tricycle
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input license-checkbox" type="checkbox" value="B" id="licenseB"
+                                               @(selectedCodes.Contains("B") ? "checked" : "")>
+                                        <label class="form-check-label" for="licenseB">
+                                            B: Passenger Car
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input license-checkbox" type="checkbox" value="B1" id="licenseB1"
+                                               @(selectedCodes.Contains("B1") ? "checked" : "")>
+                                        <label class="form-check-label" for="licenseB1">
+                                            B1: Passenger Van or Jeepney
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input license-checkbox" type="checkbox" value="B2" id="licenseB2"
+                                               @(selectedCodes.Contains("B2") ? "checked" : "")>
+                                        <label class="form-check-label" for="licenseB2">
+                                            B2: Light Commercial Vehicle
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input license-checkbox" type="checkbox" value="C" id="licenseC"
+                                               @(selectedCodes.Contains("C") ? "checked" : "")>
+                                        <label class="form-check-label" for="licenseC">
+                                            C: Heavy Commercial Vehicle
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input license-checkbox" type="checkbox" value="D" id="licenseD"
+                                               @(selectedCodes.Contains("D") ? "checked" : "")>
+                                        <label class="form-check-label" for="licenseD">
+                                            D: Passenger Bus
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input license-checkbox" type="checkbox" value="BE" id="licenseBE"
+                                               @(selectedCodes.Contains("BE") ? "checked" : "")>
+                                        <label class="form-check-label" for="licenseBE">
+                                            BE: Light Articulated Vehicle
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input license-checkbox" type="checkbox" value="CE" id="licenseCE"
+                                               @(selectedCodes.Contains("CE") ? "checked" : "")>
+                                        <label class="form-check-label" for="licenseCE">
+                                            CE: Heavy Articulated Vehicle
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="licenseCodeValidation" class="text-danger" style="display:none;">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Please select at least one license code
+                            </span>
+                        </div>
+                    </div>
 
                     <div class="mb-3">
                         <label class="form-label">
@@ -528,286 +528,286 @@ A1: Tricycle
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 
     <script>
-           let cropper = null;
-                let currentFile = null;
+                   let cropper = null;
+                        let currentFile = null;
 
-                // Handle file selection
-                document.getElementById('profilePictureInput').addEventListener('change', function(e) {
-                    const file = e.target.files[0];
+                        // Handle file selection
+                        document.getElementById('profilePictureInput').addEventListener('change', function(e) {
+                            const file = e.target.files[0];
 
-         if (!file) return;
+                 if (!file) return;
 
-               // Validate file size (5MB)
-             if (file.size > 5 * 1024 * 1024) {
-               alert('File size must not exceed 5MB!');
-            e.target.value = '';
-                      return;
-                    }
+                       // Validate file size (5MB)
+                     if (file.size > 5 * 1024 * 1024) {
+                       alert('File size must not exceed 5MB!');
+                    e.target.value = '';
+                              return;
+                            }
 
-         // Validate file type
-           if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
-            alert('Only JPG, JPEG, and PNG files are allowed!');
-              e.target.value = '';
-               return;
-                    }
+                 // Validate file type
+                   if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
+                    alert('Only JPG, JPEG, and PNG files are allowed!');
+                      e.target.value = '';
+                       return;
+                            }
 
-               currentFile = file;
+                       currentFile = file;
 
-              // Read and display the image
-                const reader = new FileReader();
-                  reader.onload = function(event) {
-         const image = document.getElementById('imageToCrop');
-              image.src = event.target.result;
-
-            // Destroy previous cropper instance if exists
-             if (cropper) {
-                   cropper.destroy();
-                      }
-
-          // Show cropper container
-                 document.getElementById('cropperContainer').style.display = 'block';
-            document.getElementById('uploadCroppedImageBtn').style.display = 'inline-block';
-
-                  // Initialize Cropper.js
-                     cropper = new Cropper(image, {
-                     aspectRatio: 1,
-                viewMode: 1,
-             preview: '#previewImage',
-                autoCropArea: 1,
-            responsive: true,
-            restore: false,
-         guides: true,
-                 center: true,
-               highlight: false,
-                       cropBoxMovable: true,
-                     cropBoxResizable: true,
-                   toggleDragModeOnDblclick: false,
-            });
-                    };
-              reader.readAsDataURL(file);
-                });
-
-                // Zoom In
-                document.getElementById('zoomInBtn').addEventListener('click', function() {
-             if (cropper) {
-                cropper.zoom(0.1);
-        }
-                });
-
-                // Zoom Out
-           document.getElementById('zoomOutBtn').addEventListener('click', function() {
-                    if (cropper) {
-                cropper.zoom(-0.1);
-                    }
-                });
-
-                // Rotate Left
-                document.getElementById('rotateLeftBtn').addEventListener('click', function() {
-          if (cropper) {
-            cropper.rotate(-90);
-                    }
-           });
-
-                // Rotate Right
-        document.getElementById('rotateRightBtn').addEventListener('click', function() {
-                    if (cropper) {
-             cropper.rotate(90);
-                    }
-          });
-
-                // Reset
-                document.getElementById('resetBtn').addEventListener('click', function() {
-                    if (cropper) {
-                cropper.reset();
-              }
-                });
-
-                // Upload cropped image
-           document.getElementById('uploadCroppedImageBtn').addEventListener('click', function() {
-             if (!cropper) return;
-
-              // Get cropped canvas
-                    const canvas = cropper.getCroppedCanvas({
-             width: 400,
-             height: 400,
-         imageSmoothingEnabled: true,
-                        imageSmoothingQuality: 'high',
-                    });
-
-                // Convert to blob
-           canvas.toBlob(function(blob) {
-                   // Check size
-                   if (blob.size > 5 * 1024 * 1024) {
-                     alert('Cropped image size exceeds 5MB. Please zoom out or select a smaller area.');
-             return;
-                  }
-
-             // Convert to base64
+                      // Read and display the image
                         const reader = new FileReader();
-                  reader.onloadend = function() {
-                      const base64data = reader.result;
+                          reader.onload = function(event) {
+                 const image = document.getElementById('imageToCrop');
+                      image.src = event.target.result;
 
-        // Create form and submit
-                    const form = document.createElement('form');
-              form.method = 'POST';
-          form.action = '@Url.Action("UpdateProfile", "Customer")';
+                    // Destroy previous cropper instance if exists
+                     if (cropper) {
+                           cropper.destroy();
+                              }
 
-                      // Add CSRF token
-          const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                const tokenInput = document.createElement('input');
-                     tokenInput.type = 'hidden';
-            tokenInput.name = '__RequestVerificationToken';
-             tokenInput.value = token;
-                  form.appendChild(tokenInput);
+                  // Show cropper container
+                         document.getElementById('cropperContainer').style.display = 'block';
+                    document.getElementById('uploadCroppedImageBtn').style.display = 'inline-block';
 
-                  // Add cropped image data
-                    const imageInput = document.createElement('input');
-                imageInput.type = 'hidden';
-            imageInput.name = 'croppedImage';
-             imageInput.value = base64data;
-            form.appendChild(imageInput);
+                          // Initialize Cropper.js
+                             cropper = new Cropper(image, {
+                             aspectRatio: 1,
+                        viewMode: 1,
+                     preview: '#previewImage',
+                        autoCropArea: 1,
+                    responsive: true,
+                    restore: false,
+                 guides: true,
+                         center: true,
+                       highlight: false,
+                               cropBoxMovable: true,
+                             cropBoxResizable: true,
+                           toggleDragModeOnDblclick: false,
+                    });
+                            };
+                      reader.readAsDataURL(file);
+                        });
 
-                // Add customer data
-           const customerIdInput = document.createElement('input');
-              customerIdInput.type = 'hidden';
-            customerIdInput.name = 'CustomerId';
-              customerIdInput.value = '@Model.CustomerId';
-                    form.appendChild(customerIdInput);
+                        // Zoom In
+                        document.getElementById('zoomInBtn').addEventListener('click', function() {
+                     if (cropper) {
+                        cropper.zoom(0.1);
+                }
+                        });
 
-              const firstNameInput = document.createElement('input');
-                            firstNameInput.type = 'hidden';
-                   firstNameInput.name = 'FirstName';
-           firstNameInput.value = '@Model.FirstName';
-              form.appendChild(firstNameInput);
+                        // Zoom Out
+                   document.getElementById('zoomOutBtn').addEventListener('click', function() {
+                            if (cropper) {
+                        cropper.zoom(-0.1);
+                            }
+                        });
 
-              const lastNameInput = document.createElement('input');
-                lastNameInput.type = 'hidden';
-                  lastNameInput.name = 'LastName';
-             lastNameInput.value = '@Model.LastName';
-             form.appendChild(lastNameInput);
+                        // Rotate Left
+                        document.getElementById('rotateLeftBtn').addEventListener('click', function() {
+                  if (cropper) {
+                    cropper.rotate(-90);
+                            }
+                   });
 
-                const emailInput = document.createElement('input');
-                   emailInput.type = 'hidden';
-          emailInput.name = 'Email';
-              emailInput.value = '@Model.Email';
-          form.appendChild(emailInput);
+                        // Rotate Right
+                document.getElementById('rotateRightBtn').addEventListener('click', function() {
+                            if (cropper) {
+                     cropper.rotate(90);
+                            }
+                  });
 
-                const phoneInput = document.createElement('input');
-                   phoneInput.type = 'hidden';
-          phoneInput.name = 'PhoneNumber';
-            phoneInput.value = '@Model.PhoneNumber';
-            form.appendChild(phoneInput);
+                        // Reset
+                        document.getElementById('resetBtn').addEventListener('click', function() {
+                            if (cropper) {
+                        cropper.reset();
+                      }
+                        });
 
-         const addressInput = document.createElement('input');
-         addressInput.type = 'hidden';
-                  addressInput.name = 'Address';
-                addressInput.value = '@Model.Address';
-                  form.appendChild(addressInput);
+                        // Upload cropped image
+                   document.getElementById('uploadCroppedImageBtn').addEventListener('click', function() {
+                     if (!cropper) return;
 
-                const licenseInput = document.createElement('input');
-                     licenseInput.type = 'hidden';
-                licenseInput.name = 'LicenseNumber';
-                licenseInput.value = '@Model.LicenseNumber';
-                  form.appendChild(licenseInput);
+                      // Get cropped canvas
+                            const canvas = cropper.getCroppedCanvas({
+                     width: 400,
+                     height: 400,
+                 imageSmoothingEnabled: true,
+                                imageSmoothingQuality: 'high',
+                            });
 
-                        const expiryInput = document.createElement('input');
-                expiryInput.type = 'hidden';
-            expiryInput.name = 'LicenseExpiryDate';
-                 expiryInput.value = '@Model.LicenseExpiryDate.ToString("yyyy-MM-dd")';
-           form.appendChild(expiryInput);
+                        // Convert to blob
+                   canvas.toBlob(function(blob) {
+                           // Check size
+                           if (blob.size > 5 * 1024 * 1024) {
+                             alert('Cropped image size exceeds 5MB. Please zoom out or select a smaller area.');
+                     return;
+                          }
 
-                        const licenseCodeInput = document.createElement('input');
-        licenseCodeInput.type = 'hidden';
-            licenseCodeInput.name = 'LicenseCode';
-      licenseCodeInput.value = '@Model.LicenseCode';
-    form.appendChild(licenseCodeInput);
-
-                   const createdAtInput = document.createElement('input');
-                  createdAtInput.type = 'hidden';
-                  createdAtInput.name = 'CreatedAt';
-             createdAtInput.value = '@Model.CreatedAt.ToString("o")';
-                form.appendChild(createdAtInput);
-
-              document.body.appendChild(form);
-             form.submit();
-                        };
-             reader.readAsDataURL(blob);
-                    }, 'image/jpeg', 0.9);
-                });
-
-              // Reset modal when closed
-                document.getElementById('uploadProfilePictureModal').addEventListener('hidden.bs.modal', function() {
-            if (cropper) {
-               cropper.destroy();
-            cropper = null;
-               }
-        document.getElementById('profilePictureInput').value = '';
-           document.getElementById('cropperContainer').style.display = 'none';
-             document.getElementById('uploadCroppedImageBtn').style.display = 'none';
-                });
-
-            // Remove profile picture
-                function removeProfilePicture() {
-          if (!confirm('Are you sure you want to remove your profile picture?')) {
-           return;
-                    }
+                     // Convert to base64
+                                const reader = new FileReader();
+                          reader.onloadend = function() {
+                              const base64data = reader.result;
 
                 // Create form and submit
-            const form = document.createElement('form');
-         form.method = 'POST';
-               form.action = '@Url.Action("RemoveProfilePicture", "Customer")';
+                            const form = document.createElement('form');
+                      form.method = 'POST';
+                  form.action = '@Url.Action("UpdateProfile", "Customer")';
 
-         const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                const tokenInput = document.createElement('input');
-          tokenInput.type = 'hidden';
-           tokenInput.name = '__RequestVerificationToken';
-          tokenInput.value = token;
-                form.appendChild(tokenInput);
+                              // Add CSRF token
+                  const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                        const tokenInput = document.createElement('input');
+                             tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                     tokenInput.value = token;
+                          form.appendChild(tokenInput);
 
-           document.body.appendChild(form);
-                form.submit();
-                }
+                          // Add cropped image data
+                            const imageInput = document.createElement('input');
+                        imageInput.type = 'hidden';
+                    imageInput.name = 'croppedImage';
+                     imageInput.value = base64data;
+                    form.appendChild(imageInput);
 
-     // Handle License Code checkboxes
-  document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('.license-checkbox');
-          const hiddenInput = document.getElementById('LicenseCodeHidden');
-            const validationMessage = document.getElementById('licenseCodeValidation');
-            
- function updateLicenseCode() {
-    const selectedCodes = [];
-  checkboxes.forEach(function(checkbox) {
-        if (checkbox.checked) {
-     selectedCodes.push(checkbox.value);
-      }
-     });
-        hiddenInput.value = selectedCodes.join(', ');
-            
- // Show/hide validation message
-        if (selectedCodes.length === 0) {
-   validationMessage.style.display = 'block';
-                } else {
-      validationMessage.style.display = 'none';
-      }
-    }
-            
-checkboxes.forEach(function(checkbox) {
-       checkbox.addEventListener('change', updateLicenseCode);
-            });
-            
-         // Validate on form submit
-  const editProfileForm = document.querySelector('#editProfileModal form');
-   if (editProfileForm) {
-      editProfileForm.addEventListener('submit', function(e) {
-     updateLicenseCode();
-              if (hiddenInput.value === '') {
-               e.preventDefault();
-                validationMessage.style.display = 'block';
-  alert('Please select at least one license code.');
-            return false;
-          }
-      });
-    }
-        });
+                        // Add customer data
+                   const customerIdInput = document.createElement('input');
+                      customerIdInput.type = 'hidden';
+                    customerIdInput.name = 'CustomerId';
+                      customerIdInput.value = '@Model.CustomerId';
+                            form.appendChild(customerIdInput);
+
+                      const firstNameInput = document.createElement('input');
+                                    firstNameInput.type = 'hidden';
+                           firstNameInput.name = 'FirstName';
+                   firstNameInput.value = '@Model.FirstName';
+                      form.appendChild(firstNameInput);
+
+                      const lastNameInput = document.createElement('input');
+                        lastNameInput.type = 'hidden';
+                          lastNameInput.name = 'LastName';
+                     lastNameInput.value = '@Model.LastName';
+                     form.appendChild(lastNameInput);
+
+                        const emailInput = document.createElement('input');
+                           emailInput.type = 'hidden';
+                  emailInput.name = 'Email';
+                      emailInput.value = '@Model.Email';
+                  form.appendChild(emailInput);
+
+                        const phoneInput = document.createElement('input');
+                           phoneInput.type = 'hidden';
+                  phoneInput.name = 'PhoneNumber';
+                    phoneInput.value = '@Model.PhoneNumber';
+                    form.appendChild(phoneInput);
+
+                 const addressInput = document.createElement('input');
+                 addressInput.type = 'hidden';
+                          addressInput.name = 'Address';
+                        addressInput.value = '@Model.Address';
+                          form.appendChild(addressInput);
+
+                        const licenseInput = document.createElement('input');
+                             licenseInput.type = 'hidden';
+                        licenseInput.name = 'LicenseNumber';
+                        licenseInput.value = '@Model.LicenseNumber';
+                          form.appendChild(licenseInput);
+
+                                const expiryInput = document.createElement('input');
+                        expiryInput.type = 'hidden';
+                    expiryInput.name = 'LicenseExpiryDate';
+                         expiryInput.value = '@Model.LicenseExpiryDate.ToString("yyyy-MM-dd")';
+                   form.appendChild(expiryInput);
+
+                                const licenseCodeInput = document.createElement('input');
+                licenseCodeInput.type = 'hidden';
+                    licenseCodeInput.name = 'LicenseCode';
+              licenseCodeInput.value = '@Model.LicenseCode';
+            form.appendChild(licenseCodeInput);
+
+                           const createdAtInput = document.createElement('input');
+                          createdAtInput.type = 'hidden';
+                          createdAtInput.name = 'CreatedAt';
+                     createdAtInput.value = '@Model.CreatedAt.ToString("o")';
+                        form.appendChild(createdAtInput);
+
+                      document.body.appendChild(form);
+                     form.submit();
+                                };
+                     reader.readAsDataURL(blob);
+                            }, 'image/jpeg', 0.9);
+                        });
+
+                      // Reset modal when closed
+                        document.getElementById('uploadProfilePictureModal').addEventListener('hidden.bs.modal', function() {
+                    if (cropper) {
+                       cropper.destroy();
+                    cropper = null;
+                       }
+                document.getElementById('profilePictureInput').value = '';
+                   document.getElementById('cropperContainer').style.display = 'none';
+                     document.getElementById('uploadCroppedImageBtn').style.display = 'none';
+                        });
+
+                    // Remove profile picture
+                        function removeProfilePicture() {
+                  if (!confirm('Are you sure you want to remove your profile picture?')) {
+                   return;
+                            }
+
+                        // Create form and submit
+                    const form = document.createElement('form');
+                 form.method = 'POST';
+                       form.action = '@Url.Action("RemoveProfilePicture", "Customer")';
+
+                 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                        const tokenInput = document.createElement('input');
+                  tokenInput.type = 'hidden';
+                   tokenInput.name = '__RequestVerificationToken';
+                  tokenInput.value = token;
+                        form.appendChild(tokenInput);
+
+                   document.body.appendChild(form);
+                        form.submit();
+                        }
+
+             // Handle License Code checkboxes
+          document.addEventListener('DOMContentLoaded', function() {
+                    const checkboxes = document.querySelectorAll('.license-checkbox');
+                  const hiddenInput = document.getElementById('LicenseCodeHidden');
+                    const validationMessage = document.getElementById('licenseCodeValidation');
+
+         function updateLicenseCode() {
+            const selectedCodes = [];
+          checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+             selectedCodes.push(checkbox.value);
+              }
+             });
+                hiddenInput.value = selectedCodes.join(', ');
+
+         // Show/hide validation message
+                if (selectedCodes.length === 0) {
+           validationMessage.style.display = 'block';
+                        } else {
+              validationMessage.style.display = 'none';
+              }
+            }
+
+        checkboxes.forEach(function(checkbox) {
+               checkbox.addEventListener('change', updateLicenseCode);
+                    });
+
+                 // Validate on form submit
+          const editProfileForm = document.querySelector('#editProfileModal form');
+           if (editProfileForm) {
+              editProfileForm.addEventListener('submit', function(e) {
+             updateLicenseCode();
+                      if (hiddenInput.value === '') {
+                       e.preventDefault();
+                        validationMessage.style.display = 'block';
+          alert('Please select at least one license code.');
+                    return false;
+                  }
+              });
+            }
+                });
     </script>
 }

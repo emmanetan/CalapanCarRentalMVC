@@ -392,25 +392,25 @@
 
                   $('#registerForm').on('submit', function(e) {
            var agreeCheckbox = $('#agreeToTermsCheckbox');
-                    var errorSpan = $('#agreeToTermsError';
+        var errorSpan = $('#agreeToTermsError');
 
-                 if (!agreeCheckbox.is(':checked')) {
-            e.preventDefault();
-              errorSpan.text('You must agree to the Terms of Service and Privacy Policy');
-             agreeCheckbox.focus();
+     if (!agreeCheckbox.is(':checked')) {
+     e.preventDefault();
+     errorSpan.text('You must agree to the Terms of Service and Privacy Policy');
+   agreeCheckbox.focus();
          return false;
            } else {
-                errorSpan.text('');
-                 }
+       errorSpan.text('');
+             }
 
-                // Check if email is verified
-           if (!emailVerified) {
-                  e.preventDefault();
-              showEmailMessage('Please verify your email address before registering', 'danger');
-                $('#emailInput').focus();
-         return false;
+            // Check if email is verified
+  if (!emailVerified) {
+         e.preventDefault();
+      showEmailMessage('Please verify your email address before registering', 'danger');
+      $('#emailInput').focus();
+ return false;
           }
-              });
+    });
 
              $('#agreeToTermsCheckbox').on('change', function() {
                      var errorSpan = $('#agreeToTermsError');
